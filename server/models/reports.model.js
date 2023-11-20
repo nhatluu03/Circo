@@ -8,5 +8,4 @@ const AccountReportSchema = new mongoose.Schema({
 }, {timestamp: true});
 
 const Report = mongoose.model('Report', ReportSchema);
-
-module.exports = Report;
+export default Report;

@@ -33,14 +33,12 @@ const UserSchema = new Schema(
     },
     gender: {type: String, enum: ["male", "female", "other"]},
     dob: { type: Date },
-    rating: { type: Number },
     socialLinks: [
       {
         platform: { type: String }, 
         url: { type: String }, 
       },
     ],
-    createdAt: { type: Date, default: Date.now },
   },
   { timpestamps: true }
 );

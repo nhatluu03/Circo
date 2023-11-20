@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const ArtCategorySchema = new Schema(
+const CategorySchema = new Schema(
   {
     title: {type: String, required: true, maxLength: [100, "Category title cannot exceed 50 characters"]},
     description: {type: String}
@@ -9,6 +9,6 @@ const ArtCategorySchema = new Schema(
   { timpestamps: true }
 );
 
-const ArtCategory = mongoose.model("ArtCategory", ArtCategorySchema);
+const Category = mongoose.model("Category", CategorySchema);
 
-export default ArtCategory;
+export default Category;
