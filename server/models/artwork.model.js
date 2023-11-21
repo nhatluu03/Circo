@@ -10,7 +10,7 @@ const ArtworkSchema = new Schema(
     description: {type: String},
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'ArtCategory', required: true },
   },
-  { timpestamps: true }
+  { timestamps: true }
 );
 
 const Artwork = mongoose.model("Artwork", ArtworkSchema);

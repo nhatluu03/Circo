@@ -162,13 +162,14 @@ class UserController {
 
   update = async (req, res, next) => {
     try {
+      
       //Update User
       const updatedUser = await User.findByIdAndUpdate(
         req.params.id,
         { $set: req.body },
         { new: true },
         //Check if there is an error
-        (err,updatedUser) => {
+        (err, updatedUser) => {
           if(err){
             console.error('Error updating user:', err);
           } else{
