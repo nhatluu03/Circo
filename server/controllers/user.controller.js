@@ -71,13 +71,28 @@ class UserController {
       let newUser;
       switch (role) {
         case "artist":
-          newUser = new ArtistUser({ username, password: hashedPassword, fullName, role });
+          newUser = new ArtistUser({
+            username,
+            password: hashedPassword,
+            fullName,
+            role,
+          });
           break;
         case "client":
-          newUser = new ClientUser({ username, password: hashedPassword, fullName, role });
+          newUser = new ClientUser({
+            username,
+            password: hashedPassword,
+            fullName,
+            role,
+          });
           break;
         case "admin":
-          newUser = new AdminUser({ username, password: hashedPassword, fullName, role });
+          newUser = new AdminUser({
+            username,
+            password: hashedPassword,
+            fullName,
+            role,
+          });
           break;
         default:
           return res.status(400).json({ error: "Invalid role" });
@@ -104,13 +119,13 @@ class UserController {
       const { username, password } = req.body;
       const user = await User.findOne({ username });
       if (!user) return next(new Error("User not found"));
-  
+
       const validPassword = await this.validatePassword(
         password,
         user.password
       );
       if (!validPassword) return next(new Error("Invalid password"));
-  
+
       const accessToken = jwt.sign(
         { userId: user._id },
         process.env.JWT_SECRET,
@@ -118,11 +133,11 @@ class UserController {
           expiresIn: "1d",
         }
       );
-  
+
       await User.findByIdAndUpdate(user._id, {
         accessToken,
       });
-  
+
       res.status(200).json({
         data: {
           username: user.username,
@@ -134,25 +149,47 @@ class UserController {
       res.status(500).json({ error: error.message });
     }
   };
-  
-  store = async (req, res, next) => {
-    res.status(200).json("Creating a new user");
-  };
 
   index = async (req, res, next) => {
+    const users = await User.find()
     res.status(200).json("Getting all users");
   };
 
   show = async (req, res, next) => {
-    res.status(200).json("Getting a specific user");
+    const user = await User.findById(req.params.id);
+    res.status(200).send(user);
   };
 
   update = async (req, res, next) => {
-    res.status(200).json("Updating a user");
+    try {
+      //Update User
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        { $set: req.body },
+        { new: true },
+        //Check if there is an error
+        (err,updatedUser) => {
+          if(err){
+            console.error('Error updating user:', err);
+          } else{
+            console.log('Updated user', updatedUser);
+          }
+        }
+      );
+      res.status(200).send(updatedUser);
+    }catch (error) {
+      next(error)
+    }
   };
 
   destroy = async (req, res, next) => {
-    res.status(200).json("Deleting a user");
+    const user = await User.findById(req.params.id);
+    //Check userOwner
+    if(user._id !== req.params.id)
+      return res.status(400).send("You can delete only your account");
+    //Delete user
+    await User.findByIdAndDelete(req.params.id);
+    res.status(200).send("User has been deleted");
   };
 }
 
