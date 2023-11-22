@@ -2,9 +2,9 @@ import AccessControl from "accesscontrol";
 const ac = new AccessControl();
 
 const roles = () => {
-  ac.grant("client").updateOwn("profile").readOwn("profile");
+  ac.grant("client").deleteOwn("profile").updateOwn("profile").readOwn("profile").readAny("profile");
 
-  ac.grant("artist").extend("client");
+  ac.grant("artist").extend("client").createOwn("profile");
 
   ac.grant("admin")
     .extend("client")

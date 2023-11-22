@@ -5,9 +5,9 @@ import UserController from '../controllers/user.controller.js';
 const router = express.Router();
 
 router.get('/', ArtworkController.index);
-router.post('/', UserController.allowIfLoggedIn, UserController.grantAccess(), ArtworkController.store);
+router.post('/', UserController.allowIfLoggedIn, UserController.grantAccess('createOwn', 'profile'), ArtworkController.store);
 router.get('/:id', ArtworkController.show);
-router.put('/:id', UserController.allowIfLoggedIn, UserController.grantAccess('updateAny', 'profile'), ArtworkController.update);
-router.delete('/:id', UserController.allowIfLoggedIn, UserController.grantAccess('deleteAny', 'profile'), ArtworkController.destroy);
+router.put('/:id', UserController.allowIfLoggedIn, UserController.grantAccess('updateOwn', 'profile'), ArtworkController.update);
+router.delete('/:id', UserController.allowIfLoggedIn, UserController.grantAccess('deleteOwn', 'profile'), ArtworkController.destroy);
 
 export default router;
