@@ -9,14 +9,9 @@ import bcrypt from "bcrypt";
 import roles from "../roles.js";
 import "mongoose";
 import "../utils/loadEnv.js";
+import createError from "../utils/createError.js";
 
 class UserController {
-  async hashPassword(password) {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    return hashedPassword;
-  }
-
   async validatePassword(plaintPassword, hashedPassword) {
     return await bcrypt.compare(plaintPassword, hashedPassword);
   }
@@ -25,6 +20,8 @@ class UserController {
     return async (req, res, next) => {
       try {
         const permission = roles.can(req.user.role)[action](resource);
+        console.log(req.user.role)
+        console.log(permission.granted)
         if (!permission.granted) {
           return res.status(401).json({
             error: "You don't have enough permission to perform this action",
@@ -39,14 +36,23 @@ class UserController {
 
   allowIfLoggedIn = async (req, res, next) => {
     try {
-      const user = res.locals.loggedInUser;
-      if (!user) {
-        return res.status(401).json({
-          error: "You need to login to access this resource",
-        });
-      }
-      req.user = user;
-      next();
+      // const user = res.locals.loggedInUser;
+      // if (!user) {
+      //   return res.status(401).json({
+      //     error: "You need to login to access this resource",
+      //   });
+      // }
+      // req.user = user;
+      // next();
+      const token = req.cookies.accessToken;
+      if (!token) return next(createError(401, "You are not authenticated!"));
+      jwt.verify(token, process.env.JWT_SECRET, async (error, payload) => {
+        console.log(payload)
+        if (error) return next(createError(403, "Token is not valid"));
+        req.userId = payload.userId
+        req.user = await User.findById(payload.userId)
+        next();
+      });
     } catch (error) {
       next(error);
     }
@@ -65,7 +71,7 @@ class UserController {
       }
 
       // Hash the password for security
-      const hashedPassword = await this.hashPassword(password);
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
       // Create a new user based on the role
       let newUser;
@@ -120,11 +126,9 @@ class UserController {
       const user = await User.findOne({ username });
       if (!user) return next(new Error("User not found"));
 
-      const validPassword = await this.validatePassword(
-        password,
-        user.password
-      );
-      if (!validPassword) return next(new Error("Invalid password"));
+      const validated = bcrypt.compareSync(req.body.password, user.password);
+      if (!validated)
+        return next(createError(400, "Wrong password or username!"));
 
       const accessToken = jwt.sign(
         { userId: user._id },
@@ -133,6 +137,11 @@ class UserController {
           expiresIn: "1d",
         }
       );
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true, // This ensures the cookie is only accessible by the server
+        secure: process.env.NODE_ENV === "production", // Use secure cookie in production
+        maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time in milliseconds (1 day in this example)
+      });
 
       await User.findByIdAndUpdate(user._id, {
         accessToken,
@@ -150,8 +159,10 @@ class UserController {
     }
   };
 
+  logout = async (req, res, next) => {};
+
   index = async (req, res, next) => {
-    const users = await User.find()
+    const users = await User.find();
     res.status(200).json("Getting all users");
   };
 
@@ -162,31 +173,24 @@ class UserController {
 
   update = async (req, res, next) => {
     try {
-      
       //Update User
       const updatedUser = await User.findByIdAndUpdate(
         req.params.id,
         { $set: req.body },
         { new: true },
         //Check if there is an error
-        (err, updatedUser) => {
-          if(err){
-            console.error('Error updating user:', err);
-          } else{
-            console.log('Updated user', updatedUser);
-          }
-        }
       );
+      
       res.status(200).send(updatedUser);
-    }catch (error) {
-      next(error)
+    } catch (error) {
+      next(error);
     }
   };
 
   destroy = async (req, res, next) => {
     const user = await User.findById(req.params.id);
     //Check userOwner
-    if(user._id !== req.params.id)
+    if (user._id !== req.params.id)
       return res.status(400).send("You can delete only your account");
     //Delete user
     await User.findByIdAndDelete(req.params.id);
