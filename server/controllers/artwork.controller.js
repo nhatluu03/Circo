@@ -1,9 +1,12 @@
+import mongoose from "mongoose";
 import Artwork from "../models/artwork.model.js";
 import createError from "../utils/createError.js";
 
 class ArtworkController {
   
   isOwner = (artwork, userId) => {
+    console.log(artwork.artist.toString())
+    console.log(userId.toString())
     return artwork.artist.toString() === userId.toString();
   };
 
@@ -12,15 +15,19 @@ class ArtworkController {
   };
 
   store = async (req, res, next) => {
+    const {user} = req;
+    const { artist, ...artworkData } = req.body; // Destructure artist from req.body
+  
     const artwork = new Artwork({
-      ...req.body,
-    })
+      artist: user._id, // Convert artist to ObjectId
+      ...artworkData,
+    });
+  
     try {
       const newArtwork = await artwork.save();
       res.status(201).json(newArtwork);
-
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 

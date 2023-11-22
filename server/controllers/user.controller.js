@@ -20,8 +20,6 @@ class UserController {
     return async (req, res, next) => {
       try {
         const permission = roles.can(req.user.role)[action](resource);
-        console.log(req.user.role)
-        console.log(permission.granted)
         if (!permission.granted) {
           return res.status(401).json({
             error: "You don't have enough permission to perform this action",
@@ -47,7 +45,6 @@ class UserController {
       const token = req.cookies.accessToken;
       if (!token) return next(createError(401, "You are not authenticated!"));
       jwt.verify(token, process.env.JWT_SECRET, async (error, payload) => {
-        console.log(payload)
         if (error) return next(createError(403, "Token is not valid"));
         req.userId = payload.userId
         req.user = await User.findById(payload.userId)
