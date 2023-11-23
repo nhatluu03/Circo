@@ -6,7 +6,7 @@ const CategorySchema = new Schema(
     title: {type: String, required: true, maxLength: [100, "Category title cannot exceed 50 characters"]},
     description: {type: String}
   },
-  { timpestamps: true }
+  { timestamps: true }
 );
 
 const Category = mongoose.model("Category", CategorySchema);

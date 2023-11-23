@@ -156,7 +156,12 @@ class UserController {
     }
   };
 
-  logout = async (req, res, next) => {};
+  logout = async (req, res) => {
+    res.clearCookie("accessToken",{
+      sameSite: "none",
+      secure: true,
+    }).status(200).send("User has been logged out.");
+  };
 
   index = async (req, res, next) => {
     const users = await User.find();
@@ -175,9 +180,7 @@ class UserController {
         req.params.id,
         { $set: req.body },
         { new: true },
-        //Check if there is an error
       );
-      
       res.status(200).send(updatedUser);
     } catch (error) {
       next(error);
@@ -187,7 +190,7 @@ class UserController {
   destroy = async (req, res, next) => {
     const user = await User.findById(req.params.id);
     //Check userOwner
-    if (user._id !== req.params.id)
+    if (user._id.toString() !== req.params.id)
       return res.status(400).send("You can delete only your account");
     //Delete user
     await User.findByIdAndDelete(req.params.id);

@@ -8,7 +8,7 @@ const ArtworkSchema = new Schema(
     likes: {type: Number, default: 0},
     saves: {type: Number, default: 0},
     description: {type: String},
-    category: { type: mongoose.Schema.Types.ObjectId, ref: 'ArtCategory'},
+    category: { type: mongoose.Schema.Types.ObjectId, ref: 'ArtCategory', required: true},
   },
   { timestamps: true }
 );
