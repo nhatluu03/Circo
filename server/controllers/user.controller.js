@@ -121,11 +121,16 @@ class UserController {
     try {
       const { username, password } = req.body;
       const user = await User.findOne({ username });
-      if (!user) return next(new Error("User not found"));
+      if (!user) 
+        return res.status(404).json({
+          error: "User not found",
+        });
 
       const validated = bcrypt.compareSync(req.body.password, user.password);
       if (!validated)
-        return next(createError(400, "Wrong password or username!"));
+        return res.status(404).json({
+          error: "Wrong password or username",
+        });
 
       const accessToken = jwt.sign(
         { userId: user._id },
@@ -169,11 +174,29 @@ class UserController {
   };
 
   show = async (req, res, next) => {
-    const user = await User.findById(req.params.id);
-    res.status(200).send(user);
+    try {
+      const user = await User.findById(req.params.id);
+      if (!user) {
+        return res.status(404).json({
+          error: "User not found",
+        });
+      }
+      const {accessToken, password, _id, ...userData} = user._doc
+      res.status(200).send(userData);
+    } catch (error) {
+      next(error)
+    }
   };
 
   update = async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        error: "User not found",
+      });
+    }
+    if (req.user._id.toString() !== req.params.id)
+      return res.status(400).send("You can update only your account");
     try {
       //Update User
       const updatedUser = await User.findByIdAndUpdate(
@@ -189,12 +212,21 @@ class UserController {
 
   destroy = async (req, res, next) => {
     const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        error: "User not found",
+      });
+    }
     //Check userOwner
-    if (user._id.toString() !== req.params.id)
+    if (req.user._id.toString() !== req.params.id)
       return res.status(400).send("You can delete only your account");
-    //Delete user
-    await User.findByIdAndDelete(req.params.id);
-    res.status(200).send("User has been deleted");
+    try {
+      //Delete user
+      await User.findByIdAndDelete(req.params.id);
+      res.status(200).send("User has been deleted");
+    } catch (error) {
+      next(error)
+    }
   };
 }
 

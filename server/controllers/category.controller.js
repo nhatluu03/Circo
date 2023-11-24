@@ -15,25 +15,46 @@ class CategoryController {
   };
 
   show = async (req, res, next) => {
-    const category = await Category.findById(req.params.id)
-    res.status(200).json("Getting a specific category");
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({
+        error: "Category not found",
+      });
+    }
+    res.status(200).json(category);
   };
 
   update = async (req, res, next) => {
-    const updatedCategory = await Category.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
-      { new: true }
-    );
-    res.status(200).json("Updating a category");
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({
+        error: "Category not found",
+      });
+    }
+    try {
+      const updatedCategory = await Category.findByIdAndUpdate(
+        req.params.id,
+        { $set: req.body },
+        { new: true }
+      );
+      res.status(200).json("Updating a category");
+    } catch (error) {
+      next(error);
+    }
   };
 
   destroy = async (req, res, next) => {
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({
+        error: "Category not found",
+      });
+    }
     try {
       await Category.findByIdAndDelete(req.params.id);
       res.status(200).json("Deleting a category");
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 }
