@@ -39,6 +39,9 @@ const UserSchema = new Schema(
         url: { type: String }, 
       },
     ],
+    bookmark: [
+      { type: mongoose.Schema.Types.ObjectId, ref: 'Artwork' }
+    ]
   },
   { timestamps: true }
 );

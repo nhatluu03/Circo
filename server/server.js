@@ -16,10 +16,11 @@ app.use(cookieParser());
 const PORT = process.env.PORT || 3000;
 
 mongoose
-  .connect("mongodb+srv://phapluu2k5tqt:PhapNhat987AZ@cluster0.ebp3xzv.mongodb.net/?retryWrites=true&w=majority")
+  .connect(process.env.MONGO)
   .then(() => {
     console.log("Connected to the Database successfully");
-  }); 
+  });
+  
 // app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(async (req, res, next) => {
