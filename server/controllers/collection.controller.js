@@ -10,7 +10,14 @@ class CollectionController {
   };
 
   index = async (req, res, next) => {
-    res.status(200).json("Getting all collections");
+    try {
+      const artistId = new mongoose.Types.ObjectId(req.params.id);
+      const collections = await Collection.find({ artist: artistId });
+      res.status(200).json(collections);
+    } catch (error) {
+      // Handle errors here
+      next(error);
+    }
   };
 
   store = async (req, res, next) => {
