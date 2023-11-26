@@ -39,11 +39,13 @@ const UserSchema = new Schema(
         url: { type: String }, 
       },
 
-      
+
     ],
     bookmark: [
       { type: mongoose.Schema.Types.ObjectId, ref: 'Artwork' }
-    ]
+    ],
+    followers:[ { type: Schema.Types.ObjectId, ref: 'User' } ],
+    following:[ { type: Schema.Types.ObjectId, ref: 'User' } ],
   },
   { timestamps: true }
 );
