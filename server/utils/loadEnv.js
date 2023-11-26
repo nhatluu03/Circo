@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: "../.env" });
+dotenv.config();
 
 // import { fileURLToPath } from 'url';
 // import { dirname, resolve } from 'path';

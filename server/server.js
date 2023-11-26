@@ -7,17 +7,20 @@ import roles from "./roles.js";
 import path from "path";
 import route from "./routes/index.js";
 import './utils/loadEnv.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 const PORT = process.env.PORT || 3000;
 
 mongoose
-  .connect("mongodb://0.0.0.0:27017/art_commission")
+  .connect(process.env.MONGO)
   .then(() => {
     console.log("Connected to the Database successfully");
-  }); 
+  });
+  
 // app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(async (req, res, next) => {
@@ -35,9 +38,11 @@ app.use(async (req, res, next) => {
         });
       }
       res.locals.loggedInUser = await User.findById(userId);
+      
       next();
     } catch (error) {
       next(error);
+
     }
   } else {
     next();
