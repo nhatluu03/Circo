@@ -1,4 +1,4 @@
-import "mongoose";
+import mongoose from "mongoose";
 import Collection from "../models/collection.model.js";
 import roles from "../roles.js";
 import { User } from "../models/user.model.js";
@@ -23,12 +23,13 @@ class CollectionController {
 
     try {
       const { artworks, ...collectionData } = req.body; //Destructuring artworks from req.body
-      const artworkIds = await artworks.map((artworkId) =>
-        mongoose.Types.ObjectId(artworkId)
+      const artworkIds = await artworks.map(
+        (artworkId) => new mongoose.Types.ObjectId(artworkId)
       );
       // Create a new collection instance using the Collection model
       const collection = new Collection({
         ...collectionData,
+        artist: user._id,
         artworks: artworkIds,
       });
 
@@ -42,16 +43,15 @@ class CollectionController {
   };
 
   show = async (req, res, next) => {
-
     try {
       const collection = await Collection.findById(req.params.id);
-      if(!collection)
+      if (!collection)
         return res.status(404).json({
           error: "Not found",
         });
       res.status(200).json(collection);
     } catch (error) {
-      next(error)      
+      next(error);
     }
   };
 
@@ -65,20 +65,40 @@ class CollectionController {
       return res.status(401).json({
         error: "You don't have enough permission to update this collection",
       });
+
     try {
-      await Collection.findByIdAndUpdate(
-        req.params.id,
-        { $set: req.body },
-        { new: true }
-      );
-      res.status(200).json("Updating a collection");
+      // const updatedCollection = await Collection.findByIdAndUpdate(
+      //   req.params.id,
+      //   { $set: req.body },
+      //   { new: true }
+      // );
+      // res.status(200).json(updatedCollection);
+
+      // Check if the request body contains artworkToAdd and artworkToRemove
+      const { artworkToAdd, artworkToRemove, ...updatedData } = req.body;
+      // Add new artwork to the collection
+      if (artworkToAdd) {
+        const artworkIdToAdd = new mongoose.Types.ObjectId(artworkToAdd);
+        collection.artworks.push(artworkIdToAdd);
+      }
+      // Remove artwork from the collection
+      if (artworkToRemove) {
+        const artworkIdToRemove = new mongoose.Types.ObjectId(artworkToRemove);
+        collection.artworks = collection.artworks.filter(
+          (artworkId) => !artworkId.equals(artworkIdToRemove)
+        );
+      }
+      // Update other properties in the collection
+      Object.assign(collection, updatedData);
+      // Save the updated collection to the database
+      const updatedCollection = await collection.save();
+      res.status(200).json(updatedCollection);
     } catch (error) {
-      next(error)      
+      next(error);
     }
   };
 
   destroy = async (req, res, next) => {
-    
     const collection = await Collection.findById(req.params.id);
     if (!collection)
       return res.status(404).json({
@@ -86,14 +106,14 @@ class CollectionController {
       });
     if (!this.isOwner(collection, req.userId))
       return res.status(401).json({
-        error: "You don't have enough permission to update this collection",
+        error: "You don't have enough permission to delete this collection",
       });
-    
+
     try {
-      await Collection.findByIdAndDelete(req.params.id)
+      await Collection.findByIdAndDelete(req.params.id);
       res.status(200).json("Deleting a collection");
     } catch (error) {
-      next(error)      
+      next(error);
     }
   };
 }
