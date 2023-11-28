@@ -17,7 +17,6 @@ const orderSchema = new mongoose.Schema({
     type: String,
   },
   media: [{ type: String, maxlength: 3 }]
-  
 });
 
 const Order = mongoose.model("Order", orderSchema);
