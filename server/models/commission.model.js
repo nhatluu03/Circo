@@ -5,7 +5,7 @@ const commissionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true
     },
     category:{
-        category: { type: mongoose.Schema.Types.ObjectId, ref: 'ArtCategory', required: true},
+        type: mongoose.Schema.Types.ObjectId, ref: 'ArtCategory', required: true,
     },
     price_from:{
         type: Number
@@ -17,6 +17,7 @@ const commissionSchema = new mongoose.Schema({
     count:{
         type: Number,
         required: true,
+        default: 1
     },
     note:{ type: String } 
 });
