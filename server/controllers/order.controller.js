@@ -5,10 +5,7 @@ import { User } from "../models/user.model.js";
 class OrderController {
   index = async (req, res, next) => {
     try {
-      //Create an ObjectId from req.params.id
-      const clientId = new mongoose.Types.ObjectId(req.params.id);
-      //Query
-      const orders = await Order.find({ client: clientId });
+      const orders = await Order.find()
       res.status(200).json(orders);
     } catch (error) {
       next(error);

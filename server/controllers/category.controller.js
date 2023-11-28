@@ -3,7 +3,8 @@ import createError from "../utils/createError.js";
 
 class CategoryController {
   index = async (req, res, next) => {
-    res.status(200).json("Getting all categories");
+    const categories = await Category.find()
+    res.status(200).json(categories);
   };
 
   store = async (req, res, next) => {

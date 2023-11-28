@@ -170,7 +170,7 @@ class UserController {
 
   index = async (req, res, next) => {
     const users = await User.find();
-    res.status(200).json("Getting all users");
+    res.status(200).json(users);
   };
 
   show = async (req, res, next) => {
