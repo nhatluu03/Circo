@@ -15,13 +15,17 @@ class CategoryController {
   };
 
   show = async (req, res, next) => {
-    const category = await Category.findById(req.params.id);
-    if (!category) {
-      return res.status(404).json({
-        error: "Category not found",
-      });
+    try {
+      const category = await Category.findById(req.params.id);
+      if (!category) {
+        return res.status(404).json({
+          error: "Category not found",
+        });
+      }
+      res.status(200).json(category);
+    } catch (error) {
+      next(error)      
     }
-    res.status(200).json(category);
   };
 
   update = async (req, res, next) => {

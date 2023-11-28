@@ -16,7 +16,7 @@ class OrderController {
   };
 
   store = async (req, res, next) => {
-    const client = await User.findById(req.userId)
+    const client = await User.findById(req.userId);
     try {
       const order = new Order({
         client: client._id,
@@ -32,27 +32,30 @@ class OrderController {
 
   show = async (req, res, next) => {
     //Check if the order exists
+    console.log(req.params.id)
     const order = await Order.findById(req.params.id);
-    if (!order)
+    if (!order) {
       return res.status(404).json({
         error: "Order not found",
       });
-
-    try {
-      res.status(200).json(order);
-    } catch (error) {
-      next(error);
     }
+    res.status(200).json(order);
   };
 
   update = async (req, res, next) => {
-    //Check if the order exists
     const order = await Order.findById(req.params.id);
+    const user = await User.findById(req.userId);
+    //Check if the order exists
     if (!order)
       return res.status(404).json({
         error: "Order not found",
       });
-    
+    //Check if the client is the owner of the order
+    if (order.client.toString() !== user._id.toString())
+      return res.status(404).json({
+        error: "You do not have permission to update this order",
+      });
+
     try {
       const updatedOrder = await Order.findByIdAndUpdate(
         req.params.id,

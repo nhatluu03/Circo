@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import Collection from "../models/collection.model.js";
-import roles from "../roles.js";
 import { User } from "../models/user.model.js";
 
 class CollectionController {
@@ -12,7 +11,7 @@ class CollectionController {
   index = async (req, res, next) => {
     try {
       //Create an ObjectId from req.params.id
-      const artistId = new mongoose.Types.ObjectId(req.params.id);
+      const artistId = new mongoose.Types.ObjectId(req.params.artistId);
       //Query
       const collections = await Collection.find({ artist: artistId });
       res.status(200).json(collections);
@@ -52,16 +51,25 @@ class CollectionController {
   };
 
   show = async (req, res, next) => {
-    try {
-      const collection = await Collection.findById(req.params.id);
-      if (!collection)
-        return res.status(404).json({
-          error: "Not found",
-        });
-      res.status(200).json(collection);
-    } catch (error) {
-      next(error);
+    // try {
+    //   const collection = await Collection.findById(req.params.id);
+    //   if (!collection) {
+    //     return res.status(404).json({
+    //       error: "Not found",
+    //     });
+    //   }
+    //   res.status(500).json(collection);
+    // } catch (error) {
+    //   next(error);
+    // }
+    const collection = await Collection.findById(req.params.id);
+    if (!collection) {
+      return res.status(404).json({
+        error: "Collection not found",
+      });
     }
+    res.status(200).json(collection);
+    
   };
 
   update = async (req, res, next) => {

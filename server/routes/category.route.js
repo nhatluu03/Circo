@@ -1,13 +1,13 @@
 import express from 'express';
-import CategoryController from '../controllers/category.controller.js';
+import categoryController from '../controllers/category.controller.js';
 import userController from '../controllers/user.controller.js';
 
 const router = express.Router();
 
-router.get('/', CategoryController.index);
-router.post('/', userController.allowIfLoggedIn, userController.grantAccess('createAny', 'profile'), CategoryController.store);
-router.get('/:id', CategoryController.show);
-router.put('/:id', userController.allowIfLoggedIn, userController.grantAccess('updateAny', 'profile'), CategoryController.update);
-router.delete('/:id', userController.allowIfLoggedIn, userController.grantAccess('deleteAny', 'profile'), CategoryController.destroy);
+router.get('/', categoryController.index);
+router.post('/', userController.allowIfLoggedIn, userController.grantAccess('createAny', 'profile'), categoryController.store);
+router.get('/:id', categoryController.show);
+router.put('/:id', userController.allowIfLoggedIn, userController.grantAccess('updateAny', 'profile'), categoryController.update);
+router.delete('/:id', userController.allowIfLoggedIn, userController.grantAccess('deleteAny', 'profile'), categoryController.destroy);
 
 export default router;
