@@ -69,7 +69,6 @@ class CollectionController {
       });
     }
     res.status(200).json(collection);
-    
   };
 
   update = async (req, res, next) => {

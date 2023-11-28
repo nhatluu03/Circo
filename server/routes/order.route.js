@@ -4,7 +4,7 @@ import userController from '../controllers/user.controller.js';
 
 const router = express.Router();
 
-router.get('/:id', OrderController.index);
+router.get('/', OrderController.index);
 router.post('/', userController.allowIfLoggedIn, userController.grantAccess('createOwn', 'profile'), OrderController.store);
 router.get('/:id', userController.allowIfLoggedIn, userController.grantAccess('readOwn', 'profile'), OrderController.show);
 router.put('/:id', userController.allowIfLoggedIn, userController.grantAccess('updateOwn', 'profile'), OrderController.update);
