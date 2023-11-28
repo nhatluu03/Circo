@@ -1,5 +1,4 @@
 import Category from "../models/category.model.js";
-import createError from "../utils/createError.js";
 
 class CategoryController {
   index = async (req, res, next) => {
@@ -42,7 +41,7 @@ class CategoryController {
         { $set: req.body },
         { new: true }
       );
-      res.status(200).json("Updating a category");
+      res.status(200).json(updatedCategory);
     } catch (error) {
       next(error);
     }

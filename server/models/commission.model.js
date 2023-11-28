@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
-const couponSchema = new mongoose.Schema({
-
+const commissionSchema = new mongoose.Schema({
     artist:{
         type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true
     },
@@ -22,5 +21,5 @@ const couponSchema = new mongoose.Schema({
     note:{ type: String } 
 });
 
-const Coupon = mongoose.model("Coupon", couponSchema);
-export default Coupon;
+const Commission = mongoose.model("Commission", commissionSchema);
+export default Commission;
