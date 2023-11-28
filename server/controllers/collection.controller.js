@@ -11,7 +11,9 @@ class CollectionController {
 
   index = async (req, res, next) => {
     try {
+      //Create an ObjectId from req.params.id
       const artistId = new mongoose.Types.ObjectId(req.params.id);
+      //Query
       const collections = await Collection.find({ artist: artistId });
       res.status(200).json(collections);
     } catch (error) {
