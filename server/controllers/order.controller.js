@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import Order from "../models/order.model";
+import Order from "../models/order.model.js";
+import { User } from "../models/user.model.js";
 
 class OrderController {
   index = async (req, res, next) => {
@@ -15,8 +16,11 @@ class OrderController {
   };
 
   store = async (req, res, next) => {
+    const client = await User.findById(req.userId)
+
     try {
       const order = new Order({
+        client: client._id,
         ...req.body,
       });
       //Save the order to the database
