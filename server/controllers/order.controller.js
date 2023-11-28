@@ -17,7 +17,6 @@ class OrderController {
 
   store = async (req, res, next) => {
     const client = await User.findById(req.userId)
-
     try {
       const order = new Order({
         client: client._id,
@@ -53,7 +52,7 @@ class OrderController {
       return res.status(404).json({
         error: "Order not found",
       });
-
+    
     try {
       const updatedOrder = await Order.findByIdAndUpdate(
         req.params.id,

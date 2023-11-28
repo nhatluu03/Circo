@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema({
     required: true
   },
   price:{
-    type: String,
+    type: Number,
     required: true
   },
   rating:{
@@ -21,7 +21,11 @@ const orderSchema = new mongoose.Schema({
   review:{
     type: String,
   },
-  media: [{ type: String, maxlength: 3 }]
+  media: [{ type: String, maxlength: 3 }],
+  isCompleted:{
+    type: Boolean,
+    required: true
+  }
 });
 
 const Order = mongoose.model("Order", orderSchema);
