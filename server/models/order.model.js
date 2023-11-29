@@ -40,6 +40,7 @@ const orderSchema = new mongoose.Schema(
       default: false,
       required: true,
     },
+    payment_intent:{type: String}
   },
   {
     timestamps: true,

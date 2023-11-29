@@ -7,17 +7,55 @@ import Commission from "../models/commission.model.js";
 
 class OrderController {
   intent = async (req, res, next) => {
-    const stripe = new Stripe(process.env.STRIPE);
+    //Find the artwork/commission, client in the database
+    const commission = await Commission.findById(req.params.id);
     const artwork = await Artwork.findById(req.params.id);
+    const client = await User.findById(req.userId);
+
+    //Stripe Integration
+    const stripe = new Stripe(process.env.STRIPE);
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: artwork.price * 100,
       currency: "aud",
       // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
       automatic_payment_methods: {
         enabled: true,
       },
     });
+
+    //Define the orderData
+    let orderData = {
+      client: client._id,
+      ...req.body,
+    };
+    //Check whether the type is artwork or commission
+    if (artwork) {
+      //Add fields
+      orderData.type = {
+        artwork: new mongoose.Types.ObjectId(req.params.id),
+      };
+      orderData.price = artwork.price;
+      orderData.artist = artwork.artist;
+      //Stripe Integration
+      paymentIntent.amount = artwork.price * 100;
+    } else if (commission) {
+      //Add fields
+      orderData.type = {
+        commission: new mongoose.Types.ObjectId(req.params.id),
+      };
+      orderData.price = commission.price;
+      orderData.artist = commission.artist;
+      //Stripe Integration
+      paymentIntent.amount = commission.price * 100;
+    } else {
+      res.status(404).json({
+        error: "Invalid type",
+      });
+    };
+
+    const order = new Order(orderData);
+    await order.save();
   };
+  
   index = async (req, res, next) => {
     try {
       const orders = await Order.find();
