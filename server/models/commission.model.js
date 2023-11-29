@@ -12,10 +12,7 @@ const commissionSchema = new mongoose.Schema(
       ref: "ArtCategory",
       required: true,
     },
-    price_from: {
-      type: Number,
-    },
-    price_to: {
+    price: {
       type: Number,
     },
     images: [{ type: String }],

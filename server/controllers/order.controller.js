@@ -1,8 +1,23 @@
 import mongoose from "mongoose";
 import Order from "../models/order.model.js";
 import { User } from "../models/user.model.js";
+import Stripe from "stripe";
+import Artwork from "../models/artwork.model.js";
+import Commission from "../models/commission.model.js";
 
 class OrderController {
+  intent = async (req, res, next) => {
+    const stripe = new Stripe(process.env.STRIPE);
+    const artwork = await Artwork.findById(req.params.id);
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: artwork.price * 100,
+      currency: "aud",
+      // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+  };
   index = async (req, res, next) => {
     try {
       const orders = await Order.find();
@@ -14,29 +29,36 @@ class OrderController {
 
   store = async (req, res, next) => {
     try {
-      const artist = await User.findById(req.params.id)
+      //Find the artwork/commission, client in the database
+      const commission = await Commission.findById(req.params.id);
+      const artwork = await Artwork.findById(req.params.id);
       const client = await User.findById(req.userId);
+      //Define the orderData
       let orderData = {
-        artist: artist._id,
         client: client._id,
         ...req.body,
       };
-      if (req.body.type && req.body.type.artwork) {
+      //Check whether the type is artwork or commission
+      if (artwork) {
         orderData.type = {
-          artwork: new mongoose.Types.ObjectId(req.body.type.artwork),
+          artwork: new mongoose.Types.ObjectId(req.params.id),
         };
-      } else if (req.body.type && req.body.type.commission) {
+        orderData.price = artwork.price;
+        orderData.artist = artwork.artist;
+      } else if (commission) {
         orderData.type = {
-          commission: new mongoose.Types.ObjectId(req.body.type.commission),
+          commission: new mongoose.Types.ObjectId(req.params.id),
         };
+        orderData.price = commission.price;
+        orderData.artist = commission.artist;
       } else {
-        return res.status(404).json({
-          error: "Type filed is invalid",
+        res.status(404).json({
+          error: "Invalid type",
         });
       }
-      const order = new Order(orderData)
+      const order = new Order(orderData);
       //Save the order to the database
-      await order.save()
+      await order.save();
       res.status(200).json(order);
     } catch (error) {
       next(error);

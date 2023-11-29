@@ -2,7 +2,7 @@ import mongoose, { Types } from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    artist:{
+    artist: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -37,6 +37,7 @@ const orderSchema = new mongoose.Schema(
     media: [{ type: String, maxlength: 3 }],
     isCompleted: {
       type: Boolean,
+      default: false,
       required: true,
     },
   },
