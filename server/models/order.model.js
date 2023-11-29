@@ -8,8 +8,15 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     type: {
-      type: String,
-      required: true,
+      // Modify the 'type' field to dynamically reference either Artwork or Commission model
+      artwork: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Artwork",
+      },
+      commission: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Commission",
+      },
     },
     price: {
       type: Number,

@@ -5,7 +5,7 @@ import { User } from "../models/user.model.js";
 class OrderController {
   index = async (req, res, next) => {
     try {
-      const orders = await Order.find()
+      const orders = await Order.find();
       res.status(200).json(orders);
     } catch (error) {
       next(error);
@@ -13,14 +13,28 @@ class OrderController {
   };
 
   store = async (req, res, next) => {
-    const client = await User.findById(req.userId);
     try {
-      const order = new Order({
+      const client = await User.findById(req.userId);
+      let orderData = {
         client: client._id,
         ...req.body,
-      });
+      };
+      if (req.body.type && req.body.type.artwork) {
+        orderData.type = {
+          artwork: new mongoose.Types.ObjectId(req.body.type.artwork),
+        };
+      } else if (req.body.type && req.body.type.commission) {
+        orderData.type = {
+          commission: new mongoose.Types.ObjectId(req.body.type.commission),
+        };
+      } else {
+        return res.status(404).json({
+          error: "Type filed is invalid",
+        });
+      }
+      const order = new Order(orderData)
       //Save the order to the database
-      await order.save();
+      await order.save()
       res.status(200).json(order);
     } catch (error) {
       next(error);
@@ -29,7 +43,7 @@ class OrderController {
 
   show = async (req, res, next) => {
     //Check if the order exists
-    console.log(req.params.id)
+    console.log(req.params.id);
     const order = await Order.findById(req.params.id);
     if (!order) {
       return res.status(404).json({
