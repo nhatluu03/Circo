@@ -25,6 +25,7 @@ class OrderController {
     //Define the orderData
     let orderData = {
       client: client._id,
+      payment_intent: paymentIntent.id,
       ...req.body,
     };
     //Check whether the type is artwork or commission
@@ -55,7 +56,7 @@ class OrderController {
     const order = new Order(orderData);
     await order.save();
   };
-  
+
   index = async (req, res, next) => {
     try {
       const orders = await Order.find();
