@@ -14,8 +14,10 @@ class OrderController {
 
   store = async (req, res, next) => {
     try {
+      const artist = await User.findById(req.params.id)
       const client = await User.findById(req.userId);
       let orderData = {
+        artist: artist._id,
         client: client._id,
         ...req.body,
       };
