@@ -11,6 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@huggingface/inference": "^2.6.4",
+    "@stripe/react-stripe-js": "^2.4.0",
+    "@stripe/stripe-js": "^2.2.0",
     "accesscontrol": "^2.2.1",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",

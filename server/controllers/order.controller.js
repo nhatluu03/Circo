@@ -51,10 +51,13 @@ class OrderController {
       res.status(404).json({
         error: "Invalid type",
       });
-    };
+    }
 
     const order = new Order(orderData);
     await order.save();
+    res.status(200).json({
+      clientSecret: paymentIntent.client_secret,
+    });
   };
 
   index = async (req, res, next) => {
