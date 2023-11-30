@@ -10,7 +10,8 @@ class ArtworkController {
   };
 
   index = async (req, res, next) => {
-    res.status(200).json("Getting all artworks");
+    const artworks = await Artwork.find()
+    res.status(200).json(artworks);
   };
 
   store = async (req, res, next) => {

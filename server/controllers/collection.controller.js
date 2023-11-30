@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import Collection from "../models/collection.model.js";
-import roles from "../roles.js";
 import { User } from "../models/user.model.js";
 
 class CollectionController {
@@ -10,7 +9,12 @@ class CollectionController {
   };
 
   index = async (req, res, next) => {
-    res.status(200).json("Getting all collections");
+    try {
+      const collections = await Collection.find();
+      res.status(200).json(collections);
+    } catch (error) {
+      next(error);
+    }
   };
 
   store = async (req, res, next) => {
@@ -43,16 +47,24 @@ class CollectionController {
   };
 
   show = async (req, res, next) => {
-    try {
-      const collection = await Collection.findById(req.params.id);
-      if (!collection)
-        return res.status(404).json({
-          error: "Not found",
-        });
-      res.status(200).json(collection);
-    } catch (error) {
-      next(error);
+    // try {
+    //   const collection = await Collection.findById(req.params.id);
+    //   if (!collection) {
+    //     return res.status(404).json({
+    //       error: "Not found",
+    //     });
+    //   }
+    //   res.status(500).json(collection);
+    // } catch (error) {
+    //   next(error);
+    // }
+    const collection = await Collection.findById(req.params.id);
+    if (!collection) {
+      return res.status(404).json({
+        error: "Collection not found",
+      });
     }
+    res.status(200).json(collection);
   };
 
   update = async (req, res, next) => {

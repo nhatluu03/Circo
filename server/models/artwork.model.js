@@ -8,6 +8,7 @@ const ArtworkSchema = new Schema(
     likes: {type: Number, default: 0},
     saves: {type: Number, default: 0},
     description: {type: String},
+    price:{type: Number, default: 0},
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'ArtCategory', required: true},
   },
   { timestamps: true }
