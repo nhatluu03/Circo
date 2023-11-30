@@ -55,7 +55,7 @@ class OrderController {
 
     const order = new Order(orderData);
     await order.save();
-    res.status(200).json({
+    res.status(200).send({
       clientSecret: paymentIntent.client_secret,
     });
   };
