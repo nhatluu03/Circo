@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const couponSchema = new mongoose.Schema(
+const CouponSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -30,5 +30,5 @@ const couponSchema = new mongoose.Schema(
   }
 );
 
-const Coupon = mongoose.model("Coupon", couponSchema);
+const Coupon = mongoose.model("Coupon", CouponSchema);
 export default Coupon;

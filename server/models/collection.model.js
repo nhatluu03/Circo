@@ -9,8 +9,8 @@ const CollectionSchema = new Schema(
       required: true,
     },
     cover: { type: mongoose.Schema.Types.ObjectId, ref: "Artwork" },
-    title: { type: String, required: true },
-    state: {
+    title: { type: String, required: true, maxlength: 50 },
+    status: {
       type: String,
       default: "public",
       enum: ["public", "private"],
