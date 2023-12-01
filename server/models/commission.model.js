@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const commissionSchema = new mongoose.Schema(
+const CommissionSchema = new mongoose.Schema(
   {
     artist: {
       type: mongoose.Schema.Types.ObjectId,
@@ -26,5 +26,5 @@ const commissionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Commission = mongoose.model("Commission", commissionSchema);
+const Commission = mongoose.model("Commission", CommissionSchema);
 export default Commission;
