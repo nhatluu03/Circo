@@ -8,8 +8,17 @@ import path from "path";
 import route from "./routes/index.js";
 import './utils/loadEnv.js';
 import cookieParser from 'cookie-parser';
+import { Server } from 'socket.io'
+import http from 'http'
 
 const app = express();
+//Socket.io
+const server = http.createServer(app)
+const io = new Server(server)
+io.on('connection', (socket)=> {
+  console.log(socket.id)
+})
+
 app.use(express.json());
 app.use(cookieParser());
 
