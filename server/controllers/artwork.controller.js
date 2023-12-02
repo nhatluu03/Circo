@@ -1,25 +1,30 @@
 import mongoose from "mongoose";
 import Artwork from "../models/artwork.model.js";
 import createError from "../utils/createError.js";
+import Category from '../models/category.model.js'
 
 class ArtworkController {
   
   isOwner = (artwork, userId) => {
-    console.log(artwork.artist.toString())
-    console.log(userId.toString())
     return artwork.artist.toString() === userId.toString();
   };
 
   index = async (req, res, next) => {
-    res.status(200).json("Getting all artworks");
+    const artworks = await Artwork.find()
+    res.status(200).json(artworks);
   };
 
   store = async (req, res, next) => {
     const {user} = req;
-    const { artist, ...artworkData } = req.body; // Destructure artist from req.body
-  
+    if(user.role === "client")
+      return res.status(400).json({
+        error: "You don't have enough permission to create artwork",
+      });
+    const { artist, categoryId, ...artworkData } = req.body; // Destructure artist, category from req.body
+    const category = Category.findById(categoryId)
     const artwork = new Artwork({
       artist: user._id, // Convert artist to ObjectId
+      category,
       ...artworkData,
     });
   
@@ -34,27 +39,31 @@ class ArtworkController {
   show = async (req, res, next) => {
     try {
       const artwork = await Artwork.findById(req.params.id);
-      if(!artwork)
-        return next(createError(404,"NotFound"));
+      if (!artwork) {
+        return res.status(404).json({
+          error: "Artwork not found",
+        });
+      }
       res.status(200).json(artwork);
-
     } catch (error) {
       next(error)
     }
   };
-
   
   update = async (req, res, next) => {
+    const artwork = await Artwork.findById(req.params.id);
+    //Check if artwork exists
+    if (!artwork) {
+      return res.status(404).json({
+        error: "Artwork not found",
+      });
+    }
+    //Check if the artist is the artwork's owner
+    if (!this.isOwner(artwork, req.user._id)) 
+    return res.status(404).json({
+      error: "You do not have enough permission to update this artwork",
+    });
     try {
-      const artwork = await Artwork.findById(req.params.id);
-      //Check if artwork exists
-      if (!artwork) 
-        return next(createError(404,"Artwork not found"))
-
-      //Check if the artist is the artwork's owner
-      if (!this.isOwner(artwork, req.user._id)) 
-        return next(createError(403,"You do not have permission to update this artwork"));
-      
       const updatedArtwork = await Artwork.findByIdAndUpdate(
         req.params.id,
         {
@@ -80,9 +89,10 @@ class ArtworkController {
       }
       //Check if the artist is the artwork's owner
       if (!this.isOwner(artwork, req.user._id)) {
-        return next(createError(403,"You do not have permission to delete this artwork"));
+        return res.status(404).json({
+          error: "You do not have enough permission to delete this artwork",
+        });
       }
-  
       await Artwork.findByIdAndDelete(req.params.id);
   
       res.status(200).json("Artwork deleted successfully")
