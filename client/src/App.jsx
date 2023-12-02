@@ -1,35 +1,76 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import "./assets/scss/base.scss";
+import 'boxicons';
+import React from "react";
+import Navbar from "./components/navbar/Navbar";
+import Artworks from "./pages/artworks/Artworks";
+import Artwork from "./pages/artwork/Artwork";
+import Challenges from "./pages/challenges/Challenges";
+import Challenge from "./pages/challenge/Challenge";
+import Talents from "./pages/talents/Talents";
+import Talent from "./pages/talent/Talent";
+
+import {
+  QueryClient,
+  QueryClientProvider,
+} from "react-query";
+// import Success from "./pages/success/Success";
+// ... (other imports)
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+  const Layout = ({showSidebar }) => {
+    return (
+      <div className="app">
+          <Navbar />
+          {showSidebar && <div className="sidebar">SIDEBAR</div>}
+          <Outlet /> 
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    );
+  };
+  
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Layout showSidebar={true}></Layout>,
+      children: [
+        {
+          path: "/talents/:id",
+          element: <Talent />,
+        },
+      ]
+    },
+    {
+      path: "/",
+      element: <Layout showSidebar={false}></Layout>,
+      children: [
+        {
+          path: "/artworks",
+          element: <Artworks />,
+        },
+        {
+          path: "/artworks/:id",
+          element: <Artwork />,
+        },
+        {
+          path: "/challenges",
+          element: <Challenges />,
+        },
+        {
+          path: "/challenges/:id",
+          element: <Challenge />,
+        },
+        {
+          path: "/talents",
+          element: <Talents />,
+        },
+      ]
+    },
+    
+  ]);
+
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
