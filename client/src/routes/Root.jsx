@@ -1,5 +1,5 @@
 import {Outlet, Link} from 'react-router-dom';
-import {getContacts} from '../contacts';
+import {getContacts} from './Contact.jsx';
 
 export async function loader() {
   const contacts = await getContacts();
