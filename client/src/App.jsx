@@ -9,6 +9,7 @@ import Challenges from "./pages/challenges/Challenges";
 import Challenge from "./pages/challenge/Challenge";
 import Talents from "./pages/talents/Talents";
 import Talent from "./pages/talent/Talent";
+import Message from "./pages/message/message";
 
 import {
   QueryClient,
@@ -48,6 +49,10 @@ function App() {
         {
           path: "/artworks",
           element: <Artworks />,
+        },
+        {
+          path: "/message",
+          element:<Message/>
         },
         {
           path: "/artworks/:id",
