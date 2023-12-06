@@ -21,7 +21,9 @@ class ConversationController {
 
   show = async (req, res, next) => {
     try {
-      const conversation = await Conversation.findById(req.params.id);
+      const conversation = await Conversation.find({
+        members: { $in: [req.params.id] },
+      });
       if (!conversation)
         return res.status(404).json({
           error: "Conversation not found",
@@ -32,29 +34,31 @@ class ConversationController {
     }
   };
 
-  update = async (req, res, next) => {
-    try {
-      const conversation = await Conversation.findById(req.params.id);
-      if (!conversation)
-        return res.status(404).json({
-          error: "Conversation not found",
-        });
-      const updatedConversation = await Conversation.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: req.body,
-        },
-        { new: true }
-      );
-      res.status(200).json(updatedConversation);
-    } catch (error) {
-      next(error);
-    }
-  };
+  //   update = async (req, res, next) => {
+  //     try {
+  //       const conversation = await Conversation.findById(req.params.id);
+  //       if (!conversation)
+  //         return res.status(404).json({
+  //           error: "Conversation not found",
+  //         });
+  //       const updatedConversation = await Conversation.findByIdAndUpdate(
+  //         req.params.id,
+  //         {
+  //           $set: req.body,
+  //         },
+  //         { new: true }
+  //       );
+  //       res.status(200).json(updatedConversation);
+  //     } catch (error) {
+  //       next(error);
+  //     }
+  //   };
 
   destroy = async (req, res, next) => {
     try {
-      const conversation = await Conversation.findById(req.params.id);
+      const conversation = await Conversation.find({
+        members: { $in: [req.params.id] },
+      });
       if (!conversation)
         return res.status(404).json({
           error: "Conversation not found",
