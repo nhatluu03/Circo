@@ -4,6 +4,7 @@
     padding: 10px;
     cursor: pointer;
     transition: 0.2s;
+    border-radius: 10px;
     &:hover{
         background-color:  lightgrey;
     }
@@ -16,5 +17,6 @@
     }
     span{
         font-weight: 500;
+        font-size: 14px;
     }
 }

@@ -1,3 +1,4 @@
+import ChatOnline from '../../components/chatOnline/ChatOnline'
 import Conversation from '../../components/conversation/Conversation'
 import Message from '../../components/message/Message'
 import './Messenger.scss'
@@ -57,8 +58,8 @@ export default function Messenger() {
           </div>
         </div>
         <div className='chatOnline'>
-          <div className='wrapper'>
-            Online
+          <div className='chatOnlineWrapper'>
+            <ChatOnline/>
           </div>
         </div>
     </div>
