@@ -16,8 +16,8 @@ export default function route(app) {
     app.use('/orders', OrderRouter);
     app.use('/commissions', CommissionRouter);
     app.use('/coupons', CouponRouter);
-    app.use('/coupons', ConversationRouter);
-    app.use('/coupons', MessageRouter);
+    app.use('/conversations', ConversationRouter);
+    app.use('/messages', MessageRouter);
     // app.use('/events', EventRouter);
     // app.use('/reports', ReportRouter);
     // app.use('/', siteRouter);

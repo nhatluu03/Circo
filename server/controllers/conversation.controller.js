@@ -8,7 +8,15 @@ class ConversationController {
   };
 
   store = async (req, res, next) => {
-    
+    const conversation = new Conversation({
+      members: [req.body.senderId, req.body.receiverId],
+    });
+    try {
+      const savedConversation = await conversation.save();
+      res.status(200).json(savedConversation);
+    } catch (error) {
+      next(error);
+    }
   };
 
   show = async (req, res, next) => {
@@ -26,23 +34,22 @@ class ConversationController {
 
   update = async (req, res, next) => {
     try {
-        const conversation = await Conversation.findById(req.params.id);
-        if (!conversation)
-          return res.status(404).json({
-            error: "Conversation not found",
-          });
-        const updatedConversation = await Conversation.findByIdAndUpdate(
-          req.params.id,
-          {
-            $set: req.body,
-          },
-          { new: true }
-        );
-        res.status(200).json(updatedConversation)
+      const conversation = await Conversation.findById(req.params.id);
+      if (!conversation)
+        return res.status(404).json({
+          error: "Conversation not found",
+        });
+      const updatedConversation = await Conversation.findByIdAndUpdate(
+        req.params.id,
+        {
+          $set: req.body,
+        },
+        { new: true }
+      );
+      res.status(200).json(updatedConversation);
     } catch (error) {
-        next(error)        
+      next(error);
     }
-
   };
 
   destroy = async (req, res, next) => {
