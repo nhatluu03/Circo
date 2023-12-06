@@ -5,6 +5,8 @@ import CollectionRouter from './collection.route.js'
 import OrderRouter from './order.route.js'
 import CommissionRouter from './commission.route.js'
 import CouponRouter from './coupon.route.js'
+import ConversationRouter from './conversation.route.js'
+import MessageRouter from './message.route.js'
 
 export default function route(app) {
     app.use('/users', UserRouter);
@@ -14,6 +16,8 @@ export default function route(app) {
     app.use('/orders', OrderRouter);
     app.use('/commissions', CommissionRouter);
     app.use('/coupons', CouponRouter);
+    app.use('/coupons', ConversationRouter);
+    app.use('/coupons', MessageRouter);
     // app.use('/events', EventRouter);
     // app.use('/reports', ReportRouter);
     // app.use('/', siteRouter);
