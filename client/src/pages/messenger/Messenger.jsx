@@ -42,10 +42,10 @@ export default function Messenger() {
       currentChat?.members.includes(arrivalMessage.sender) &&
       setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage, currentChat]);
+
   useEffect(() => {
     socket.current.emit("addUser", currentUser._id);
     socket.current?.on("getUsers", (users) => {
-      console.log(users);
     });
   }, [currentUser]);
 
@@ -59,6 +59,7 @@ export default function Messenger() {
       receiverId,
       text: newMessage,
     });
+    console.log(receiverId)
   };
 
   return (
@@ -110,10 +111,9 @@ export default function Messenger() {
           </div>
           <div className="chatBoxBottom">
             <textarea
-              onSubmit={() => handleSubmit(e)}
               placeholder="Write something..."
             ></textarea>
-            <button type="submit">Send</button>
+            <button onClick={handleSubmit}>Send</button>
           </div>
         </div>
       </div>

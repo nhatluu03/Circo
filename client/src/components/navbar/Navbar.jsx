@@ -13,7 +13,6 @@ const Navbar = () => {
   const focusInput = () => {
     setIsFocused(true);
   };
-
   const blurInput = () => {
     setIsFocused(false);
     setShowDropdown(false);
