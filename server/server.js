@@ -8,27 +8,8 @@ import path from "path";
 import route from "./routes/index.js";
 import "./utils/loadEnv.js";
 import cookieParser from "cookie-parser";
-import { Server } from "socket.io";
-import http from "http";
 
 const app = express();
-//Socket.io
-const server = http.createServer(app);
-const io = new Server(server);
-io.on("connection", (socket) => {
-  console.log(socket.id);
-  socket.on("chat message", (msg) => {
-    // Broadcast the message to all connected clients
-    io.emit("chat message", msg);
-  });
-
-  // Handle other events...
-
-  // Disconnect event
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
-});
 
 app.use(express.json());
 app.use(cookieParser());
