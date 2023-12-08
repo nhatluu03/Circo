@@ -1,16 +1,32 @@
-import React from 'react'
-import './Message.scss'
+import React, { useEffect, useState } from "react";
+import {format} from 'timeago.js'
+import "./Message.scss";
+import axios from "axios";
 
-export default function Message({own}) {
+export default function Message({ message, own }) {
+  const [sender, setSender] = useState(null);
+  useEffect(() => {
+    const senderId = message.sender;
+
+    const getSender = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:3000/users/?userId=" + senderId
+        );
+        setSender(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getSender();
+  }, [message]);
   return (
-    <div className={ own ? "message own" : "message"}>
-        <div className='top'>
-            <img
-                src='https://i.pinimg.com/736x/6e/31/e5/6e31e54567cf3239e60d6c95e5f89091.jpg'
-            />
-            <p>using nearer necessary flew noun bill worker empty additional military molecular certain act dust accident dot mysterious cat likely course hurry queen fair by</p>
-        </div>
-        <div className='bottom'>1 hour ago</div>
+    <div className={own ? "message own" : "message"}>
+      <div className="top">
+        <img src={sender?.avatar} />
+        <p>{message.text}</p>
+      </div>
+      <div className="bottom">{format(message.createdAt)}</div>
     </div>
-  )
+  );
 }
