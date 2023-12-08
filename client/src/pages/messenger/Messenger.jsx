@@ -82,10 +82,12 @@ export default function Messenger() {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/messages/" + currentChat?._id
-        );
-        setMessages(res.data)
+        if(currentChat){
+          const res = await axios.get(
+            "http://localhost:3000/messages/" + currentChat?._id
+          );
+          setMessages(res.data)
+        }
       } catch (error) {
         console.log(error)        
       }
