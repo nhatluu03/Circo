@@ -4,12 +4,14 @@ import Conversation from "../../components/conversation/Conversation";
 import Message from "../../components/message/Message";
 import "./Messenger.scss";
 import { io } from "socket.io-client";
+import axios from 'axios';
+
 export default function Messenger() {
   //Mock data including currentUser, currentChat, and newMessage
   const currentUser = {
     _id: "655c8afe9f5ae05cb5fc89fb",
     username: "LuuQuocNhat",
-    role: "artist",
+    role: "talent",
     avatar:
       "https://sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png",
     country: "Vietnam",
@@ -20,6 +22,7 @@ export default function Messenger() {
   };
 
   //Code
+  const [conversations, setConversations] = useState([])
   const [messages, setMessages] = useState([])
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const newMessage = "Hello, my name is Phap";
@@ -48,6 +51,18 @@ export default function Messenger() {
     socket.current?.on("getUsers", (users) => {
     });
   }, [currentUser]);
+  //Fetch conversations of currentUser
+  useEffect(()=>{
+    const getConversation = async() =>{
+      try {
+        const res = await axios.get('http://localhost:3000/conversations/'+ currentUser._id)
+        console.log(res)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getConversation();
+  },[currentUser._id])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
