@@ -16,17 +16,18 @@ export default function Messenger() {
       "https://sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png",
     country: "Vietnam",
     rating: 5,
-    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTVjOGFmZTlmNWFlMDVjYjVmYzg5ZmIiLCJpYXQiOjE3MDIwMzc3MzYsImV4cCI6MTcwMjEyNDEzNn0.rrh6yra0PdLi3tY5ZdNQWeVlB8pCs_LEOLqA0gMpXdY"
+    accessToken:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTVjOGFmZTlmNWFlMDVjYjVmYzg5ZmIiLCJpYXQiOjE3MDIwMzc3MzYsImV4cCI6MTcwMjEyNDEzNn0.rrh6yra0PdLi3tY5ZdNQWeVlB8pCs_LEOLqA0gMpXdY",
   };
-
   //Code
   const [conversations, setConversations] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   let [arrivalMessage, setArrivalMessage] = useState(null);
+  const scrollRef = useRef();
   //Socket Initialization
-  const socket = useRef();
+  const socket = useRef(null);
   useEffect(() => {
     socket.current = io("ws://localhost:8900");
     //Get message from server
@@ -74,8 +75,8 @@ export default function Messenger() {
 
     try {
       const res = await axios.post("http://localhost:3000/messages", message);
-      setMessages([...messages, res.data])
-      setNewMessage('')
+      setMessages([...messages, res.data]);
+      setNewMessage("");
     } catch (error) {
       console.log(error);
     }
@@ -105,7 +106,11 @@ export default function Messenger() {
     };
     getMessages();
   }, [currentChat]);
-  console.log(messages);
+
+  useEffect(()=>{
+    scrollRef.current?.scrollIntoView({behavior: "smooth"})
+  },[messages])
+
   return (
     <div className="messenger">
       <div className="chatMenu">
@@ -128,11 +133,13 @@ export default function Messenger() {
             <>
               <div className="chatBoxTop">
                 {messages.map((message) => (
-                  <Message
-                    key={message._id}
-                    message={message}
-                    own={message.sender === currentUser._id}
-                  />
+                  <div ref={scrollRef}>
+                    <Message
+                      key={message._id}
+                      message={message}
+                      own={message.sender === currentUser._id}
+                    />
+                  </div>
                 ))}
               </div>
               <div className="chatBoxBottom">
