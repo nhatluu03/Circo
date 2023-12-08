@@ -79,16 +79,34 @@ export default function Messenger() {
     console.log(receiverId);
   };
 
+  useEffect(() => {
+    const getMessages = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:3000/messages/" + currentChat?._id
+        );
+        setMessages(res.data)
+      } catch (error) {
+        console.log(error)        
+      }
+    };
+    getMessages()
+  },[currentChat]);
+  console.log(messages)
   return (
     <div className="messenger">
       <div className="chatMenu">
         <input placeholder="Search for artists" />
         {conversations.map((conversation) => (
-          <Conversation
+          <div
             key={conversation._id}
-            conversation={conversation}
-            currentUser={currentUser}
-          />
+            onClick={() => setCurrentChat(conversation)}
+          >
+            <Conversation
+              conversation={conversation}
+              currentUser={currentUser}
+            />
+          </div>
         ))}
       </div>
       <div className="chatBox">
