@@ -7,7 +7,7 @@ import { io } from "socket.io-client";
 import axios from "axios";
 
 export default function Messenger() {
-  //Mock data including currentUser, currentChat, and newMessage
+  //Mock data including currentUser
   const currentUser = {
     _id: "655c8afe9f5ae05cb5fc89fb",
     username: "LuuQuocNhat",
@@ -16,17 +16,15 @@ export default function Messenger() {
       "https://sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png",
     country: "Vietnam",
     rating: 5,
+    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTVjOGFmZTlmNWFlMDVjYjVmYzg5ZmIiLCJpYXQiOjE3MDIwMzc3MzYsImV4cCI6MTcwMjEyNDEzNn0.rrh6yra0PdLi3tY5ZdNQWeVlB8pCs_LEOLqA0gMpXdY"
   };
-  // const currentChat = {
-  //   members: ["655c8afe9f5ae05cb5fc89fb", "6560ab19487316bb8ce89407"],
-  // };
 
   //Code
   const [conversations, setConversations] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
   let [arrivalMessage, setArrivalMessage] = useState(null);
-  const newMessage = "Hello, my name is Phap";
   //Socket Initialization
   const socket = useRef();
   useEffect(() => {
@@ -68,6 +66,19 @@ export default function Messenger() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const message = {
+      conversationId: currentChat._id,
+      sender: currentUser._id,
+      text: newMessage,
+    };
+
+    try {
+      const res = await axios.post("http://localhost:3000/messages", message);
+      setMessages([...messages, res.data])
+      setNewMessage('')
+    } catch (error) {
+      console.log(error);
+    }
     const receiverId = currentChat.members.find(
       (member) => member !== currentUser._id
     );
@@ -82,19 +93,19 @@ export default function Messenger() {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        if(currentChat){
+        if (currentChat) {
           const res = await axios.get(
             "http://localhost:3000/messages/" + currentChat?._id
           );
-          setMessages(res.data)
+          setMessages(res.data);
         }
       } catch (error) {
-        console.log(error)        
+        console.log(error);
       }
     };
-    getMessages()
-  },[currentChat]);
-  console.log(messages)
+    getMessages();
+  }, [currentChat]);
+  console.log(messages);
   return (
     <div className="messenger">
       <div className="chatMenu">
@@ -116,12 +127,20 @@ export default function Messenger() {
           {currentChat ? (
             <>
               <div className="chatBoxTop">
-              {messages.map((message)=>(
-                <Message message={message} own={message.sender === currentUser._id} />
-              ))}
+                {messages.map((message) => (
+                  <Message
+                    key={message._id}
+                    message={message}
+                    own={message.sender === currentUser._id}
+                  />
+                ))}
               </div>
               <div className="chatBoxBottom">
-                <textarea placeholder="Write something..."></textarea>
+                <textarea
+                  placeholder="Write something..."
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  value={newMessage}
+                ></textarea>
                 <button onClick={handleSubmit}>Send</button>
               </div>
             </>
