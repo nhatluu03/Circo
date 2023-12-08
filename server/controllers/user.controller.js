@@ -1,6 +1,6 @@
 import {
   User,
-  ArtistUser,
+  TalentUser,
   ClientUser,
   AdminUser,
 } from "../models/user.model.js";
@@ -73,8 +73,8 @@ class UserController {
       // Create a new user based on the role
       let newUser;
       switch (role) {
-        case "artist":
-          newUser = new ArtistUser({
+        case "talent":
+          newUser = new TalentUser({
             username,
             password: hashedPassword,
             fullName,

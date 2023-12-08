@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const ArtworkSchema = new Schema(
   {
-    artist: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    talent: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     images: [{ type: String, required: true }],
     likes: { type: Number, default: 0 },
     saves: { type: Number, default: 0 },

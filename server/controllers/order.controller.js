@@ -35,7 +35,7 @@ class OrderController {
         artwork: new mongoose.Types.ObjectId(req.params.id),
       };
       orderData.price = artwork.price;
-      orderData.artist = artwork.artist;
+      orderData.talent = artwork.talent;
       //Stripe Integration
       paymentIntent.amount = artwork.price * 100;
     } else if (commission) {
@@ -44,7 +44,7 @@ class OrderController {
         commission: new mongoose.Types.ObjectId(req.params.id),
       };
       orderData.price = commission.price;
-      orderData.artist = commission.artist;
+      orderData.talent = commission.talent;
       //Stripe Integration
       paymentIntent.amount = commission.price * 100;
     } else {
@@ -86,13 +86,13 @@ class OrderController {
           artwork: new mongoose.Types.ObjectId(req.params.id),
         };
         orderData.price = artwork.price;
-        orderData.artist = artwork.artist;
+        orderData.talent = artwork.talent;
       } else if (commission) {
         orderData.type = {
           commission: new mongoose.Types.ObjectId(req.params.id),
         };
         orderData.price = commission.price;
-        orderData.artist = commission.artist;
+        orderData.talent = commission.talent;
       } else {
         res.status(404).json({
           error: "Invalid type",

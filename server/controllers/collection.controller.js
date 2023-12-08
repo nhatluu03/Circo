@@ -4,8 +4,8 @@ import { User } from "../models/user.model.js";
 
 class CollectionController {
   isOwner = (collection, userId) => {
-    //Check if the artist is the owner of the collection
-    return collection.artist.toString() === userId.toString();
+    //Check if the talent is the owner of the collection
+    return collection.talent.toString() === userId.toString();
   };
 
   index = async (req, res, next) => {
@@ -20,7 +20,7 @@ class CollectionController {
   store = async (req, res, next) => {
     const user = await User.findById(req.userId);
     //Client cannot create a collection
-    if (user.role !== "artist")
+    if (user.role !== "talent")
       return res.status(401).json({
         error: "You don't have enough permission to perform this action",
       });
@@ -33,7 +33,7 @@ class CollectionController {
       // Create a new collection instance using the Collection model
       const collection = new Collection({
         ...collectionData,
-        artist: user._id,
+        talent: user._id,
         artworks: artworkIds,
       });
 
