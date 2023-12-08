@@ -1,13 +1,29 @@
-import React from 'react'
-import './Conversation.scss'
-export default function Conversation() {
+import React, { useEffect, useState } from "react";
+import "./Conversation.scss";
+import axios from "axios";
+export default function Conversation({ conversation }, { currentUser }) {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    const friendId = conversation.members.find(
+      (member) => member !== currentUser?._id
+    );
+
+    const getUser = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:3000/users?userId=" + friendId
+        );
+        setUser(res.data)
+      } catch (error) {
+        console.log(error)
+      }
+    };
+    getUser()
+  }, [currentUser, conversation]);
   return (
-    <div className='conversation'>
-      <img 
-        alt='avatar'
-        src='https://i.pinimg.com/736x/cb/fe/c8/cbfec855ed8d21551beb5d148e8eaf9d.jpg'
-      />
-      <span>John Doe</span>
+    <div className="conversation">
+      <img alt="avatar" src={user.avatar} />
+      <span>{user.username}</span>
     </div>
-  )
+  );
 }

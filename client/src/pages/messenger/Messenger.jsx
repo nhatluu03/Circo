@@ -24,7 +24,7 @@ export default function Messenger() {
   //Code
   const [conversations, setConversations] = useState([])
   const [messages, setMessages] = useState([])
-  const [arrivalMessage, setArrivalMessage] = useState(null);
+  let [arrivalMessage, setArrivalMessage] = useState(null);
   const newMessage = "Hello, my name is Phap";
   //Socket Initialization
   const socket = useRef();
@@ -56,7 +56,7 @@ export default function Messenger() {
     const getConversation = async() =>{
       try {
         const res = await axios.get('http://localhost:3000/conversations/'+ currentUser._id)
-        console.log(res)
+        setConversations(res.data)
       } catch (error) {
         console.log(error)
       }
@@ -81,12 +81,9 @@ export default function Messenger() {
     <div className="messenger">
       <div className="chatMenu">
         <input placeholder="Search for artists" />
-        <Conversation />
-        <Conversation />
-        <Conversation />
-        <Conversation />
-        <Conversation />
-        <Conversation />
+        {conversations.map(conversation=>(
+        <Conversation key={conversation._id} conversation = {conversation} currentUser={currentUser} />
+        ))}
       </div>
       <div className="chatBox">
         <div className="chatBoxWrapper">
