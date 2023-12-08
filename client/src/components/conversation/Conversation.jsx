@@ -22,8 +22,8 @@ export default function Conversation({ conversation }, { currentUser }) {
   }, [currentUser, conversation]);
   return (
     <div className="conversation">
-      <img alt="avatar" src={user.avatar} />
-      <span>{user.username}</span>
+      <img alt="avatar" src={user?.avatar} />
+      <span>{user?.username}</span>
     </div>
   );
 }

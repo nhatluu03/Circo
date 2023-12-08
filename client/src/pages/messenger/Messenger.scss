@@ -10,6 +10,15 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            position: relative;
+            .noneChat{
+                position: absolute;
+                top: 10%;
+                font-size: 50px;
+                line-height: 50px;
+                color: rgb(190, 187, 187);
+                cursor: default;
+            }
             .chatBoxTop{
                 height: 85%;
                 overflow-y: scroll;
@@ -36,6 +45,7 @@
                     color: white;
                 }
             }
+
         }
     }
     .chatOnline{

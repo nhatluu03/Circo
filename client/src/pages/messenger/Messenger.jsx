@@ -4,7 +4,7 @@ import Conversation from "../../components/conversation/Conversation";
 import Message from "../../components/message/Message";
 import "./Messenger.scss";
 import { io } from "socket.io-client";
-import axios from 'axios';
+import axios from "axios";
 
 export default function Messenger() {
   //Mock data including currentUser, currentChat, and newMessage
@@ -17,13 +17,14 @@ export default function Messenger() {
     country: "Vietnam",
     rating: 5,
   };
-  const currentChat = {
-    members: ["655c8afe9f5ae05cb5fc89fb", "6560ab19487316bb8ce89407"],
-  };
+  // const currentChat = {
+  //   members: ["655c8afe9f5ae05cb5fc89fb", "6560ab19487316bb8ce89407"],
+  // };
 
   //Code
-  const [conversations, setConversations] = useState([])
-  const [messages, setMessages] = useState([])
+  const [conversations, setConversations] = useState([]);
+  const [currentChat, setCurrentChat] = useState(null);
+  const [messages, setMessages] = useState([]);
   let [arrivalMessage, setArrivalMessage] = useState(null);
   const newMessage = "Hello, my name is Phap";
   //Socket Initialization
@@ -48,21 +49,22 @@ export default function Messenger() {
 
   useEffect(() => {
     socket.current.emit("addUser", currentUser._id);
-    socket.current?.on("getUsers", (users) => {
-    });
+    socket.current?.on("getUsers", (users) => {});
   }, [currentUser]);
   //Fetch conversations of currentUser
-  useEffect(()=>{
-    const getConversation = async() =>{
+  useEffect(() => {
+    const getConversation = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/conversations/'+ currentUser._id)
-        setConversations(res.data)
+        const res = await axios.get(
+          "http://localhost:3000/conversations/" + currentUser._id
+        );
+        setConversations(res.data);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
+    };
     getConversation();
-  },[currentUser._id])
+  }, [currentUser._id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,59 +76,67 @@ export default function Messenger() {
       receiverId,
       text: newMessage,
     });
-    console.log(receiverId)
+    console.log(receiverId);
   };
 
   return (
     <div className="messenger">
       <div className="chatMenu">
         <input placeholder="Search for artists" />
-        {conversations.map(conversation=>(
-        <Conversation key={conversation._id} conversation = {conversation} currentUser={currentUser} />
+        {conversations.map((conversation) => (
+          <Conversation
+            key={conversation._id}
+            conversation={conversation}
+            currentUser={currentUser}
+          />
         ))}
       </div>
       <div className="chatBox">
         <div className="chatBoxWrapper">
-          <div className="chatBoxTop">
-            <Message />
-            <Message own={true} />
-            <Message />
-            <Message own={true} />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-            <Message />
-          </div>
-          <div className="chatBoxBottom">
-            <textarea
-              placeholder="Write something..."
-            ></textarea>
-            <button onClick={handleSubmit}>Send</button>
-          </div>
+          {currentChat ? (
+            <>
+              <div className="chatBoxTop">
+                <Message />
+                <Message own={true} />
+                <Message />
+                <Message own={true} />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+                <Message />
+              </div>
+              <div className="chatBoxBottom">
+                <textarea placeholder="Write something..."></textarea>
+                <button onClick={handleSubmit}>Send</button>
+              </div>
+            </>
+          ) : (
+            <span className="noneChat">Open a conversation to chat </span>
+          )}
         </div>
       </div>
       <div className="chatOnline">
