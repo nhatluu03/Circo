@@ -17,6 +17,7 @@ import Challenges from "./pages/challenges/Challenges";
 import Challenge from "./pages/challenge/Challenge";
 import Talents from "./pages/talents/Talents";
 import Talent from "./pages/talent/Talent";
+import Messenger from './pages/messenger/Messenger'
 
 
 // import Success from "./pages/success/Success";
@@ -53,6 +54,10 @@ function App() {
         {
           path: "/artworks",
           element: <Artworks />,
+        },
+        {
+          path: "/messenger",
+          element:<Messenger/>
         },
         {
           path: "/artworks/:id",

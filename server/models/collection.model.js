@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const CollectionSchema = new Schema(
   {
-    artist: {
+    talent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

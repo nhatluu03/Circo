@@ -6,7 +6,7 @@ import Category from '../models/category.model.js'
 class ArtworkController {
   
   isOwner = (artwork, userId) => {
-    return artwork.artist.toString() === userId.toString();
+    return artwork.talent.toString() === userId.toString();
   };
 
   index = async (req, res, next) => {
@@ -20,10 +20,10 @@ class ArtworkController {
       return res.status(400).json({
         error: "You don't have enough permission to create artwork",
       });
-    const { artist, categoryId, ...artworkData } = req.body; // Destructure artist, category from req.body
+    const { talent, categoryId, ...artworkData } = req.body; // Destructure talent, category from req.body
     const category = Category.findById(categoryId)
     const artwork = new Artwork({
-      artist: user._id, // Convert artist to ObjectId
+      talent: user._id, // Convert talent to ObjectId
       category,
       ...artworkData,
     });
@@ -58,7 +58,7 @@ class ArtworkController {
         error: "Artwork not found",
       });
     }
-    //Check if the artist is the artwork's owner
+    //Check if the talent is the artwork's owner
     if (!this.isOwner(artwork, req.user._id)) 
     return res.status(404).json({
       error: "You do not have enough permission to update this artwork",
@@ -87,7 +87,7 @@ class ArtworkController {
           error: "Artwork not found",
         });
       }
-      //Check if the artist is the artwork's owner
+      //Check if the talent is the artwork's owner
       if (!this.isOwner(artwork, req.user._id)) {
         return res.status(404).json({
           error: "You do not have enough permission to delete this artwork",

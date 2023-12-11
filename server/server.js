@@ -10,28 +10,15 @@ import "./utils/loadEnv.js";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import http from "http";
-import './utils/loadEnv.js';
-import cors from 'cors';
 
+const redisClient = redis.createClient()
 const app = express();
-//Socket.io
-const server = http.createServer(app);
-const io = new Server(server);
-io.on("connection", (socket) => {
-  console.log(socket.id);
-  socket.on("chat message", (msg) => {
-    // Broadcast the message to all connected clients
-    io.emit("chat message", msg);
-  });
 
-  // Handle other events...
-
-  // Disconnect event
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
-});
-
+app.use(cors({
+  origin:"http://localhost:5173",
+  methods:"GET, HEAD, PUT, PATCH, POST, DELETE",
+  credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(

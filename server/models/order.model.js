@@ -2,10 +2,9 @@ import mongoose, { Types } from "mongoose";
 
 const OrderSchema = new mongoose.Schema(
   {
-    artist: {
+    talent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     client: {
       type: mongoose.Schema.Types.ObjectId,

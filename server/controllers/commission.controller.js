@@ -12,9 +12,9 @@ class CommissionController {
   store = async (req, res, next) => {
     //Find the currentUser to get "_id" and check "permission"
     const currentUser = await User.findById(req.userId);
-    if (currentUser.role !== "artist")
+    if (currentUser.role !== "talent")
       return res.status(401).json({
-        error: "Only artist can create commission",
+        error: "Only talent can create commission",
       });
     //Destructuring category String from req.body
     const { category } = req.body;
@@ -22,7 +22,7 @@ class CommissionController {
     const categoryId = new mongoose.Types.ObjectId(category);
 
     const commission = new Commission({
-      artist: currentUser._id,
+      talent: currentUser._id,
       category: categoryId,
       ...req.body,
     });
@@ -50,12 +50,12 @@ class CommissionController {
   update = async (req, res, next) => {
     try {
       const commission = await Commission.findById(req.params.id);
-      const artist = await User.findById(req.userId);
+      const talent = await User.findById(req.userId);
       if (!commission)
         return res.status(404).json({
           error: "Commission not found",
         });
-      if (commission.artist.toString() !== artist._id.toString())
+      if (commission.talent.toString() !== talent._id.toString())
         return res.status(401).json({
           error: "You do not have enough permission to perform this action",
         });
@@ -74,12 +74,12 @@ class CommissionController {
 
   destroy = async (req, res, next) => {
     const commission = await Commission.findById(req.params.id);
-    const artist = await User.findById(req.userId);
+    const talent = await User.findById(req.userId);
     if (!commission)
       return res.status(404).json({
         error: "Commission not found",
       });
-    if (commission.artist.toString() !== artist._id.toString())
+    if (commission.talent.toString() !== talent._id.toString())
       return res.status(401).json({
         error: "You do not have enough permission to perform this action",
       });

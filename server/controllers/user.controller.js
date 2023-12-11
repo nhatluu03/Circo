@@ -1,6 +1,6 @@
 import {
   User,
-  ArtistUser,
+  TalentUser,
   ClientUser,
   AdminUser,
 } from "../models/user.model.js";
@@ -46,8 +46,8 @@ class UserController {
       if (!token) return next(createError(401, "You are not authenticated!"));
       jwt.verify(token, process.env.JWT_SECRET, async (error, payload) => {
         if (error) return next(createError(403, "Token is not valid"));
-        req.userId = payload.userId
-        req.user = await User.findById(payload.userId)
+        req.userId = payload.userId;
+        req.user = await User.findById(payload.userId);
         next();
       });
     } catch (error) {
@@ -73,8 +73,8 @@ class UserController {
       // Create a new user based on the role
       let newUser;
       switch (role) {
-        case "artist":
-          newUser = new ArtistUser({
+        case "talent":
+          newUser = new TalentUser({
             username,
             password: hashedPassword,
             fullName,
@@ -121,7 +121,7 @@ class UserController {
     try {
       const { username, password } = req.body;
       const user = await User.findOne({ username });
-      if (!user) 
+      if (!user)
         return res.status(404).json({
           error: "User not found",
         });
@@ -162,10 +162,13 @@ class UserController {
   };
 
   logout = async (req, res) => {
-    res.clearCookie("accessToken",{
-      sameSite: "none",
-      secure: true,
-    }).status(200).send("User has been logged out.");
+    res
+      .clearCookie("accessToken", {
+        sameSite: "none",
+        secure: true,
+      })
+      .status(200)
+      .send("User has been logged out.");
   };
 
   index = async (req, res, next) => {
@@ -174,18 +177,30 @@ class UserController {
   };
 
   show = async (req, res, next) => {
+    //Get user by query
+    const userId = req.query.userId;
+    const username = req.query.username;
     try {
-      const user = await User.findById(req.params.id);
-      if (!user) {
-        return res.status(404).json({
-          error: "User not found",
-        });
-      }
-      const {accessToken, password, _id, ...userData} = user._doc
-      res.status(200).send(userData);
+      const user = userId
+        ? await User.findById(userId)
+        : await User.findOne({ username: username });
+      const { password, updatedAt, ...other } = user._doc;
+      res.status(200).json(other);
     } catch (error) {
-      next(error)
+      next(error);
     }
+    // try {
+    //   const user = await User.findById(req.params.id);
+    //   if (!user) {
+    //     return res.status(404).json({
+    //       error: "User not found",
+    //     });
+    //   }
+    //   const {accessToken, password, _id, ...userData} = user._doc
+    //   res.status(200).send(userData);
+    // } catch (error) {
+    //   next(error)
+    // }
   };
 
   update = async (req, res, next) => {
@@ -202,7 +217,7 @@ class UserController {
       const updatedUser = await User.findByIdAndUpdate(
         req.params.id,
         { $set: req.body },
-        { new: true },
+        { new: true }
       );
       res.status(200).send(updatedUser);
     } catch (error) {
@@ -225,7 +240,7 @@ class UserController {
       await User.findByIdAndDelete(req.params.id);
       res.status(200).send("User has been deleted");
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 }

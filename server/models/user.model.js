@@ -8,7 +8,7 @@ const UserSchema = new Schema(
     role: {
       type: String,
       default: "client",
-      enum: ["client", "artist", "admin"],
+      enum: ["client", "talent", "admin"],
     },
     accessToken: { type: String },
     avatar: {
@@ -51,9 +51,9 @@ const UserSchema = new Schema(
 );
 
 const User = mongoose.model("User", UserSchema);
-// Define a discriminator for the "artist" role
-const ArtistUser = User.discriminator(
-  "artist",
+// Define a discriminator for the "talent" role
+const TalentUser = User.discriminator(
+  "talent",
   new Schema({
     // Add role-specific fields here
     rating: { type: Number, default: 5, min: [0, "Rating cannot be negative"], max: [5, "Rating cannot exceed 5"] },
@@ -66,5 +66,5 @@ const ClientUser = User.discriminator("client", new Schema({}));
 // Define a discriminator for the "admin" role (no specific fields needed)
 const AdminUser = User.discriminator("admin", new Schema({}));
 
-export { User, ArtistUser, ClientUser, AdminUser };
+export { User, TalentUser, ClientUser, AdminUser };
 // export default User;
