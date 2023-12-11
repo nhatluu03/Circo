@@ -5,7 +5,6 @@ const OrderSchema = new mongoose.Schema(
     talent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     client: {
       type: mongoose.Schema.Types.ObjectId,

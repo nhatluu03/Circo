@@ -15,6 +15,7 @@ class OrderController {
     //Stripe Integration
     const stripe = new Stripe(process.env.STRIPE);
     const paymentIntent = await stripe.paymentIntents.create({
+      amount: 2000,
       currency: "aud",
       // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
       automatic_payment_methods: {
@@ -52,12 +53,12 @@ class OrderController {
         error: "Invalid type",
       });
     }
-
+    
     const order = new Order(orderData);
     await order.save();
     res.status(200).send({
       clientSecret: paymentIntent.client_secret,
-    });
+  });
   };
 
   index = async (req, res, next) => {
