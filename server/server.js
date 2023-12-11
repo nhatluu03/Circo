@@ -10,6 +10,8 @@ import "./utils/loadEnv.js";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import http from "http";
+import './utils/loadEnv.js';
+import cors from 'cors';
 
 const app = express();
 //Socket.io
@@ -32,7 +34,12 @@ io.on("connection", (socket) => {
 
 app.use(express.json());
 app.use(cookieParser());
-
+app.use(
+  cors({
+    origin: "http://localhost:5173/",
+    // methods: "GET,POST,PUT,DELETE, PATCH",
+  })
+);
 const PORT = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGO).then(() => {

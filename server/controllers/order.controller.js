@@ -80,6 +80,7 @@ class OrderController {
         client: client._id,
         ...req.body,
       };
+      
       //Check whether the type is artwork or commission
       if (artwork) {
         orderData.type = {

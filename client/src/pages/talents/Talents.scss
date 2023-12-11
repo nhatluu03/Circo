@@ -1,16 +1,24 @@
 .talent-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
+  gap: 22px 0;
 
   .talent-item {
-    width: 100%;
+    // width: 23%;
+    // margin-right: 2.66%;
 
+    width: 19%;
+    margin-right: 1.2%;
+
+    &:nth-child(5n) {
+      margin-right: 0;
+    }
     .talent-item-details {
       position: relative;
-      padding: 16px;
+      padding: 2px 12px 16px 12px;
       border-radius: 8px;
-      width: 18%;
+      font-size: 1.2rem;
       box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
         rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
       // border: 1px solid var(--field-border-light);
@@ -20,30 +28,55 @@
         left: 0;
         top: 0;
         width: 100%;
-        height: 60px;
         object-fit: cover;
         border-radius: 8px 8px 0 0;
         z-index: -1;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 3px;
+
+        img {
+          width: 33.3%;
+          height: 72px;
+          object-fit: cover;
+          padding: 0 1px;
+
+          &:first-child {
+            border-radius: 8px 0 0 0;
+          }
+          &:last-child {
+            border-radius: 0 8px 0 0;
+          }
+        }
       }
 
       .talent-item-details__basics {
+        margin-top: 60px;
+
         display: flex;
-        justify-content: space-between;
+        align-items: end;
         flex-wrap: wrap;
 
-        .talent-item-details__basics__fullname {
-          font-size: 1.3rem;
-          // width: 100%;
-          // display: block;
-        }
+        .talent-item-details__basics__name {
+          display: flex;
+          flex-direction: column;
+          margin-left: 12px;
 
-        .talent-item-details__basics__username {
-          font-size: 1.2rem;
-          color: gray;
+          .talent-item-details__basics__fullname {
+            font-size: 1.3rem;
+            margin: 0;
+          }
+
+          .talent-item-details__basics__username {
+            font-size: 1.2rem;
+            color: gray;
+            margin: 0;
+          }
         }
 
         .talent-item-details__basics__avt {
-          margin-top: 20px;
           width: 50px;
           height: 50px;
           object-fit: cover;
@@ -53,19 +86,33 @@
         }
       }
 
-      .star-ic {
-        height: 1.4rem;
-      }
 
-      .order-commission-btn {
-        background-color: black;
-        color: white;
-        border-radius: 8px;
-        padding: 8px 14px;
-        outline: none;
-        border: none;
-        width: 100%;
-        padding: 10px 0;
+      .rating {
+        display: flex;
+
+        .star-ic {
+          margin-left: 2px;
+          height: 1.4rem;
+        }
+      }
+      
+
+      .talent-item-button-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+
+        .follow-btn {
+          width: 42%;
+        }
+
+        .order-btn {
+          width: 55%;
+
+          img {
+            color: white;
+          }
+        }
       }
     }
   }

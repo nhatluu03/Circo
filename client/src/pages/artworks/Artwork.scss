@@ -30,11 +30,15 @@
 
       .artwork-item__author {
         img {
-          width: 18px;
-          height: 18px;
+          width: 28px;
+          height: 28px;
           object-fit: cover;
           border-radius: 50%;
           margin-right: 8px;
+        }
+
+        p {
+          font-size: 1.3rem;
         }
       }
 

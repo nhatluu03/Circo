@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/img/logo.png";
 import Avt from "../../assets/img/avt.png";
+import Menu from "../menu/Menu.jsx";
 import "./Navbar.scss";
 
 const Navbar = () => {
@@ -9,6 +10,20 @@ const Navbar = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [searchOptions, setSearchOptions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const menuRef = useRef();
+  const [showMenu, setShowMenu] = useState(false);
+
+  useEffect(() => {
+    let handler = (e) => {
+      if (menuRef && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  });
 
   const focusInput = () => {
     setIsFocused(true);
@@ -106,7 +121,10 @@ const Navbar = () => {
 
                         {item.avt ? (
                           <>
-                            <img src={item.avt} alt={`Avatar of ${item.name}`}/>
+                            <img
+                              src={item.avt}
+                              alt={`Avatar of ${item.name}`}
+                            />
                             <span>{item.name}</span>
                           </>
                         ) : (
@@ -115,7 +133,9 @@ const Navbar = () => {
                       </li>
                     ))}
                   </ul>
-                  <p className="dropdown-search-item__extra">+{category.count} more</p>
+                  <p className="dropdown-search-item__extra">
+                    +{category.count} more
+                  </p>
                 </div>
               ))}
             </div>
@@ -162,7 +182,7 @@ const Navbar = () => {
           </li>
         </ul>
 
-        <hr />
+        <hr className="hor-hr" />
 
         <div className="nav-right-icon-container">
           <div className="nav-right-icon-item">
@@ -172,7 +192,18 @@ const Navbar = () => {
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAO5JREFUSEvd1TFuwkAQheGPMlcIEhKKlOQaOQEtV0hNGhpqaKKUHCEn4AAcgYJ0EUhRrpAmCLQSlmzL9hqMpRA3W8zO+3fe7I47Wv46LetLAwaY4rEh9AMvWASdNOAL3YbiSfon7vKA/THa1LaMTlrsfwKSqmKtKXUiZlHrgNjJi+J/q8lVFpVd55MqaB1w/T24aAVb9EoUk4Y+YY77CHmDfn7YhXE9w0NB8i1eMaxR0grjonFd9Wh+cIOwTvCG3xqwzP+gChBi7xjhu45wsic2+8M7WOMZy1OE6wLCiYMdu3PE800+V6MyL2ZRY+gBDRc1GbMbgpYAAAAASUVORK5CYII=" />
           </div>
         </div>
-        <img src={Avt} className="avt" alt="Avatar" />
+        <div className="nav-right-menu" ref={menuRef}>
+          <img
+            src={Avt}
+            className="nav-right-menu__avt"
+            // onClick={toggleMenu}
+            onClick={() => {
+              setShowMenu(!showMenu);
+            }}
+            alt="Avatar"
+          />
+          {showMenu && <Menu />}
+        </div>
       </div>
     </nav>
   );

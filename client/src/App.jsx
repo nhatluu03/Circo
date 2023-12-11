@@ -2,7 +2,15 @@ import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import "./assets/scss/base.scss";
 import 'boxicons';
 import React from "react";
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { SharedDataProvider } from './SharedDataContext.jsx'; // Adjust the path accordingly
+
+
+// Components
 import Navbar from "./components/navbar/Navbar";
+import Sidebar from "./components/sidebar/Sidebar";
+
+// Pages
 import Artworks from "./pages/artworks/Artworks";
 import Artwork from "./pages/artwork/Artwork";
 import Challenges from "./pages/challenges/Challenges";
@@ -10,10 +18,7 @@ import Challenge from "./pages/challenge/Challenge";
 import Talents from "./pages/talents/Talents";
 import Talent from "./pages/talent/Talent";
 
-import {
-  QueryClient,
-  QueryClientProvider,
-} from "react-query";
+
 // import Success from "./pages/success/Success";
 // ... (other imports)
 
@@ -21,9 +26,9 @@ function App() {
 
   const Layout = ({showSidebar }) => {
     return (
-      <div className="app">
+      <div className={`app ${showSidebar ? 'with-sidebar' : 'without-sidebar'}`}>
           <Navbar />
-          {showSidebar && <div className="sidebar">SIDEBAR</div>}
+          {showSidebar && <Sidebar />}
           <Outlet /> 
       </div>
     );
@@ -70,7 +75,14 @@ function App() {
     
   ]);
 
-  return <RouterProvider router={router} />;
+  // return <RouterProvider router={router} />;
+  return (
+    <QueryClientProvider client={new QueryClient()}>
+      <SharedDataProvider>
+        <RouterProvider router={router} />
+      </SharedDataProvider>
+    </QueryClientProvider>
+  );
 }
 
 export default App;

@@ -1,0 +1,94 @@
+.sidebar {
+  width: 25%;
+  background-color: var(--gray-bg-light);
+  border-radius: 12px;
+  padding: 40px 48px;
+
+  .profile-basics {
+    text-align: center;
+
+    img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid white;
+    }
+
+    .profile-basics__fullname {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+
+    .profile-basics__username {
+      color: var(--gray-text-color-light);
+    }
+    .profile-basics__job {
+    }
+
+    .profile-basics__loc {
+    }
+  }
+
+  .profile-buttons {
+    display: flex;
+    justify-content: center;
+
+    .btn {
+      margin: 0 6px;
+      min-width: 40%;
+    }
+  }
+
+  .profile-stats {
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .profile-stats-followers {
+      display: flex;
+      align-items: center;
+
+      .profile-stats-followers__img-container {
+        // position: relative;
+        display: flex;
+
+        img {
+          width: 24px;
+          height: 24px;
+          object-fit: cover;
+          border: 1px solid white;
+          border-radius: 50%;
+          // position: absolute;
+        }
+
+        img:nth-child(1) {
+          z-index: 1;
+        }
+
+        img:nth-child(2) {
+          transform: translate(-12px);
+          z-index: 2;
+        }
+
+        img:nth-child(3) {
+          transform: translate(-24px);
+          z-index: 3;
+        }
+      }
+    }
+  }
+
+  .profile-section {
+    h4 {
+      margin: 0;
+    }
+
+    hr {
+        background-color: var(--field-border-light);
+        border: none;
+        outline: none;
+        height: 1px;
+    }
+  }
+}

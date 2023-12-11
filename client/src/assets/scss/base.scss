@@ -1,6 +1,9 @@
 :root {
+  // Light theme colors
   --text-color-light: #2c2c2c;
+  --gray-text-color-light: #3C3C3C;
   --field-border-light: #cfcfcf;
+  --gray-bg-light: #e9e9e9;
 }
 
 * {
@@ -21,6 +24,9 @@ body {
   text-overflow: ellipsis;
   width: 100%;
   overflow-x: hidden;
+  height: 50000px;
+  font-size: 1.3rem;
+  font-weight: 500;
 }
 
 #root {
@@ -28,8 +34,8 @@ body {
 }
 
 ::selection {
-  color: white;
-  background: #ffa377;
+  // color: white;
+  // background: #c661ff;
 }
 ul,
 ol {
@@ -68,4 +74,72 @@ a {
 a {
   text-decoration: none;
   color: var(--text-color-light);
+}
+
+// Headings & Texts
+h1 {
+  font-size: 2.6rem;
+}
+
+h2 {
+  font-size: 2.2rem;
+}
+
+h3 {
+  font-size: 1.8rem;
+}
+
+h4 {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+p {
+  font-size: 1.2rem;
+}
+
+// Buttons
+.btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: unset;
+
+  .btn-ic {
+    width: 16px;
+    height: 16px;
+    object-fit: cover;
+    margin-right: 8px;
+  }
+
+  &:hover {
+    opacity: 0.8;
+    cursor: pointer;
+    transition: 0.05s;
+  }
+}
+.btn-1 {
+  border: 1px solid black;
+  // background-color: white;
+}
+
+.btn-2 {
+  background-color: black;
+  color: white;
+}
+
+// Commons
+hr {
+  border: none;
+  height: 1px;
+  width: 100%;
+  background-color: var(--field-border-light);
+}
+
+.dot-delimiter {
+  margin: 0 5px;
 }
