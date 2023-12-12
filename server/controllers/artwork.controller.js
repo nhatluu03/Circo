@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import Artwork from "../models/artwork.model.js";
 import createError from "../utils/createError.js";
 import Category from "../models/category.model.js";
-import redisClient from ".././redisSetup.js";
+import client from ".././redisSetup.js";
 import responseView from "../utils/redisResponse.js";
 
 class ArtworkController {
@@ -42,7 +42,7 @@ class ArtworkController {
     let result;
     let isCached = false;
     try {
-      const cacheResult = await redisClient.get(artworkId);
+      const cacheResult = await client.get(artworkId);
       if (cacheResult) {
         isCached =  true; 
         result = JSON.parse(cacheResult);
@@ -51,7 +51,7 @@ class ArtworkController {
         if (!result) {
           throw "API returned an empty data";
         }
-        await redisClient.set(artworkId, JSON.stringify(result));
+        await client.set(artworkId, JSON.stringify(result));
       }
 
       responseView.sendResponse(res, isCached, result);
