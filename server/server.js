@@ -9,9 +9,7 @@ import route from "./routes/index.js";
 import "./utils/loadEnv.js";
 import cookieParser from "cookie-parser";
 import cors from 'cors'
-import redis from 'redis'
 
-const redisClient = redis.createClient()
 const app = express();
 
 app.use(cors({
