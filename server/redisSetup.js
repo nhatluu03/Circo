@@ -1,4 +1,4 @@
-import redis from 'redis'
+import redis from 'redis';
 
 let redisClient;
 
@@ -7,7 +7,8 @@ let redisClient;
 
   redisClient.on("error", (error) => console.error(`Error : ${error}`));
 
-  await redisClient.connect();
+  await new Promise((resolve) => redisClient.once('connect', resolve));
 })();
 
-module.exports = redisClient;
+export default redisClient;
+

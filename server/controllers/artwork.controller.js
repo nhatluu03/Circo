@@ -1,33 +1,34 @@
 import mongoose from "mongoose";
 import Artwork from "../models/artwork.model.js";
 import createError from "../utils/createError.js";
-import Category from '../models/category.model.js'
+import Category from "../models/category.model.js";
+import redisClient from ".././redisSetup.js";
+import responseView from "../utils/redisResponse.js";
 
 class ArtworkController {
-  
   isOwner = (artwork, userId) => {
     return artwork.talent.toString() === userId.toString();
   };
 
   index = async (req, res, next) => {
-    const artworks = await Artwork.find()
+    const artworks = await Artwork.find();
     res.status(200).json(artworks);
   };
 
   store = async (req, res, next) => {
-    const {user} = req;
-    if(user.role === "client")
+    const { user } = req;
+    if (user.role === "client")
       return res.status(400).json({
         error: "You don't have enough permission to create artwork",
       });
     const { talent, categoryId, ...artworkData } = req.body; // Destructure talent, category from req.body
-    const category = Category.findById(categoryId)
+    const category = Category.findById(categoryId);
     const artwork = new Artwork({
       talent: user._id, // Convert talent to ObjectId
       category,
       ...artworkData,
     });
-  
+
     try {
       const newArtwork = await artwork.save();
       res.status(201).json(newArtwork);
@@ -37,19 +38,29 @@ class ArtworkController {
   };
 
   show = async (req, res, next) => {
+    const artworkId = req.params.id;
+    let result;
+    let isCached = false;
     try {
-      const artwork = await Artwork.findById(req.params.id);
-      if (!artwork) {
-        return res.status(404).json({
-          error: "Artwork not found",
-        });
+      const cacheResult = await redisClient.get(artworkId);
+      if (cacheResult) {
+        isCached =  true; 
+        result = JSON.parse(cacheResult);
+      } else {
+        result = await Artwork.findById(artworkId);
+        if (!result) {
+          throw "API returned an empty data";
+        }
+        await redisClient.set(artworkId, JSON.stringify(result));
       }
-      res.status(200).json(artwork);
+
+      responseView.sendResponse(res, isCached, result);
     } catch (error) {
-      next(error)
+      console.error(error);
+      responseView.sendErrorResponse(res, "Data unavailable");
     }
   };
-  
+
   update = async (req, res, next) => {
     const artwork = await Artwork.findById(req.params.id);
     //Check if artwork exists
@@ -59,10 +70,10 @@ class ArtworkController {
       });
     }
     //Check if the talent is the artwork's owner
-    if (!this.isOwner(artwork, req.user._id)) 
-    return res.status(404).json({
-      error: "You do not have enough permission to update this artwork",
-    });
+    if (!this.isOwner(artwork, req.user._id))
+      return res.status(404).json({
+        error: "You do not have enough permission to update this artwork",
+      });
     try {
       const updatedArtwork = await Artwork.findByIdAndUpdate(
         req.params.id,
@@ -71,13 +82,13 @@ class ArtworkController {
         },
         { new: true }
       );
-  
+
       res.status(200).json(updatedArtwork);
     } catch (error) {
       next(error);
     }
   };
-  
+
   destroy = async (req, res, next) => {
     try {
       const artwork = await Artwork.findById(req.params.id);
@@ -94,8 +105,8 @@ class ArtworkController {
         });
       }
       await Artwork.findByIdAndDelete(req.params.id);
-  
-      res.status(200).json("Artwork deleted successfully")
+
+      res.status(200).json("Artwork deleted successfully");
     } catch (error) {
       next(error);
     }
