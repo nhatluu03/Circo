@@ -19,16 +19,19 @@ class ArtworkController {
       ...(q.talentId && { talent: q.talentId }),
     };
     try {
-      const cacheResult = await client.get(q.talentId)
-      if(cacheResult){
-        isCached = true;
-        artworks = JSON.parse(cacheResult)
-      }else{
-        artworks = await Artwork.find(filters);
+      //Check whether the artworks from Redis is existed
+      artworks = await getOrSetCache.getFromRedis(`artworks/${q.talentId}`)
+      
+      if (!artworks){
+        artworks =  await Artwork.find(filters)
+        //Error handling
         if(!artworks){
-          throw "API returned an empty array";
+          throw "API returned an empty array"
         }
-        await client.set(q.talentId, JSON.stringify(artworks))
+        //Set to Redis
+        await getOrSetCache.setToRedis(`artworks/${q.talentId}`, artworks)
+      }else{
+        isCached = true;
       }
       responseView.sendResponse(res, isCached, artworks);
     } catch (error) {
@@ -42,18 +45,19 @@ class ArtworkController {
     let artwork;
     let isCached = false;
     try {
-      const cacheResult = await client.get(artworkId);
-      if (cacheResult) {
-        isCached = true;
-        artwork = JSON.parse(cacheResult);
-      } else {
-        artwork = await Artwork.findById(artworkId);
-        if (!artwork) {
-          throw "API returned an empty data";
+      //Check whether the artwork from Redis is existed
+      artwork = await getOrSetCache.getFromRedis(`artworks/${artworkId}`)
+      if(!artwork){
+        artwork = await Artwork.findById(artworkId)
+        //Error handling
+        if(!artwork){
+          throw "API returned an empty data"
         }
-        await client.set(artworkId, JSON.stringify(artwork));
+        //Set to Redis
+        await getOrSetCache.setToRedis(`artworks/${artworkId}`, artwork)
+      }else{
+        isCached = true
       }
-
       responseView.sendResponse(res, isCached, artwork);
     } catch (error) {
       console.error(error);
