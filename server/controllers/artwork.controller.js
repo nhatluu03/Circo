@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 import Artwork from "../models/artwork.model.js";
-import createError from "../utils/createError.js";
 import Category from "../models/category.model.js";
-import client from ".././redisSetup.js";
 import responseView from "../utils/redisResponse.js";
 import getOrSetCache from "../utils/getOrSetCache.js";
 
@@ -14,23 +12,28 @@ class ArtworkController {
   index = async (req, res, next) => {
     const q = req.query;
     let isCached = false;
-    let artworks
+    let artworks;
     const filters = {
       ...(q.talentId && { talent: q.talentId }),
     };
     try {
       //Check whether the artworks from Redis is existed
-      artworks = await getOrSetCache.getFromRedis(`artworks/${q.talentId}`)
-      
-      if (!artworks){
-        artworks =  await Artwork.find(filters)
+      artworks = await getOrSetCache.getFromRedis(
+        `artworks/talentId:${q.talentId}`
+      );
+
+      if (!artworks) {
+        artworks = await Artwork.find(filters);
         //Error handling
-        if(!artworks){
-          throw "API returned an empty array"
+        if (!artworks) {
+          throw "API returned an empty array";
         }
         //Set to Redis
-        await getOrSetCache.setToRedis(`artworks/${q.talentId}`, artworks)
-      }else{
+        await getOrSetCache.setToRedis(
+          `artworks/talentId:${q.talentId}`,
+          artworks
+        );
+      } else {
         isCached = true;
       }
       responseView.sendResponse(res, isCached, artworks);
@@ -46,17 +49,17 @@ class ArtworkController {
     let isCached = false;
     try {
       //Check whether the artwork from Redis is existed
-      artwork = await getOrSetCache.getFromRedis(`artworks/${artworkId}`)
-      if(!artwork){
-        artwork = await Artwork.findById(artworkId)
+      artwork = await getOrSetCache.getFromRedis(`artworks/${artworkId}`);
+      if (!artwork) {
+        artwork = await Artwork.findById(artworkId);
         //Error handling
-        if(!artwork){
-          throw "API returned an empty data"
+        if (!artwork) {
+          throw "API returned an empty data";
         }
         //Set to Redis
-        await getOrSetCache.setToRedis(`artworks/${artworkId}`, artwork)
-      }else{
-        isCached = true
+        await getOrSetCache.setToRedis(`artworks/${artworkId}`, artwork);
+      } else {
+        isCached = true;
       }
       responseView.sendResponse(res, isCached, artwork);
     } catch (error) {
@@ -87,9 +90,9 @@ class ArtworkController {
     }
   };
 
-
   update = async (req, res, next) => {
-    const artwork = await Artwork.findById(req.params.id);
+    const artworkId = req.params.id;
+    const artwork = await Artwork.findById(artworkId);
     //Check if artwork exists
     if (!artwork) {
       return res.status(404).json({
@@ -109,6 +112,25 @@ class ArtworkController {
         },
         { new: true }
       );
+      // Update the artwork in Redis cache if exists
+      let checkArtwork = await getOrSetCache.getFromRedis(`artworks/${artworkId}`)
+      console.log(checkArtwork)
+      if(checkArtwork){
+        await getOrSetCache.setToRedis(`artworks/${artworkId}`, updatedArtwork);
+      }
+      // Update the list associated with "artworks/talentId:${q.talentId}"
+      const listKey = `artworks/talentId:${req.user._id}`;
+      let artworkList = await getOrSetCache.getFromRedis(listKey);
+      console.log(artworkList)
+      if (Array.isArray(artworkList)) {
+        artworkList = artworkList.map((artwork) => {
+          if (artwork._id === artworkId) {
+            return updatedArtwork;
+          }
+          return artwork;
+        });
+        await getOrSetCache.setToRedis(listKey, artworkList);
+      }
 
       res.status(200).json(updatedArtwork);
     } catch (error) {
