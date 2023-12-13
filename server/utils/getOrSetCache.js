@@ -8,4 +8,7 @@ const getFromRedis = async (key) => {
 const setToRedis = async (key, data) => {
   await client.set(key, JSON.stringify(data));
 };
-export default {getFromRedis, setToRedis}
+const deleteFromRedis = async(key) =>{
+  await client.del(key)
+}
+export default {getFromRedis, setToRedis, deleteFromRedis}
