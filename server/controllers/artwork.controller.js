@@ -4,6 +4,7 @@ import createError from "../utils/createError.js";
 import Category from "../models/category.model.js";
 import client from ".././redisSetup.js";
 import responseView from "../utils/redisResponse.js";
+import getOrSetCache from "../utils/getOrSetCache.js";
 
 class ArtworkController {
   isOwner = (artwork, userId) => {
@@ -11,8 +12,53 @@ class ArtworkController {
   };
 
   index = async (req, res, next) => {
-    const artworks = await Artwork.find();
-    res.status(200).json(artworks);
+    const q = req.query;
+    let isCached = false;
+    let artworks
+    const filters = {
+      ...(q.talentId && { talent: q.talentId }),
+    };
+    try {
+      const cacheResult = await client.get(q.talentId)
+      if(cacheResult){
+        isCached = true;
+        artworks = JSON.parse(cacheResult)
+      }else{
+        artworks = await Artwork.find(filters);
+        if(!artworks){
+          throw "API returned an empty array";
+        }
+        await client.set(q.talentId, JSON.stringify(artworks))
+      }
+      responseView.sendResponse(res, isCached, artworks);
+    } catch (error) {
+      console.error(error);
+      responseView.sendErrorResponse(res, "Data unavailable");
+    }
+  };
+
+  show = async (req, res, next) => {
+    const artworkId = req.params.id;
+    let artwork;
+    let isCached = false;
+    try {
+      const cacheResult = await client.get(artworkId);
+      if (cacheResult) {
+        isCached = true;
+        artwork = JSON.parse(cacheResult);
+      } else {
+        artwork = await Artwork.findById(artworkId);
+        if (!artwork) {
+          throw "API returned an empty data";
+        }
+        await client.set(artworkId, JSON.stringify(artwork));
+      }
+
+      responseView.sendResponse(res, isCached, artwork);
+    } catch (error) {
+      console.error(error);
+      responseView.sendErrorResponse(res, "Data unavailable");
+    }
   };
 
   store = async (req, res, next) => {
@@ -37,29 +83,6 @@ class ArtworkController {
     }
   };
 
-  show = async (req, res, next) => {
-    const artworkId = req.params.id;
-    let result;
-    let isCached = false;
-    try {
-      const cacheResult = await client.get(artworkId);
-      if (cacheResult) {
-        isCached =  true; 
-        result = JSON.parse(cacheResult);
-      } else {
-        result = await Artwork.findById(artworkId);
-        if (!result) {
-          throw "API returned an empty data";
-        }
-        await client.set(artworkId, JSON.stringify(result));
-      }
-
-      responseView.sendResponse(res, isCached, result);
-    } catch (error) {
-      console.error(error);
-      responseView.sendErrorResponse(res, "Data unavailable");
-    }
-  };
 
   update = async (req, res, next) => {
     const artwork = await Artwork.findById(req.params.id);
