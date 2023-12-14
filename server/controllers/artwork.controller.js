@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import Artwork from "../models/artwork.model.js";
 import Category from "../models/category.model.js";
 import responseView from "../utils/redisResponse.js";
-import RedisHandling from "../utils/getOrSetCache.js";
+import RedisHandling from "../utils/redisHandling.js";
 
 class ArtworkController {
   isOwner = (artwork, userId) => {
