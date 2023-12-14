@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import Collection from "../models/collection.model.js";
 import { User } from "../models/user.model.js";
-
+import redisHandling from "../utils/redisHandling.js";
+import redisResponse from "../utils/redisResponse.js";
 class CollectionController {
   isOwner = (collection, userId) => {
     //Check if the talent is the owner of the collection
@@ -9,11 +10,27 @@ class CollectionController {
   };
 
   index = async (req, res, next) => {
+    const q = req.query
+    let isCached = false
+    let collections
+    const filters = {
+      ...(q.talentId && {talent: q.talentId})
+    }
     try {
-      const collections = await Collection.find();
-      res.status(200).json(collections);
+      collections = await redisHandling.getFromRedis(`collections/talentId:${q.talentId}`)
+      if(!collections){
+        collections = await Collection.find(filters)
+        if(!collections){
+          throw "API returned an empty array"
+        }
+        await redisHandling.setToRedis(`collections/talentId:${q.talentId}`, collections)
+      }else{
+        isCached = true
+      }
+      redisResponse.sendResponse(res, isCached, collections)
     } catch (error) {
-      next(error);
+      console.log(error)
+      redisResponse.sendErrorResponse(res, "Data unavailable");
     }
   };
 
@@ -36,10 +53,8 @@ class CollectionController {
         talent: user._id,
         artworks: artworkIds,
       });
-
       // Save the collection to the database
       await collection.save();
-
       res.status(200).json("New collection created successfully");
     } catch (error) {
       next(error);
@@ -58,13 +73,25 @@ class CollectionController {
     // } catch (error) {
     //   next(error);
     // }
-    const collection = await Collection.findById(req.params.id);
-    if (!collection) {
-      return res.status(404).json({
-        error: "Collection not found",
-      });
+    const collectionId = req.params.id
+    let isCached = false
+    let collection
+    try {
+      collection = await redisHandling.getFromRedis(`collections/${collectionId}`)
+      if(!collection){
+        collection = await Collection.findById(collectionId);
+        if(!collection){
+          throw "API returned an empty data"
+        }
+        await redisHandling.setToRedis(`collections/${collectionId}`, collection)
+      }else{
+        isCached = true
+      }
+      redisResponse.sendResponse(res, isCached, collection)
+    } catch (error) {
+      console.log(error)
+      redisResponse.sendErrorResponse(res, 'Data unavailable')      
     }
-    res.status(200).json(collection);
   };
 
   update = async (req, res, next) => {
