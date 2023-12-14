@@ -153,7 +153,6 @@ class ArtworkController {
           error: "You do not have enough permission to delete this artwork",
         });
       }
-      await Artwork.findByIdAndDelete(artworkId);
       //Redis
       const artworkInRedis = await redisHandling.getFromRedis(
         `artworks/${artworkId}`
@@ -168,8 +167,9 @@ class ArtworkController {
         // If the list is in the cache, remove the specific artwork from the list
         artworks = artworks.filter((artwork) => artwork._id !== artworkId);
         // Set the updated list back to Redis cache
-        await getOrSetCache.setToRedis(listKey, artworks);
+        await redisHandling.setToRedis(listKey, artworks);
       }
+      await Artwork.findByIdAndDelete(artworkId);
       res.status(200).json("Artwork deleted successfully");
     } catch (error) {
       next(error);
