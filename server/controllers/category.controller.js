@@ -54,7 +54,8 @@ class CategoryController {
   };
 
   update = async (req, res, next) => {
-    const category = await Category.findById(req.params.id);
+    const categoryId = req.params.id
+    const category = await Category.findById(categoryId);
     if (!category) {
       return res.status(404).json({
         error: "Category not found",
@@ -62,10 +63,25 @@ class CategoryController {
     }
     try {
       const updatedCategory = await Category.findByIdAndUpdate(
-        req.params.id,
+        categoryId,
         { $set: req.body },
         { new: true }
       );
+      const categoryInRedis = await redisHandling.getFromRedis(`categories/${categoryId}`)
+      if(categoryInRedis){
+        await redisHandling.setToRedis(`categories/${categoryId}`, updatedCategory)
+      }
+      const listKey = 'categories'
+      let categories = await redisHandling.getFromRedis(listKey)
+      if(Array.isArray(categories)){
+        categories = categories.map(category =>{
+          if(category._id === categoryId){
+            return updatedCategory
+          }
+          return category
+        })
+        await redisHandling.setToRedis('categories', categories)
+      }
       res.status(200).json(updatedCategory);
     } catch (error) {
       next(error);
@@ -81,8 +97,22 @@ class CategoryController {
           error: "Category not found",
         });
       }
+      //Redis
+      const categoryInRedis = await redisHandling.getFromRedis(`categories/${categoryId}`)
+      if(categoryInRedis){
+        //Delete in Redis if exists
+        await redisHandling.deleteFromRedis(`categories/${categoryId}`)
+      }
+      //Delete category associated an array if exists
+      const listKey = 'categories'
+      let categories = await redisHandling.getFromRedis(listKey)
+      if(Array.isArray(categories)){
+        // If the list is in the cache, remove the specific category from the list
+        categories = categories.filter(category => category._id !== categoryId)
+        // Set the updated list back to Redis cache
+        await redisHandling.setToRedis(listKey, categories)
+      }
       await Category.findByIdAndDelete(categoryId);
-      await redisHandling.deleteFromRedis(`categories/${categoryId}`);
       res.status(200).json("Deleting a category");
     } catch (error) {
       next(error);
