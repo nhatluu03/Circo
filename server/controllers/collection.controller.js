@@ -95,7 +95,8 @@ class CollectionController {
   };
 
   update = async (req, res, next) => {
-    const collection = await Collection.findById(req.params.id);
+    const collectionId = req.params.id
+    const collection = await Collection.findById(collectionId);
     if (!collection)
       return res.status(404).json({
         error: "Not found",
@@ -131,6 +132,23 @@ class CollectionController {
       Object.assign(collection, updatedData);
       // Save the updated collection to the database
       const updatedCollection = await collection.save();
+      //Redis
+      const collectionInRedis = await redisHandling.getFromRedis(`collections/${collectionId}`)
+      if(collectionInRedis){
+        await redisHandling.setToRedis(`collections/${collectionId}`, updatedCollection)
+      }
+      // Update the list associated with "artworks/talentId:${q.talentId}"
+      const listKey = `collections/talentId:${req.userId}`
+      let collections = await redisHandling.getFromRedis(listKey)
+      if(Array.isArray(collections)){
+        collections = collections.map(collection =>{
+          if(collection._id === collectionId){
+            return updatedCollection
+          }
+          return collection
+        })
+        await redisHandling.setToRedis(listKey, collections)
+      }
       res.status(200).json(updatedCollection);
     } catch (error) {
       next(error);
@@ -138,7 +156,8 @@ class CollectionController {
   };
 
   destroy = async (req, res, next) => {
-    const collection = await Collection.findById(req.params.id);
+    const collectionId = re.params.id
+    const collection = await Collection.findById(collectionId);
     if (!collection)
       return res.status(404).json({
         error: "Not found",
@@ -147,9 +166,15 @@ class CollectionController {
       return res.status(401).json({
         error: "You don't have enough permission to delete this collection",
       });
-
     try {
-      await Collection.findByIdAndDelete(req.params.id);
+      await redisHandling.deleteFromRedis(`collections/${collectionId}`)
+      //Delete artwork belong to an array in redis
+      let collections = await redisHandling.getFromRedis(`collections/talentId:${req.userId}`)
+      if(Array.isArray(collections)){
+        collections = collections.filter(collection => collection._id !== collectionId)
+        await redisHandling.setToRedis(`collections/talentId:${req.userId}`,)
+      }
+      await Collection.findByIdAndDelete(collectionId);
       res.status(200).json("Deleting a collection");
     } catch (error) {
       next(error);
