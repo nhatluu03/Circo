@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import Artwork from "../models/artwork.model.js";
 import Category from "../models/category.model.js";
-import responseView from "../utils/redisResponse.js";
-import RedisHandling from "../utils/redisHandling.js";
+import redisResponse from "../utils/redisResponse.js";
+import redisHandling from "../utils/redisHandling.js";
 
 class ArtworkController {
   isOwner = (artwork, userId) => {
@@ -18,7 +18,7 @@ class ArtworkController {
     };
     try {
       //Check whether the artworks from Redis is existed
-      artworks = await RedisHandling.getFromRedis(
+      artworks = await redisHandling.getFromRedis(
         `artworks/talentId:${q.talentId}`
       );
 
@@ -29,17 +29,17 @@ class ArtworkController {
           throw "API returned an empty array";
         }
         //Set to Redis
-        await RedisHandling.setToRedis(
+        await redisHandling.setToRedis(
           `artworks/talentId:${q.talentId}`,
           artworks
         );
       } else {
         isCached = true;
       }
-      responseView.sendResponse(res, isCached, artworks);
+      redisResponse.sendResponse(res, isCached, artworks);
     } catch (error) {
       console.error(error);
-      responseView.sendErrorResponse(res, "Data unavailable");
+      redisResponse.sendErrorResponse(res, "Data unavailable");
     }
   };
 
@@ -49,7 +49,7 @@ class ArtworkController {
     let isCached = false;
     try {
       //Check whether the artwork from Redis is existed
-      artwork = await RedisHandling.getFromRedis(`artworks/${artworkId}`);
+      artwork = await redisHandling.getFromRedis(`artworks/${artworkId}`);
       if (!artwork) {
         artwork = await Artwork.findById(artworkId);
         //Error handling
@@ -57,14 +57,14 @@ class ArtworkController {
           throw "API returned an empty data";
         }
         //Set to Redis
-        await RedisHandling.setToRedis(`artworks/${artworkId}`, artwork);
+        await redisHandling.setToRedis(`artworks/${artworkId}`, artwork);
       } else {
         isCached = true;
       }
-      responseView.sendResponse(res, isCached, artwork);
+      redisResponse.sendResponse(res, isCached, artwork);
     } catch (error) {
       console.error(error);
-      responseView.sendErrorResponse(res, "Data unavailable");
+      redisResponse.sendErrorResponse(res, "Data unavailable");
     }
   };
 
@@ -113,15 +113,15 @@ class ArtworkController {
         { new: true }
       );
       // Update the artwork in Redis cache if exists
-      let checkArtwork = await RedisHandling.getFromRedis(`artworks/${artworkId}`)
-      console.log(checkArtwork)
-      if(checkArtwork){
-        await RedisHandling.setToRedis(`artworks/${artworkId}`, updatedArtwork);
+      let checkArtwork = await redisHandling.getFromRedis(
+        `artworks/${artworkId}`
+      );
+      if (checkArtwork) {
+        await redisHandling.setToRedis(`artworks/${artworkId}`, updatedArtwork);
       }
       // Update the list associated with "artworks/talentId:${q.talentId}"
       const listKey = `artworks/talentId:${req.user._id}`;
-      let artworkList = await RedisHandling.getFromRedis(listKey);
-      console.log(artworkList)
+      let artworkList = await redisHandling.getFromRedis(listKey);
       if (Array.isArray(artworkList)) {
         artworkList = artworkList.map((artwork) => {
           if (artwork._id === artworkId) {
@@ -129,9 +129,8 @@ class ArtworkController {
           }
           return artwork;
         });
-        await RedisHandling.setToRedis(listKey, artworkList);
+        await redisHandling.setToRedis(listKey, artworkList);
       }
-
       res.status(200).json(updatedArtwork);
     } catch (error) {
       next(error);
@@ -139,8 +138,9 @@ class ArtworkController {
   };
 
   destroy = async (req, res, next) => {
+    const artworkId = req.params.id;
     try {
-      const artwork = await Artwork.findById(req.params.id);
+      const artwork = await Artwork.findById(artworkId);
       //Check if artwork exists
       if (!artwork) {
         return res.status(404).json({
@@ -153,8 +153,23 @@ class ArtworkController {
           error: "You do not have enough permission to delete this artwork",
         });
       }
-      await Artwork.findByIdAndDelete(req.params.id);
-      await RedisHandling.deleteFromRedis(`artworks/${req.params.id}`)
+      await Artwork.findByIdAndDelete(artworkId);
+      //Redis
+      const artworkInRedis = await redisHandling.getFromRedis(
+        `artworks/${artworkId}`
+      );
+      if (artworkInRedis) {
+        await redisHandling.deleteFromRedis(`artworks/${artworkId}`);
+      }
+      //Delete artwork belong to an array in redis
+      let listKey = `artworks/talentId:${req.user._id}`;
+      let artworks = await redisHandling.getFromRedis(listKey);
+      if (Array.isArray(artworks)) {
+        // If the list is in the cache, remove the specific artwork from the list
+        artworks = artworks.filter((artwork) => artwork._id !== artworkId);
+        // Set the updated list back to Redis cache
+        await getOrSetCache.setToRedis(listKey, artworks);
+      }
       res.status(200).json("Artwork deleted successfully");
     } catch (error) {
       next(error);

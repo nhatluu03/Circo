@@ -1,9 +1,26 @@
 import Category from "../models/category.model.js";
+import redisHandling from "../utils/redisHandling.js";
+import redisResponse from "../utils/redisResponse.js";
 
 class CategoryController {
   index = async (req, res, next) => {
-    const categories = await Category.find()
-    res.status(200).json(categories);
+    let isCached = false;
+    try {
+      let categories = await redisHandling.getFromRedis(`categories`);
+      if (!categories) {
+        categories = await Category.find();
+        if (!categories) {
+          throw "API returned an empty array";
+        }
+        await redisHandling.setToRedis(`categories`, categories);
+      } else {
+        isCached = true;
+      }
+      redisResponse.sendResponse(res, isCached, categories);
+    } catch (error) {
+      console.log(error);
+      redisResponse.sendErrorResponse(res, "Data unavailable");
+    }
   };
 
   store = async (req, res, next) => {
@@ -15,16 +32,24 @@ class CategoryController {
   };
 
   show = async (req, res, next) => {
+    const categoryId = req.params.id;
+    let isCached = false;
+    let category;
     try {
-      const category = await Category.findById(req.params.id);
+      category = await redisHandling.getFromRedis(`categories/${categoryId}`);
       if (!category) {
-        return res.status(404).json({
-          error: "Category not found",
-        });
+        category = await Category.findById(categoryId);
+        if (!category) {
+          throw "API returned an empty data";
+        }
+        redisHandling.setToRedis(`categories/${categoryId}`, category);
+      } else {
+        isCached = true;
       }
-      res.status(200).json(category);
+      redisResponse.sendResponse(res, isCached, category);
     } catch (error) {
-      next(error)      
+      console.log(error);
+      redisResponse.sendErrorResponse(res, "Data unavailable");
     }
   };
 
@@ -48,14 +73,16 @@ class CategoryController {
   };
 
   destroy = async (req, res, next) => {
-    const category = await Category.findById(req.params.id);
-    if (!category) {
-      return res.status(404).json({
-        error: "Category not found",
-      });
-    }
+    const categoryId = req.params.id;
     try {
-      await Category.findByIdAndDelete(req.params.id);
+      const category = await Category.findById(req.params.id);
+      if (!category) {
+        return res.status(404).json({
+          error: "Category not found",
+        });
+      }
+      await Category.findByIdAndDelete(categoryId);
+      await redisHandling.deleteFromRedis(`categories/${categoryId}`);
       res.status(200).json("Deleting a category");
     } catch (error) {
       next(error);
