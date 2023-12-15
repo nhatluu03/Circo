@@ -81,7 +81,6 @@ class ArtworkController {
       category,
       ...artworkData,
     });
-
     try {
       const newArtwork = await artwork.save();
       //Redis
