@@ -27,8 +27,15 @@ class CategoryController {
     const category = new Category({
       ...req.body,
     });
-    await category.save();
-    res.status(200).json("Creating a new category");
+    const savedCategory = await category.save();
+    //Redis
+    const listKey = "categories";
+    let categoriesInRedis = await redisHandling.getFromRedis(listKey);
+    if (Array.isArray(categoriesInRedis)) {
+      categoriesInRedis = categoriesInRedis.push(savedCategory);
+      await redisHandling.setToRedis(listKey, categoriesInRedis);
+    }
+    res.status(200).json(savedCategory);
   };
 
   show = async (req, res, next) => {
@@ -54,7 +61,7 @@ class CategoryController {
   };
 
   update = async (req, res, next) => {
-    const categoryId = req.params.id
+    const categoryId = req.params.id;
     const category = await Category.findById(categoryId);
     if (!category) {
       return res.status(404).json({
@@ -68,20 +75,25 @@ class CategoryController {
         { new: true }
       );
       //Redis
-      const categoryInRedis = await redisHandling.getFromRedis(`categories/${categoryId}`)
-      if(categoryInRedis){
-        await redisHandling.setToRedis(`categories/${categoryId}`, updatedCategory)
+      const categoryInRedis = await redisHandling.getFromRedis(
+        `categories/${categoryId}`
+      );
+      if (categoryInRedis) {
+        await redisHandling.setToRedis(
+          `categories/${categoryId}`,
+          updatedCategory
+        );
       }
-      const listKey = 'categories'
-      let categories = await redisHandling.getFromRedis(listKey)
-      if(Array.isArray(categories)){
-        categories = categories.map(category =>{
-          if(category._id === categoryId){
-            return updatedCategory
+      const listKey = "categories";
+      let categoriesInRedis = await redisHandling.getFromRedis(listKey);
+      if (Array.isArray(categoriesInRedis)) {
+        categoriesInRedis = categoriesInRedis.map((category) => {
+          if (category._id === categoryId) {
+            return updatedCategory;
           }
-          return category
-        })
-        await redisHandling.setToRedis('categories', categories)
+          return category;
+        });
+        await redisHandling.setToRedis("categories", categoriesInRedis);
       }
       res.status(200).json(updatedCategory);
     } catch (error) {
@@ -99,19 +111,23 @@ class CategoryController {
         });
       }
       //Redis
-      const categoryInRedis = await redisHandling.getFromRedis(`categories/${categoryId}`)
-      if(categoryInRedis){
+      const categoryInRedis = await redisHandling.getFromRedis(
+        `categories/${categoryId}`
+      );
+      if (categoryInRedis) {
         //Delete in Redis if exists
-        await redisHandling.deleteFromRedis(`categories/${categoryId}`)
+        await redisHandling.deleteFromRedis(`categories/${categoryId}`);
       }
       //Delete category associated an array if exists
-      const listKey = 'categories'
-      let categories = await redisHandling.getFromRedis(listKey)
-      if(Array.isArray(categories)){
+      const listKey = "categories";
+      let categoriesInRedis = await redisHandling.getFromRedis(listKey);
+      if (Array.isArray(categoriesInRedis)) {
         // If the list is in the cache, remove the specific category from the list
-        categories = categories.filter(category => category._id !== categoryId)
+        categoriesInRedis = categoriesInRedis.filter(
+          (category) => category._id !== categoryId
+        );
         // Set the updated list back to Redis cache
-        await redisHandling.setToRedis(listKey, categories)
+        await redisHandling.setToRedis(listKey, categoriesInRedis);
       }
       await Category.findByIdAndDelete(categoryId);
       res.status(200).json("Deleting a category");

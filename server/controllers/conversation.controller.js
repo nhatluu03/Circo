@@ -16,9 +16,11 @@ class ConversationController {
     try {
       const savedConversation = await conversation.save();
       //Redis
-      let conversationsInRedis = await redisHandling.getFromRedis(`conversation/${req.userId}`)
-      if(Array.isArray(conversationsInRedis)){
-        conversationsInRedis = conversationsInRedis.push(savedConversation)
+      const listKey = `conversation/${req.userId}`;
+      let conversations = await redisHandling.getFromRedis(listKey);
+      if (Array.isArray(conversations)) {
+        conversations = conversations.push(savedConversation);
+        await redisHandling.setToRedis(listKey, conversations);
       }
       res.status(200).json(savedConversation);
     } catch (error) {
@@ -28,24 +30,26 @@ class ConversationController {
 
   show = async (req, res, next) => {
     try {
-      const userId = req.params.id
-      let isCached = false
-      let conversations = await redisHandling.getFromRedis(`conversation/${userId}`)
-      if(!conversations){
+      const userId = req.params.id;
+      let isCached = false;
+      let conversations = await redisHandling.getFromRedis(
+        `conversation/${userId}`
+      );
+      if (!conversations) {
         conversations = await Conversation.find({
           members: { $in: [req.params.id] },
         });
-        if(!conversations){
-          throw "Conversations not found"
+        if (!conversations) {
+          throw "Conversations not found";
         }
-        await redisHandling.setToRedis(`conversation/${userId}`, conversations)
-      }else{
-        isCached = true
+        await redisHandling.setToRedis(`conversation/${userId}`, conversations);
+      } else {
+        isCached = true;
       }
-      redisResponse.sendResponse(res, isCached, conversations)
+      redisResponse.sendResponse(res, isCached, conversations);
     } catch (error) {
-      console.log(error)
-      redisResponse.sendErrorResponse(res, "Data unavailable")
+      console.log(error);
+      redisResponse.sendErrorResponse(res, "Data unavailable");
     }
   };
 
@@ -71,18 +75,20 @@ class ConversationController {
 
   destroy = async (req, res, next) => {
     try {
-      const conversationId = req.params.id
+      const conversationId = req.params.id;
       const conversation = await Conversation.findById(conversationId);
       if (!conversation)
         return res.status(404).json({
           error: "Conversation not found",
         });
       //Redis
-      const listKey = `conversation/${req.userId}`
-      let conversationsInRedis = await redisHandling.getFromRedis(listKey)
-      if(Array.isArray(conversationsInRedis)){
-        conversationsInRedis = conversationsInRedis.filter(conversation => conversation._id !== conversationId)
-        await redisHandling.setToRedis(listKey, conversationsInRedis)
+      const listKey = `conversation/${req.userId}`;
+      let conversations = await redisHandling.getFromRedis(listKey);
+      if (Array.isArray(conversations)) {
+        conversations = conversations.filter(
+          (conversation) => conversation._id !== conversationId
+        );
+        await redisHandling.setToRedis(listKey, conversations);
       }
       await Conversation.findByIdAndDelete(conversationId);
       res.status(200).json("Deleting a conversation");

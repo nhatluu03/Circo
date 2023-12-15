@@ -85,9 +85,11 @@ class ArtworkController {
     try {
       const newArtwork = await artwork.save();
       //Redis
-      const artworksInRedis = await redisHandling.getFromRedis(`artworks/talentId:${req.userId}`)
-      if(Array.isArray(artworksInRedis)){
-        artworksInRedis = artworksInRedis.push(newArtwork)
+      const listKey = `artworks/talentId:${req.userId}`;
+      let artworksInRedis = await redisHandling.getFromRedis(listKey);
+      if (Array.isArray(artworksInRedis)) {
+        artworksInRedis = artworksInRedis.push(newArtwork);
+        await redisHandling.setToRedis(listKey, artworksInRedis);
       }
       res.status(201).json(newArtwork);
     } catch (error) {
@@ -126,15 +128,15 @@ class ArtworkController {
       }
       // Update the list associated with "artworks/talentId:${q.talentId}"
       const listKey = `artworks/talentId:${req.user._id}`;
-      let artworkList = await redisHandling.getFromRedis(listKey);
-      if (Array.isArray(artworkList)) {
-        artworkList = artworkList.map((artwork) => {
+      let artworksInRedis = await redisHandling.getFromRedis(listKey);
+      if (Array.isArray(artworksInRedis)) {
+        artworksInRedis = artworksInRedis.map((artwork) => {
           if (artwork._id === artworkId) {
             return updatedArtwork;
           }
           return artwork;
         });
-        await redisHandling.setToRedis(listKey, artworkList);
+        await redisHandling.setToRedis(listKey, artworksInRedis);
       }
       res.status(200).json(updatedArtwork);
     } catch (error) {
@@ -167,12 +169,12 @@ class ArtworkController {
       }
       //Delete artwork belong to an array in redis
       let listKey = `artworks/talentId:${req.user._id}`;
-      let artworks = await redisHandling.getFromRedis(listKey);
-      if (Array.isArray(artworks)) {
+      let artworksInRedis = await redisHandling.getFromRedis(listKey);
+      if (Array.isArray(artworksInRedis)) {
         // If the list is in the cache, remove the specific artwork from the list
-        artworks = artworks.filter((artwork) => artwork._id !== artworkId);
+        artworksInRedis = artworksInRedis.filter((artwork) => artwork._id !== artworkId);
         // Set the updated list back to Redis cache
-        await redisHandling.setToRedis(listKey, artworks);
+        await redisHandling.setToRedis(listKey, artworksInRedis);
       }
       await Artwork.findByIdAndDelete(artworkId);
       res.status(200).json("Artwork deleted successfully");
