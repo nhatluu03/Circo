@@ -84,6 +84,11 @@ class ArtworkController {
 
     try {
       const newArtwork = await artwork.save();
+      //Redis
+      const artworksInRedis = await redisHandling.getFromRedis(`artworks/talentId:${req.userId}`)
+      if(Array.isArray(artworksInRedis)){
+        artworksInRedis = artworksInRedis.push(newArtwork)
+      }
       res.status(201).json(newArtwork);
     } catch (error) {
       next(error);

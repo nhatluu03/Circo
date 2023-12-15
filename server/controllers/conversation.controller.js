@@ -15,6 +15,11 @@ class ConversationController {
     });
     try {
       const savedConversation = await conversation.save();
+      //Redis
+      let conversationsInRedis = await redisHandling.getFromRedis(`conversation/${req.userId}`)
+      if(Array.isArray(conversationsInRedis)){
+        conversationsInRedis = conversationsInRedis.push(savedConversation)
+      }
       res.status(200).json(savedConversation);
     } catch (error) {
       next(error);
@@ -66,14 +71,20 @@ class ConversationController {
 
   destroy = async (req, res, next) => {
     try {
-      const conversation = await Conversation.find({
-        members: { $in: [req.params.id] },
-      });
+      const conversationId = req.params.id
+      const conversation = await Conversation.findById(conversationId);
       if (!conversation)
         return res.status(404).json({
           error: "Conversation not found",
         });
-      await Conversation.findByIdAndDelete(req.params.id);
+      //Redis
+      const listKey = `conversation/${req.userId}`
+      let conversationsInRedis = await redisHandling.getFromRedis(listKey)
+      if(Array.isArray(conversationsInRedis)){
+        conversationsInRedis = conversationsInRedis.filter(conversation => conversation._id !== conversationId)
+        await redisHandling.setToRedis(listKey, conversationsInRedis)
+      }
+      await Conversation.findByIdAndDelete(conversationId);
       res.status(200).json("Deleting a conversation");
     } catch (error) {
       next(error);
