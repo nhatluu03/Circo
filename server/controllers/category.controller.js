@@ -67,6 +67,7 @@ class CategoryController {
         { $set: req.body },
         { new: true }
       );
+      //Redis
       const categoryInRedis = await redisHandling.getFromRedis(`categories/${categoryId}`)
       if(categoryInRedis){
         await redisHandling.setToRedis(`categories/${categoryId}`, updatedCategory)

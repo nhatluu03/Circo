@@ -113,10 +113,10 @@ class ArtworkController {
         { new: true }
       );
       // Update the artwork in Redis cache if exists
-      let checkArtwork = await redisHandling.getFromRedis(
+      let artworkInRedis = await redisHandling.getFromRedis(
         `artworks/${artworkId}`
       );
-      if (checkArtwork) {
+      if (artworkInRedis) {
         await redisHandling.setToRedis(`artworks/${artworkId}`, updatedArtwork);
       }
       // Update the list associated with "artworks/talentId:${q.talentId}"

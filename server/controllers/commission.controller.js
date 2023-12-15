@@ -73,8 +73,9 @@ class CommissionController {
   };
 
   update = async (req, res, next) => {
+    const commissionId = req.params.id
     try {
-      const commission = await Commission.findById(req.params.id);
+      const commission = await Commission.findById(commissionId);
       const talent = await User.findById(req.userId);
       if (!commission)
         return res.status(404).json({
@@ -85,12 +86,29 @@ class CommissionController {
           error: "You do not have enough permission to perform this action",
         });
       const updatedCommission = await Commission.findByIdAndUpdate(
-        req.params.id,
+        commissionId,
         {
           $set: req.body,
         },
         { new: true }
       );
+      //Redis
+      const commissionInRedis = await redisHandling.getFromRedis(`commissions/${commissionId}`)
+      if(commissionInRedis){
+        await redisHandling.setToRedis(`commissions/${commissionId}`, updatedCommission)
+      }
+      //Update in a list
+      const listKey = `commissions/talentId:${req.userId}`
+      let commissions = await redisHandling.getFromRedis(listKey)
+      if(Array.isArray(commissions)){
+        commissions = commissions.map(commission =>{
+          if(commission._id === commissionId){
+            return updatedCommission
+          }
+          return commission
+        })
+        await redisHandling.setToRedis(listKey, commissions)
+      }
       res.status(200).json(updatedCommission);
     } catch (error) {
       next(error);
@@ -98,7 +116,8 @@ class CommissionController {
   };
 
   destroy = async (req, res, next) => {
-    const commission = await Commission.findById(req.params.id);
+    const commissionId = req.params.id
+    const commission = await Commission.findById(commissionId);
     const talent = await User.findById(req.userId);
     if (!commission)
       return res.status(404).json({
@@ -109,7 +128,19 @@ class CommissionController {
         error: "You do not have enough permission to perform this action",
       });
     try {
-      await Commission.findByIdAndDelete(req.params.id);
+      //Redis
+      const commissionInRedis = await redisHandling.getFromRedis(`commissions/${commissionId}`)
+      if(commissionInRedis){
+        await redisHandling.deleteFromRedis(`commissions/${commissionId}`)
+      }
+      //Delete in an array
+      const listKey = `commissions/talentId:${req.userId}`
+      let commissions = await redisHandling.getFromRedis(listKey)
+      if(Array.isArray(commissions)){
+        commissions = commissions.filter(commission => commission._id !== commissionId)
+        await redisHandling.setToRedis(listKey, commissions)
+      }
+      await Commission.findByIdAndDelete(commissionId);
       res.status(200).json("Deleting a commission");
     } catch (error) {
       next(error);
