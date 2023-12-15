@@ -10,6 +10,7 @@ class ArtworkController {
   };
 
   index = async (req, res, next) => {
+    //This is for just one query, if there are many queries we need to check again
     const q = req.query;
     let isCached = false;
     let artworks;
@@ -21,7 +22,6 @@ class ArtworkController {
       artworks = await redisHandling.getFromRedis(
         `artworks/talentId:${q.talentId}`
       );
-
       if (!artworks) {
         artworks = await Artwork.find(filters);
         //Error handling

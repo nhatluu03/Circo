@@ -2,11 +2,30 @@ import Commission from "../models/commission.model.js";
 import "mongoose";
 import { User } from "../models/user.model.js";
 import mongoose from "mongoose";
+import redisHandling from "../utils/redisHandling.js";
+import redisResponse from "../utils/redisResponse.js";
 
 class CommissionController {
   index = async (req, res, next) => {
-    const commissions = await Commission.find();
-    res.status(200).json(commissions);
+    let isCached = false;
+    const q = req.query;
+    const filters = { ...(q.talentId && { talent: q.talentId }) };
+    try {
+      let commissions = await redisHandling.getFromRedis(`commissions/talentId:${q.talentId}`)
+      if(!commissions){
+        commissions = await Commission.find(filters);
+        if(!commissions){
+          throw "API returned an empty data"
+        }
+        await redisHandling.setToRedis(`commissions/talentId:${q.talentId}`, commissions)
+      }else{
+        isCached = true
+      }
+      redisResponse.sendResponse(res, isCached, commissions)
+    } catch (error) {
+      console.log(error)
+      redisResponse.sendErrorResponse(res, "Data unavailable")  
+    }
   };
 
   store = async (req, res, next) => {
@@ -35,15 +54,21 @@ class CommissionController {
   };
 
   show = async (req, res, next) => {
-    const commission = await Commission.findById(req.params.id);
-    if (!commission)
-      return res.status(404).json({
-        error: "Commission not found",
-      });
+    const commissionId = req.params.id
+    const isCached = false
     try {
-      res.status(200).json(commission);
+    let commission = await redisHandling.getFromRedis(`commissions/${commissionId}`)
+    if(!commission){
+      commission = await Commission.findById(commissionId);
+      if(!commission){
+        throw "API returned an empty data"
+      }
+      await redisHandling.setToRedis(`commissions/${commissionId}`, commission)
+    }
+    redisResponse.sendResponse(res, isCached, commission)
     } catch (error) {
-      next(error);
+      console.log(error)
+      redisResponse.sendErrorResponse(res, "Data unavailable")
     }
   };
 
