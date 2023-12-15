@@ -8,8 +8,8 @@ import path from "path";
 import route from "./routes/index.js";
 import "./utils/loadEnv.js";
 import cookieParser from "cookie-parser";
-import { Server } from "socket.io";
-import http from "http";
+import cors from 'cors'
+import redis from 'redis'
 
 const redisClient = redis.createClient()
 const app = express();
@@ -21,12 +21,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: "http://localhost:5173/",
-    // methods: "GET,POST,PUT,DELETE, PATCH",
-  })
-);
+
 const PORT = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGO).then(() => {

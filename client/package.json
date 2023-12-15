@@ -21,8 +21,10 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.20.0",
     "sass": "^1.69.5",
+    "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "sort-by": "^0.0.2",
+    "timeago": "^1.6.7",
     "timeago.js": "^4.0.2"
   },
   "devDependencies": {

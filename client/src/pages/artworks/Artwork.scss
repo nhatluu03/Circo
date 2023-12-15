@@ -1,60 +1,59 @@
 .artwork-container {
-    width: 100%;
-    overflow: hidden; /* Clear the float */
-  }
-  
-  .artwork-item {
-    width: calc(14.2857% - 20px); /* 100% / 7 columns - margin */
-    margin: 10px;
-    float: left;
-  }
-  
-  .artwork-item {
-    img {
+  column-count: 7;
+  column-gap: 24px;
+  width: 100%;
+}
+
+.artwork-item {
+  display: block;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.artwork-item {
+  img {
     width: 100%;
     height: auto; /* Maintain aspect ratio */
-    display: block; /* Remove extra space below inline-block elements */
+    // display: block; /* Remove extra space below inline-block elements */
     border-radius: 8px;
-    }
-    .artwork-item__details {
-      margin-top: 8px;
+  }
+  .artwork-item__details {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .artwork-item__author,
+    .artwork-item__reacts {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-        
-      .artwork-item__author,
-      .artwork-item__reacts      {
-        display: flex;
-        align-items: center;
-      }
+    }
 
-      .artwork-item__author {
-        img {
-          width: 28px;
-          height: 28px;
-          object-fit: cover;
-          border-radius: 50%;
-          margin-right: 8px;
-        }
-
-        p {
-          font-size: 1.3rem;
-        }
+    .artwork-item__author {
+      img {
+        width: 28px;
+        height: 28px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-right: 8px;
       }
-
-      .artwork-item__reacts {
-        img {
-          width: 15PX;
-          height: 15PX;
-          object-fit: cover;
-          margin-right: 4px;
-        }
-      }
-      
 
       p {
-        display: inline-block;
+        font-size: 1.3rem;
       }
     }
+
+    .artwork-item__reacts {
+      img {
+        width: 15px;
+        height: 15px;
+        object-fit: cover;
+        margin-right: 4px;
+      }
+    }
+
+    p {
+      display: inline-block;
+    }
   }
-  
+}
