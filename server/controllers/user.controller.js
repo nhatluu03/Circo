@@ -48,6 +48,11 @@ class UserController {
         if (error) return next(createError(403, "Token is not valid"));
         req.userId = payload.userId;
         req.user = await User.findById(payload.userId);
+
+        // Check if user exists
+        if (!req.user) {
+          return next(createError(404, "User not found"));
+        }
         next();
       });
     } catch (error) {
@@ -57,7 +62,7 @@ class UserController {
 
   register = async (req, res, next) => {
     try {
-      const { username, password, fullName, role } = req.body;
+      const { username, password, fullname, role } = req.body;
 
       // Check if the username already exists
       const existingUser = await User.findOne({ username });
@@ -77,7 +82,7 @@ class UserController {
           newUser = new TalentUser({
             username,
             password: hashedPassword,
-            fullName,
+            fullname,
             role,
           });
           break;
@@ -85,7 +90,7 @@ class UserController {
           newUser = new ClientUser({
             username,
             password: hashedPassword,
-            fullName,
+            fullname,
             role,
           });
           break;
@@ -93,7 +98,7 @@ class UserController {
           newUser = new AdminUser({
             username,
             password: hashedPassword,
-            fullName,
+            fullname,
             role,
           });
           break;
@@ -110,6 +115,7 @@ class UserController {
 
       // Save the user to the database
       await newUser.save();
+      login(username, password);
 
       res.status(200).json({ message: "You have registered successfully" });
     } catch (error) {
@@ -119,8 +125,7 @@ class UserController {
 
   login = async (req, res, next) => {
     try {
-      const { username, password } = req.body;
-      const user = await User.findOne({ username });
+      const user = await User.findOne({username: req.body.username });
       if (!user)
         return res.status(404).json({
           error: "User not found",
@@ -139,23 +144,15 @@ class UserController {
           expiresIn: "1d",
         }
       );
+
+      const { password, ...others } = user._doc;
+
+
       res.cookie("accessToken", accessToken, {
         httpOnly: true, // This ensures the cookie is only accessible by the server
         secure: process.env.NODE_ENV === "production", // Use secure cookie in production
         maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time in milliseconds (1 day in this example)
-      });
-
-      await User.findByIdAndUpdate(user._id, {
-        accessToken,
-      });
-
-      res.status(200).json({
-        data: {
-          username: user.username,
-          role: user.role,
-        },
-        accessToken,
-      });
+      }).status(200).send(others);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

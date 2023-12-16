@@ -9,6 +9,8 @@ import { SharedDataProvider } from './SharedDataContext.jsx'; // Adjust the path
 // Components
 import Navbar from "./components/navbar/Navbar";
 import Sidebar from "./components/sidebar/Sidebar";
+import Register from "./components/register/Register";
+import Login from "./components/login/Login";
 
 // Pages
 import Artworks from "./pages/artworks/Artworks";

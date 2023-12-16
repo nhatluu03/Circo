@@ -1,9 +1,18 @@
 :root {
   // Light theme colors
-  --text-color-light: #2c2c2c;
+  --black-text-color-light: #2c2c2c;
   --gray-text-color-light: #3C3C3C;
-  --field-border-light: #cfcfcf;
+  --white-text-color-light: #FFFFFF;
+  --green-link-color-light: #0EB75C;
+  
   --gray-bg-light: #e9e9e9;
+
+  --field-border-light: #D6D6D6;
+  --form-field-bg-light: #F7F7F7;
+  --form-submit-btn-light: #252525;
+
+  // Dark theme colors
+
 }
 
 * {
@@ -15,7 +24,7 @@ html {
   line-height: 1.6rem;
   font-family: "Inter", sans-serif;
   box-sizing: border-box;
-  color: var(--text-color-light);
+  color: var(--black-text-color-light);
 }
 
 body {
@@ -54,26 +63,9 @@ a {
   text-decoration: none;
 }
 
-
-.form-field {
-    padding: 8px 14px;
-    border: 1.5px solid var(--field-border-light);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-}
-
-.form-field__input {
-    border: none;
-}
-
-.form-field__input {
-    outline: none;
-}
-
 a {
   text-decoration: none;
-  color: var(--text-color-light);
+  color: var(--black-text-color-light);
 }
 
 // Headings & Texts
@@ -133,6 +125,10 @@ p {
 }
 
 // Commons
+.hide {
+  display: none;
+}
+
 hr {
   border: none;
   height: 1px;
@@ -142,4 +138,67 @@ hr {
 
 .dot-delimiter {
   margin: 0 5px;
+}
+
+.overlay {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  transition: 0.4s;
+}
+
+// Form
+.form {
+
+}
+
+.form-field {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.form-field__label {
+  margin-bottom: 6px;
+  display: block;
+  width: 100%;
+}
+
+.form-field__input {
+  border: none;
+  outline: none;
+  border: 1px solid var(--field-border-light);
+  padding: 8px 14px;
+  border-radius: 4px;
+  width: 100%;
+  background-color: var(--form-field-bg-light);
+}
+
+input[type="submit"] {
+  background-color: var(--form-submit-btn-light);
+  color: var(--white-text-color-light);
+  margin-top: 8px;
+  border: unset;
+  padding: 11px 0;
+}
+
+input[type="submit"]:hover {
+  cursor: pointer;
+  opacity: 0.95;
+  transition: 0.2s;
+}
+
+.form-title {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form-close-ic {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
