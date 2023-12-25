@@ -44,7 +44,6 @@ app.use(async (req, res, next) => {
         });
       }
       res.locals.loggedInUser = await User.findById(userId);
-
       next();
     } catch (error) {
       next(error);

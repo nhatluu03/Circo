@@ -61,66 +61,67 @@ class UserController {
   };
 
   register = async (req, res, next) => {
-    try {
-      const { username, password, fullname, role } = req.body;
+    // try {
+    //   const { username, password, fullname, role } = req.body;
 
-      // Check if the username already exists
-      const existingUser = await User.findOne({ username });
-      if (existingUser) {
-        return res.status(400).json({
-          error: "Username already exists",
-        });
-      }
+    //   // Check if the username already exists
+    //   const existingUser = await User.findOne({ username });
+    //   if (existingUser) {
+    //     return res.status(400).json({
+    //       error: "Username already exists",
+    //     });
+    //   }
 
-      // Hash the password for security
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    //   // Hash the password for security
+    //   const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-      // Create a new user based on the role
-      let newUser;
-      switch (role) {
-        case "talent":
-          newUser = new TalentUser({
-            username,
-            password: hashedPassword,
-            fullname,
-            role,
-          });
-          break;
-        case "client":
-          newUser = new ClientUser({
-            username,
-            password: hashedPassword,
-            fullname,
-            role,
-          });
-          break;
-        case "admin":
-          newUser = new AdminUser({
-            username,
-            password: hashedPassword,
-            fullname,
-            role,
-          });
-          break;
-        default:
-          return res.status(400).json({ error: "Invalid role" });
-      }
+    //   // Create a new user based on the role
+    //   let newUser;
+    //   switch (role) {
+    //     case "talent":
+    //       newUser = new TalentUser({
+    //         username,
+    //         password: hashedPassword,
+    //         fullname,
+    //         role,
+    //       });
+    //       break;
+    //     case "client":
+    //       newUser = new ClientUser({
+    //         username,
+    //         password: hashedPassword,
+    //         fullname,
+    //         role,
+    //       });
+    //       break;
+    //     case "admin":
+    //       newUser = new AdminUser({
+    //         username,
+    //         password: hashedPassword,
+    //         fullname,
+    //         role,
+    //       });
+    //       break;
+    //     default:
+    //       return res.status(400).json({ error: "Invalid role" });
+    //   }
 
-      const accessToken = jwt.sign(
-        { userId: newUser._id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
-      newUser.accessToken = accessToken;
+    //   const accessToken = jwt.sign(
+    //     { userId: newUser._id },
+    //     process.env.JWT_SECRET,
+    //     { expiresIn: "1d" }
+    //   );
+    //   newUser.accessToken = accessToken;
 
-      // Save the user to the database
-      await newUser.save();
-      login(username, password);
+    //   // Save the user to the database
+    //   await newUser.save();
+    //   this.login(username, password);
 
-      res.status(200).json({ message: "You have registered successfully" });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+    //   res.status(200).json({ message: "You have registered successfully" });
+    // } catch (error) {
+    //   res.status(500).json({ error: error.message });
+    // }
+    res.status(200).json("abc")
   };
 
   login = async (req, res, next) => {

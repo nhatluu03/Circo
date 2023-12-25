@@ -23,7 +23,7 @@ export default function Register({ setShowRegisterForm }) {
     inputs.role = "client";
     const {confirm_password, ...others} = inputs;
     console.log(others);
-    const response = await axios.post("http://localhost:3000/users/register", others);
+    const response = await axios.post("", others);
     const data = response.data;
     console.log(data);
   };
