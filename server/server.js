@@ -2,7 +2,6 @@ import { User } from "./models/user.model.js";
 import express from "express";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 import roles from "./roles.js";
 import path from "path";
 import route from "./routes/index.js";
