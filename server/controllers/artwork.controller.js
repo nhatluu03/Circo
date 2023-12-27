@@ -10,6 +10,7 @@ class ArtworkController {
   };
 
   index = async (req, res, next) => {
+    
     try {
       const artworks = Artwork.aggregate([
         {
