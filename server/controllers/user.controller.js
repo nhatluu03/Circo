@@ -63,7 +63,7 @@ class UserController {
   };
 
   register = async (req, res, next) => {
-    // try {
+    try {
     //   const { username, password, fullname, role } = req.body;
 
       // Check if the username already exists
