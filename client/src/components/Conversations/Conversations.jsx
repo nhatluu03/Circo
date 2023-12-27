@@ -11,12 +11,14 @@ export default function Conversations() {
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        const userId = JSON.parse(localStorage.getItem("user"))._id;
-        const response = await axios.get(
-          `http://localhost:3000/conversations/user/${userId}`
-        );
-        setConversations(response.data);
-        console.log("conversations: " + response.data);
+        if (user && user._id) {
+          const userId = user._id;
+          const response = await axios.get(
+            `http://localhost:3000/conversations/user/${userId}`
+          );
+          setConversations(response.data);
+          console.log("conversations: " + response.data);
+        }
       } catch (error) {
         console.log(error);
       }

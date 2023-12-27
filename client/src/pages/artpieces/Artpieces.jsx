@@ -1,17 +1,19 @@
 import {useState, useEffect} from 'react';
+import { useParams } from "react-router-dom";
 import "./Artpieces.scss";
 import axios from 'axios';
 
-export default function Artpieces({talentId}) {
-  if (!talentId) {
-    return null;
-  }
+export default function Artpieces() {
+  const { id } = useParams();
+  // if (!talentId) {
+  //   return null;
+  // }
   const [artpieces, setArtpieces] = useState([]);
-
+  
   useEffect(() => {
     const fetchArtpieces = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/artworks/talent/" + talentId);
+        const response = await axios.get("http://localhost:3000/artworks/talent/" + id);
         console.log(response.data);
         setArtpieces(response.data);
       } catch (error) {
