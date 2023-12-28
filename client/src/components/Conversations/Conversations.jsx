@@ -1,12 +1,16 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import "./Conversations.scss";
 import axios from "axios";
 import { UserContext } from "../../contexts/user.context.jsx";
 
 export default function Conversations() {
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [currentChat, setCurrentChat] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [isOpenConversations, SetIsOpenConversations] = useState(false);
   const { user } = useContext(UserContext);
+  const scrollRef = useRef();
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -17,15 +21,23 @@ export default function Conversations() {
             `http://localhost:3000/conversations/user/${userId}`
           );
           setConversations(response.data);
-          console.log("conversations: " + response.data);
-          console.log(response)
         }
       } catch (error) {
         console.log(error);
       }
     };
     fetchConversations();
-  },[isOpenConversations]);
+  }, [isOpenConversations]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(receiverId);
+  };
+  
   return (
     <div className="conversations">
       <button
@@ -67,7 +79,11 @@ export default function Conversations() {
 
           <div className="conversation-container">
             {conversations.map((conversation, index) => (
-              <div className="conversation-item" key={index}>
+              <div
+                className="conversation-item"
+                key={index}
+                onClick={() => setCurrentChat(conversation)}
+              >
                 <img
                   src={conversation.otherMember.avatar}
                   alt=""
@@ -127,6 +143,29 @@ export default function Conversations() {
           </div> */}
 
           <div className="conversation-details">
+          {currentChat ? (
+            <>
+              <div className="chatBoxTop">
+                {messages.map((message) => (
+                  <div key={message._id} ref={scrollRef}>
+                    <Message
+                      message={message}
+                      own={message.sender === currentUser._id}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="chatBoxBottom">
+                <textarea
+                  placeholder="Write something..."
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  value={newMessage}
+                ></textarea>
+                <button onClick={handleSubmit}>Send</button>
+              </div>
+            </>
+          ) : (
+            <>
             <img
               src="https://webaffiliatevn.com/wp-content/uploads/2020/08/IMGLOGO_Primary_CMYK_Blue_Rel_webready.jpg"
               alt=""
@@ -135,6 +174,8 @@ export default function Conversations() {
             <h4>Welcome to ArtHub Chat</h4>
             <hr />
             <p>Choose a conversation to start.</p>
+            </>
+          )}
           </div>
         </div>
       )}
