@@ -6,13 +6,14 @@ import axios from "axios";
 export default function Message({ message, own }) {
   const [sender, setSender] = useState(null);
   useEffect(() => {
-    const senderId = message?.sender;
+    const senderId = message?.senderId;
     const getSender = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/users/?userId=" + senderId
+          "http://localhost:3000/users/" + senderId
         );
         setSender(res.data);
+        console.log(sender)
       } catch (error) {
         console.log(error);
       }
@@ -23,7 +24,7 @@ export default function Message({ message, own }) {
     <div className={own ? "message own" : "message"}>
       <div className="top">
         <img src={sender?.avatar} />
-        <p>{message?.text}</p>
+        <p>{message?.content}</p>
       </div>
       <div className="bottom">{format(message?.createdAt)}</div>
     </div>

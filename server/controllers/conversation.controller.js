@@ -114,7 +114,7 @@ const ConversationController = {
         return res.status(404).json({ error: "Conversation not found" });
       }
 
-      const message = conversation.messages.find(msg => String(msg._id) === messageId);;
+      const message = conversation.messages.find(msg => String(msg._id) === messageId);
 
       if (!message) {
         return res.status(404).json({ error: "Message not found" });

@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, useRef } from "react";
 import "./Conversations.scss";
 import axios from "axios";
 import { UserContext } from "../../contexts/user.context.jsx";
+import Message from "../../pages/messages/Messages";
 
 export default function Conversations() {
   const [messages, setMessages] = useState([]);
@@ -28,6 +29,22 @@ export default function Conversations() {
     };
     fetchConversations();
   }, [isOpenConversations]);
+  //Get Messages
+  useEffect(() => {
+    const getMessages = async () => {
+      try {
+        if (currentChat) {
+          const res = await axios.get(
+            "http://localhost:3000/conversations/" + currentChat?._id
+          );
+          setMessages(res.data.messages);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getMessages();
+  }, [currentChat]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,9 +52,9 @@ export default function Conversations() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(receiverId);
+    
   };
-  
+  console.log(messages)
   return (
     <div className="conversations">
       <button
@@ -150,7 +167,7 @@ export default function Conversations() {
                   <div key={message._id} ref={scrollRef}>
                     <Message
                       message={message}
-                      own={message.sender === currentUser._id}
+                      own={message.senderId === user?._id}
                     />
                   </div>
                 ))}
