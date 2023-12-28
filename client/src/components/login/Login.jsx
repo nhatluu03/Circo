@@ -90,7 +90,8 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
     console.log(others);
 
     // FE validation
-    let isValidLoginInfo = validateInputs();
+    let isValidLoginInfo = true
+    // let isValidLoginInfo = validateInputs();
     if (isValidLoginInfo) {
       try {
         const response = await axios.post(

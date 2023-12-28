@@ -18,15 +18,14 @@ export default function Conversations() {
           );
           setConversations(response.data);
           console.log("conversations: " + response.data);
+          console.log(response)
         }
       } catch (error) {
         console.log(error);
       }
     };
-
     fetchConversations();
-  }, []);
-
+  },[isOpenConversations]);
   return (
     <div className="conversations">
       <button

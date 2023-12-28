@@ -16,7 +16,6 @@ const ConversationController = {
         })
         .select("members messages")
         .exec();
-
       const formattedConversations = conversations.map((conversation) => {
         const otherMember = conversation.members.find(
           (member) => String(member.user._id) !== userId
@@ -41,7 +40,6 @@ const ConversationController = {
           updatedAt: conversation.updatedAt,
         };
       });
-
       res.json(formattedConversations);
     } catch (error) {
       throw error;
@@ -65,8 +63,8 @@ const ConversationController = {
   // Create a new conversation
   createConversation: async (req, res) => {
     try {
-      const { senderId, receiverId } = req.body;
       const newConversation = await Conversation.create(req.body);
+      newConversation.save()
       res.status(200).json(newConversation);
     } catch (error) {
       res.status(500).json({ error: "Internal Server Error" });
@@ -82,12 +80,10 @@ const ConversationController = {
       if (!conversation) {
         return res.status(404).json({ error: "Conversation not found" });
       }
-
       const newMessage = {
         senderId,
         content,
       };
-
       conversation.messages.push(newMessage);
       await conversation.save();
       res.status(200).json(conversation);

@@ -13,9 +13,11 @@ export default function Talent() {
   useEffect(() => {
     const fetchTalent = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/users/" + id);
-        console.log(response.data);
-        setTalent(response.data);
+        if(id){
+          const response = await axios.get("http://localhost:3000/users/" + id);
+          console.log(response.data);
+          setTalent(response.data);
+        }
       } catch (error) {
         console.log(error);
       }

@@ -11,7 +11,6 @@ import { UserContext } from "../../contexts/user.context.jsx";
 
 const Navbar = () => {
   const { user, login, logout } = useContext(UserContext);
-
   useEffect(() => {
     if (localStorage.getItem("user")) {
       login(JSON.parse(localStorage.getItem("user")));
