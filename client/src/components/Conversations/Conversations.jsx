@@ -30,30 +30,28 @@ export default function Conversations() {
         content: data.content,
         createdAt: Date.now(),
       });
-      console.log('hello')
+      console.log('3')
     });
   }, []);
 
   useEffect(() => {
-    if(arrivalMessage){
-      if(conversation?.otherMember.userId === arrivalMessage.senderId){
-        setConversation((prevConversation) => {
-          const updatedConversation = {
-            ...prevConversation,
-            messages: [...prevConversation.messages, arrivalMessage],
-          };
-          console.log(updatedConversation);
-          return updatedConversation;
-        });
-        console.log(conversation)
+    if (arrivalMessage) {
+      if (conversation?.otherMember.userId === arrivalMessage.senderId) {
+        setConversation((prevConversation) => ({
+          ...prevConversation,
+          messages: [...prevConversation.messages, arrivalMessage],
+        }));
+        console.log('4');
       }
     }
   }, [arrivalMessage]);
+  
   //Handle users in a conversation with socket
   useEffect(() => {
     if(user){
       socket.current.emit("addUser", user._id);
       socket.current?.on("getUsers", (users) => {});
+      console.log('5')
     }
   }, [user]);
 
@@ -66,13 +64,14 @@ export default function Conversations() {
             `http://localhost:3000/conversations/user/${userId}`
           );
           setConversations(response.data);
+          console.log('6')
         }
       } catch (error) {
         console.log(error);
       }
     };
     fetchConversations();
-  }, [user?._id]);
+  }, [isOpenConversations]);
 
   //Get Messages
   useEffect(() => {
@@ -83,6 +82,7 @@ export default function Conversations() {
             `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`
           );
           setConversation(res.data);
+          console.log('7')
         }
       } catch (error) {
         console.log(error);
@@ -91,16 +91,15 @@ export default function Conversations() {
     fetchConversation();
   }, [currentChat]);
 
-  useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [conversation]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const message = {
       senderId: user._id,
       content: newMessage,
     };
+    const receiverId = conversation?.otherMember.userId
+    console.log('1')
+    console.log(receiverId)
 
     socket.current.emit("sendMessage", {
       senderId: user?._id,
@@ -113,25 +112,18 @@ export default function Conversations() {
         `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`,
         message
       );
-      setConversation((prevConversation) => {
-        const updatedConversation = {
-          ...prevConversation,
-          messages: [...prevConversation.messages, arrivalMessage],
-        };
-        console.log(updatedConversation);
-        return updatedConversation;
-      });
+      setConversation(res.data);
+      console.log('2')
       setNewMessage("");
     } catch (error) {
       console.log(error);
     }
-    const receiverId = conversation?.otherMember.userId
   };
-  useEffect(()=>{
-    if(conversation){
-      setConversation(conversation)
-    }
-  },[conversation])
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [conversation]);
+
   return (
     <div className="conversations">
       <button

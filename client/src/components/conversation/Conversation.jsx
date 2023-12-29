@@ -1,15 +1,12 @@
-import React, { useEffect } from "react";
-import './Conversation.scss'
+import React from "react";
 
 export const Conversation = ({ conversation }) => {
-  useEffect(() => {
-    conversation = conversation
-    console.log('1')
-  }, [conversation]);
   console.log(conversation)
   return (
     <div className="conversation">
-          <img src={conversation?.otherMember?.avatar} />
+      {conversation && (
+        <>
+          <img src={conversation.otherMember?.avatar} />
           {conversation?.messages.map((message) => {
             return (
               <div key={message._id}>
@@ -17,6 +14,8 @@ export const Conversation = ({ conversation }) => {
               </div>
             );
           })}
+        </>
+      )}
     </div>
   );
 };
