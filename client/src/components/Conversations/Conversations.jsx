@@ -4,6 +4,8 @@ import axios from "axios";
 import { UserContext } from "../../contexts/user.context.jsx";
 import Message from "../../pages/messages/Messages";
 import { Conversation } from "../conversation/Conversation";
+import { io } from "socket.io-client";
+
 
 export default function Conversations() {
   const [messages, setMessages] = useState([]);
@@ -15,6 +17,29 @@ export default function Conversations() {
   let [arrivalMessage, setArrivalMessage] = useState(null);
   const { user } = useContext(UserContext);
   const scrollRef = useRef();
+
+  //Socket Initialization
+  const socket = useRef(null);
+  useEffect(() => {
+    socket.current = io("ws://localhost:8900");
+    
+    //Get message from server
+    socket.current.on("getMessage", (data) => {
+      setArrivalMessage = {
+        senderId: data.senderId,
+        content: data.content,
+        createdAt: Date.now(),
+      };
+    });
+  }, []);
+  //Handle users in a conversation with socket
+  useEffect(() => {
+    if(user){
+      socket.current.emit("addUser", user._id);
+      socket.current?.on("getUsers", (users) => {});
+      
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -58,7 +83,7 @@ export default function Conversations() {
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [conversation]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,6 +102,12 @@ export default function Conversations() {
     } catch (error) {
       console.log(error);
     }
+    const receiverId = conversation?.otherMember.userId
+    socket.current.emit("sendMessage", {
+      senderId: user?._id,
+      receiverId,
+      content: newMessage,
+    });
   };
   return (
     <div className="conversations">

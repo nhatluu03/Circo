@@ -1,7 +1,7 @@
 import React from "react";
+import './Conversation.scss'
 
 export const Conversation = ({ conversation }) => {
-  console.log(conversation)
   return (
     <div className="conversation">
       {conversation && (
