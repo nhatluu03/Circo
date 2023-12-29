@@ -31,20 +31,43 @@ export default function Conversations() {
         createdAt: Date.now(),
       });
       console.log('3')
+
     });
   }, []);
 
   useEffect(() => {
     if (arrivalMessage) {
+      // If arrival message is in the current Conversation
       if (conversation?.otherMember.userId === arrivalMessage.senderId) {
         setConversation((prevConversation) => ({
           ...prevConversation,
           messages: [...prevConversation.messages, arrivalMessage],
+          lastMessage: arrivalMessage, // Update the lastMessage with the new message
         }));
-        console.log('4');
       }
+  
+      // const fetchConversation = async () => {
+      //   try {
+      //     if (currentChat && user && user._id) {
+      //       const res = await axios.get(
+      //         `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`
+      //       );
+      //       setConversation((prevConversation) => ({
+      //         ...prevConversation,
+      //         messages: [...prevConversation.messages, arrivalMessage],
+      //         lastMessage: arrivalMessage, // Update the lastMessage with the new message
+      //       }));
+      //       console.log('7')
+      //     }
+      //   } catch (error) {
+      //     console.log(error);
+      //   }
+      // };
+      // fetchConversation();
     }
   }, [arrivalMessage]);
+  
+  
   
   //Handle users in a conversation with socket
   useEffect(() => {
@@ -123,7 +146,6 @@ export default function Conversations() {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [conversation]);
-
   return (
     <div className="conversations">
       <button
@@ -180,7 +202,7 @@ export default function Conversations() {
                     {conversation.otherMember.username}
                   </p>
                   <p className="conversation-item__info__last-msg">
-                    {conversation.lastMessage.content}
+                    {conversation.lastMessage?.content}
                   </p>
                 </div>
               </div>

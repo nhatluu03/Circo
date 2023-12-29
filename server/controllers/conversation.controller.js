@@ -31,11 +31,13 @@ const ConversationController = {
             fullname: otherMember.user.fullname,
             avatar: otherMember.user.avatar,
           },
-          lastMessage: {
-            senderId: lastMessage.senderId,
-            content: lastMessage.content,
-            reactions: lastMessage.reactions,
-          },
+          lastMessage: !lastMessage
+            ? null
+            : {
+                senderId: lastMessage?.senderId,
+                content: lastMessage?.content,
+                reactions: lastMessage?.reactions,
+              },
           createdAt: conversation.createdAt,
           updatedAt: conversation.updatedAt,
         };
@@ -140,7 +142,7 @@ const ConversationController = {
 
       res.status(200).json(formattedConversation);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   },
