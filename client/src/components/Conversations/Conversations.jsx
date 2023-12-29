@@ -19,25 +19,41 @@ export default function Conversations() {
   const scrollRef = useRef();
 
   //Socket Initialization
-  const socket = useRef(null);
+  const socket = useRef();
   useEffect(() => {
     socket.current = io("ws://localhost:8900");
     
     //Get message from server
     socket.current.on("getMessage", (data) => {
-      setArrivalMessage = {
+      setArrivalMessage({
         senderId: data.senderId,
         content: data.content,
         createdAt: Date.now(),
-      };
+      });
+      console.log('hello')
     });
   }, []);
+
+  useEffect(() => {
+    if(arrivalMessage){
+      if(conversation?.otherMember.userId === arrivalMessage.senderId){
+        setConversation((prevConversation) => {
+          const updatedConversation = {
+            ...prevConversation,
+            messages: [...prevConversation.messages, arrivalMessage],
+          };
+          console.log(updatedConversation);
+          return updatedConversation;
+        });
+        console.log(conversation)
+      }
+    }
+  }, [arrivalMessage]);
   //Handle users in a conversation with socket
   useEffect(() => {
     if(user){
       socket.current.emit("addUser", user._id);
       socket.current?.on("getUsers", (users) => {});
-      
     }
   }, [user]);
 
@@ -56,13 +72,7 @@ export default function Conversations() {
       }
     };
     fetchConversations();
-  }, [isOpenConversations]);
-
-  useEffect(() => {
-    arrivalMessage &&
-      currentChat?.members.includes(arrivalMessage.senderId) &&
-      setMessages((prev) => [...prev, arrivalMessage]);
-  }, [arrivalMessage, currentChat]);
+  }, [user?._id]);
 
   //Get Messages
   useEffect(() => {
@@ -92,23 +102,36 @@ export default function Conversations() {
       content: newMessage,
     };
 
-    try {
-      const res = await axios.put(
-        `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`,
-        message
-      );
-      setConversation(res.data);
-      setNewMessage("");
-    } catch (error) {
-      console.log(error);
-    }
-    const receiverId = conversation?.otherMember.userId
     socket.current.emit("sendMessage", {
       senderId: user?._id,
       receiverId,
       content: newMessage,
     });
+
+    try {
+      const res = await axios.put(
+        `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`,
+        message
+      );
+      setConversation((prevConversation) => {
+        const updatedConversation = {
+          ...prevConversation,
+          messages: [...prevConversation.messages, arrivalMessage],
+        };
+        console.log(updatedConversation);
+        return updatedConversation;
+      });
+      setNewMessage("");
+    } catch (error) {
+      console.log(error);
+    }
+    const receiverId = conversation?.otherMember.userId
   };
+  useEffect(()=>{
+    if(conversation){
+      setConversation(conversation)
+    }
+  },[conversation])
   return (
     <div className="conversations">
       <button
