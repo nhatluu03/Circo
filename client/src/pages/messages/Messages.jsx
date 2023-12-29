@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
 import {format} from 'timeago.js'
-import "./Message.scss";
+import "./Messages.scss";
 import axios from "axios";
 
 export default function Message({ message, own }) {
   const [sender, setSender] = useState(null);
   useEffect(() => {
-    const senderId = message?.senderId;
+    const senderId = message?.sender;
     const getSender = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/users/" + senderId
+          "http://localhost:3000/users/?userId=" + senderId
         );
         setSender(res.data);
-        console.log(sender)
       } catch (error) {
         console.log(error);
       }
@@ -24,7 +23,7 @@ export default function Message({ message, own }) {
     <div className={own ? "message own" : "message"}>
       <div className="top">
         <img src={sender?.avatar} />
-        <p>{message?.content}</p>
+        <p>{message?.text}</p>
       </div>
       <div className="bottom">{format(message?.createdAt)}</div>
     </div>

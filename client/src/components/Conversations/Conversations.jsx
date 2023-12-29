@@ -3,13 +3,16 @@ import "./Conversations.scss";
 import axios from "axios";
 import { UserContext } from "../../contexts/user.context.jsx";
 import Message from "../../pages/messages/Messages";
+import { Conversation } from "../conversation/Conversation";
 
 export default function Conversations() {
   const [messages, setMessages] = useState([]);
+  const [conversation, setConversation] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [currentChat, setCurrentChat] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [isOpenConversations, SetIsOpenConversations] = useState(false);
+  let [arrivalMessage, setArrivalMessage] = useState(null);
   const { user } = useContext(UserContext);
   const scrollRef = useRef();
 
@@ -29,21 +32,28 @@ export default function Conversations() {
     };
     fetchConversations();
   }, [isOpenConversations]);
+
+  useEffect(() => {
+    arrivalMessage &&
+      currentChat?.members.includes(arrivalMessage.senderId) &&
+      setMessages((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage, currentChat]);
+
   //Get Messages
   useEffect(() => {
-    const getMessages = async () => {
+    const fetchConversation = async () => {
       try {
-        if (currentChat) {
+        if (currentChat && user && user._id) {
           const res = await axios.get(
-            "http://localhost:3000/conversations/" + currentChat?._id
+            `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`
           );
-          setMessages(res.data.messages);
+          setConversation(res.data);
         }
       } catch (error) {
         console.log(error);
       }
     };
-    getMessages();
+    fetchConversation();
   }, [currentChat]);
 
   useEffect(() => {
@@ -52,9 +62,22 @@ export default function Conversations() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    const message = {
+      senderId: user._id,
+      content: newMessage,
+    };
+
+    try {
+      const res = await axios.put(
+        `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`,
+        message
+      );
+      setConversation(res.data);
+      setNewMessage("");
+    } catch (error) {
+      console.log(error);
+    }
   };
-  console.log(messages)
   return (
     <div className="conversations">
       <button
@@ -99,7 +122,7 @@ export default function Conversations() {
               <div
                 className="conversation-item"
                 key={index}
-                onClick={() => setCurrentChat(conversation)}
+                onClick={() => setCurrentChat(conversation._id)}
               >
                 <img
                   src={conversation.otherMember.avatar}
@@ -160,39 +183,34 @@ export default function Conversations() {
           </div> */}
 
           <div className="conversation-details">
-          {currentChat ? (
-            <>
-              <div className="chatBoxTop">
-                {messages.map((message) => (
-                  <div key={message._id} ref={scrollRef}>
-                    <Message
-                      message={message}
-                      own={message.senderId === user?._id}
-                    />
+            {currentChat ? (
+              <>
+                <div className="chatBoxTop">
+                  <div>
+                    <Conversation conversation={conversation} />
                   </div>
-                ))}
-              </div>
-              <div className="chatBoxBottom">
-                <textarea
-                  placeholder="Write something..."
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  value={newMessage}
-                ></textarea>
-                <button onClick={handleSubmit}>Send</button>
-              </div>
-            </>
-          ) : (
-            <>
-            <img
-              src="https://webaffiliatevn.com/wp-content/uploads/2020/08/IMGLOGO_Primary_CMYK_Blue_Rel_webready.jpg"
-              alt=""
-              className="conversation-details__bg"
-            />
-            <h4>Welcome to ArtHub Chat</h4>
-            <hr />
-            <p>Choose a conversation to start.</p>
-            </>
-          )}
+                </div>
+                <div className="chatBoxBottom">
+                  <textarea
+                    placeholder="Write something..."
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    value={newMessage}
+                  ></textarea>
+                  <button onClick={handleSubmit}>Send</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <img
+                  src="https://webaffiliatevn.com/wp-content/uploads/2020/08/IMGLOGO_Primary_CMYK_Blue_Rel_webready.jpg"
+                  alt=""
+                  className="conversation-details__bg"
+                />
+                <h4>Welcome to ArtHub Chat</h4>
+                <hr />
+                <p>Choose a conversation to start.</p>
+              </>
+            )}
           </div>
         </div>
       )}

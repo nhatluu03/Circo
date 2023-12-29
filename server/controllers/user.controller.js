@@ -232,7 +232,7 @@ class UserController {
       }
 
       // If profile's not belong to talent or self signed
-      if (user.role != "talent") {
+      if (user.role == "client" || req.userId !== user._id) {
 
         // If
         return res.status(400).json({
