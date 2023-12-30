@@ -133,7 +133,9 @@ export default function Conversations() {
     try {
       const res = await axios.put(
         `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`,
-        message
+        message,{
+          withCredentials: true
+        }
       );
       setConversation(res.data);
       console.log('2')

@@ -96,7 +96,9 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
       try {
         const response = await axios.post(
           "http://localhost:3000/users/login",
-          others
+          others,{
+            withCredentials: true,
+          }
         );
         console.log(response.data);
         console.log(response);
@@ -106,6 +108,7 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
           const user = response.data;
           login(user);
           console.log("User data after Login: " + JSON.stringify(user));
+          console.log(document.cookie)
           // setUser(response.data);
           // Call login route
         } else if (response.status == 400) {
@@ -122,7 +125,7 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
       }
     }
   };
-
+  console.log(document.cookie);
   return (
     <div className="overlay">
       <div className="authentication login">
