@@ -13,10 +13,16 @@ const Pay = () => {
   const [clientSecret, setClientSecret] = useState("");
   const { id } = useParams();
   useEffect(() => {
+    const orderData = {
+      items:[],
+      isCompleted: false
+    }
     const makeRequest = async () => {
       try {
         const res = await axios.post(
-          `http://localhost:3000/orders/create-payment-intent/${id}`
+          `http://localhost:3000/orders/create-payment-intent/${id}`,orderData,{
+            withCredentials: true
+          }
         );
         setClientSecret(res.data.clientSecret);
       } catch (error) {

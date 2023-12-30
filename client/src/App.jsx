@@ -16,6 +16,7 @@ import Talents from "./pages/talents/Talents";
 // import Messenger from "./pages/messenger/Messenger";
 import Commissions from "./pages/commissions/Commissions";
 import Layout from "./Layout";
+import Pay from "./pages/Pay/Pay";
 
 // import Success from "./pages/success/Success";
 
@@ -42,6 +43,10 @@ function App() {
         {
           path: "/artworks",
           element: <Artworks />,
+        },
+        {
+          path: '/pay',
+          element: <Pay/>
         },
         // {
         //   path: "/messenger",

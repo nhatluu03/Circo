@@ -125,7 +125,6 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
       }
     }
   };
-  console.log(document.cookie);
   return (
     <div className="overlay">
       <div className="authentication login">

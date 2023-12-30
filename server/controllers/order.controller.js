@@ -32,18 +32,14 @@ class OrderController {
     //Check whether the type is artwork or commission
     if (artwork) {
       //Add fields
-      orderData.type = {
-        artwork: new mongoose.Types.ObjectId(req.params.id),
-      };
+      orderData.type = "artwork";
       orderData.price = artwork.price;
       orderData.talent = artwork.talent;
       //Stripe Integration
       paymentIntent.amount = artwork.price * 100;
     } else if (commission) {
       //Add fields
-      orderData.type = {
-        commission: new mongoose.Types.ObjectId(req.params.id),
-      };
+      orderData.type = 'commission';
       orderData.price = commission.price;
       orderData.talent = commission.talent;
       //Stripe Integration
@@ -53,12 +49,12 @@ class OrderController {
         error: "Invalid type",
       });
     }
-    
+
     const order = new Order(orderData);
     await order.save();
     res.status(200).send({
       clientSecret: paymentIntent.client_secret,
-  });
+    });
   };
 
   index = async (req, res, next) => {
@@ -81,7 +77,7 @@ class OrderController {
         client: client._id,
         ...req.body,
       };
-      
+
       //Check whether the type is artwork or commission
       if (artwork) {
         orderData.type = {
