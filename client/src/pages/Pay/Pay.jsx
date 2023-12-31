@@ -11,17 +11,24 @@ const stripePromise = loadStripe(
 );
 const Pay = () => {
   const [clientSecret, setClientSecret] = useState("");
-  const { id } = useParams();
+  const appearance = {
+    theme: "stripe",
+  };
+  const options = {
+    clientSecret,
+    appearance,
+  };
+  let phap;
   useEffect(() => {
     const orderData = {
-      type:'',
-      items:[],
+      type:'artwork',
+      items:['655e0f77b34510ad57a479fb','655e1035b34510ad57a479fe','657715a965c22552910f8117'],
       isCompleted: false
     }
     const makeRequest = async () => {
       try {
         const res = await axios.post(
-          `http://localhost:3000/orders/create-payment-intent/${id}`,orderData,{
+          `http://localhost:3000/orders/create-payment-intent/`, orderData,{
             withCredentials: true
           }
         );
@@ -32,14 +39,6 @@ const Pay = () => {
     };
     makeRequest();
   }, []);
-
-  const appearance = {
-    theme: "stripe",
-  };
-  const options = {
-    clientSecret,
-    appearance,
-  };
 
   return (
     <div className="pay">
