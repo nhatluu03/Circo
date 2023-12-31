@@ -74,55 +74,83 @@ class OrderController {
     }
   };
 
-  store = async (req, res, next) => {
-    try {
-      //Find the artwork/commission, client in the database
-      const commission = await Commission.findById(req.params.id);
-      const artwork = await Artwork.findById(req.params.id);
-      const client = await User.findById(req.userId);
-      //Define the orderData
-      let orderData = {
-        client: client._id,
-        ...req.body,
-      };
+  // store = async (req, res, next) => {
+  //   try {
+  //     //Find the artwork/commission, client in the database
+  //     const commission = await Commission.findById(req.params.id);
+  //     const artwork = await Artwork.findById(req.params.id);
+  //     const client = await User.findById(req.userId);
+  //     //Define the orderData
+  //     let orderData = {
+  //       client: client._id,
+  //       ...req.body,
+  //     };
 
-      //Check whether the type is artwork or commission
-      if (artwork) {
-        orderData.type = {
-          artwork: new mongoose.Types.ObjectId(req.params.id),
-        };
-        orderData.price = artwork.price;
-        orderData.talent = artwork.talent;
-      } else if (commission) {
-        orderData.type = {
-          commission: new mongoose.Types.ObjectId(req.params.id),
-        };
-        orderData.price = commission.price;
-        orderData.talent = commission.talent;
-      } else {
-        res.status(404).json({
-          error: "Invalid type",
-        });
-      }
-      const order = new Order(orderData);
-      //Save the order to the database
-      await order.save();
-      res.status(200).json(order);
-    } catch (error) {
-      next(error);
-    }
-  };
+  //     //Check whether the type is artwork or commission
+  //     if (artwork) {
+  //       orderData.type = {
+  //         artwork: new mongoose.Types.ObjectId(req.params.id),
+  //       };
+  //       orderData.price = artwork.price;
+  //       orderData.talent = artwork.talent;
+  //     } else if (commission) {
+  //       orderData.type = {
+  //         commission: new mongoose.Types.ObjectId(req.params.id),
+  //       };
+  //       orderData.price = commission.price;
+  //       orderData.talent = commission.talent;
+  //     } else {
+  //       res.status(404).json({
+  //         error: "Invalid type",
+  //       });
+  //     }
+  //     const order = new Order(orderData);
+  //     //Save the order to the database
+  //     await order.save();
+  //     res.status(200).json(order);
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // };
 
   show = async (req, res, next) => {
     //Check if the order exists
-    console.log(req.params.id);
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id)
     if (!order) {
       return res.status(404).json({
         error: "Order not found",
       });
     }
-    res.status(200).json(order);
+    try {
+      if (order.type == 'artwork') {
+        await Promise.all(order.items.map(async (itemId) => {
+          try {
+            // Dynamically fetch the referenced document using populate
+            await order.populate({
+              path: 'items',
+              match: { _id: itemId }, // Match the specific item in the array
+              select: 'talent', // Select the fields you want to populate
+            }).execPopulate();
+          } catch (error) {
+            console.error(`Error populating item with ID ${itemId}: ${error.message}`);
+          }
+        }));
+      }else if(order.type == 'commission'){
+        await order.populate({
+          path:'items',
+          select:'talent'
+        })
+      }else{
+        res.status(400).json({
+          error: 'Invalid items'
+        })
+      }
+      res.status(200).json(order);
+    } catch (error) {
+      res.status(400).json({
+        error: "Internal server error"
+      })
+    }
   };
 
   update = async (req, res, next) => {
