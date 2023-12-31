@@ -14,6 +14,7 @@ const Pay = () => {
   const { id } = useParams();
   useEffect(() => {
     const orderData = {
+      type:'',
       items:[],
       isCompleted: false
     }
