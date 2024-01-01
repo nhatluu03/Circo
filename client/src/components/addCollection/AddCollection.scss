@@ -1,0 +1,59 @@
+.add-collection-form {
+  display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 35%;
+  border-radius: 8px;
+  background-color: white;
+  z-index: 10000;
+  padding: 16px 30px;
+
+  .masterpiece-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    cursor: pointer;
+    .masterpiece-item {
+      width: 19%;
+      margin-right: 1.2%;
+      border-radius: 8px;
+      position: relative;
+
+      .masterpiece-item__img {
+        width: 100%;
+        min-height: 70px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+
+      .checkbox-overlay {
+        background-color: white;
+        width: 14px;
+        height: 14px;
+        display: block;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        border-radius: 4px;
+        line-height: 20px;
+
+        i {
+        position: absolute;
+          top: 50%;
+          left: 50%;
+          font-size: 1.4rem;
+          transform: translate(-50%, -50%);
+        }
+      }
+
+      &.active {
+        opacity: 0.8;
+      }
+      &:nth-of-type(5n) {
+        margin-right: 0;
+      }
+    }
+  }
+}

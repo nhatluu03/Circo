@@ -8,12 +8,24 @@ const ArtworkSchema = new Schema(
     likes: { type: Number, default: 0 },
     saves: { type: Number, default: 0 },
     description: { type: String },
-    category: { type: mongoose.Schema.Types.ObjectId, ref: 'ArtCategory', required: true },
-    price: { type: Number, required: function () { return this.forSelling; } }, // Make 'price' required based on 'forSelling'
-    forSelling: { type: Boolean, default: false }, // New field to indicate if artwork is for selling
+    category: { type: mongoose.Schema.Types.ObjectId, ref: 'ArtCategory'},
+    price: {
+      type: Number,
+      validate: {
+        validator: function () {
+          // If forSelling is false, ensure that price is not provided
+          return !(this.forSelling === false && this.price !== undefined);
+        },
+        message: 'Cannot set the price when forSelling is false.',
+      },
+    },
+    forSelling: { type: Boolean, default: false, required: true },
   },
   { timestamps: true }
 );
+
+// Indexing for searching
+ArtworkSchema.index({ description: 'text' });
 
 const Artwork = mongoose.model("Artwork", ArtworkSchema);
 export default Artwork;

@@ -13,6 +13,7 @@ import Artwork from "./pages/artwork/Artwork";
 import Challenges from "./pages/challenges/Challenges";
 import Challenge from "./pages/challenge/Challenge";
 import Talents from "./pages/talents/Talents";
+import Reviews from "./pages/reviews/Reviews";
 // import Messenger from "./pages/messenger/Messenger";
 import Commissions from "./pages/commissions/Commissions";
 import Layout from "./Layout";
@@ -32,6 +33,10 @@ function App() {
         {
           path: "/talents/:id/commissions",
           element: <Commissions />,
+        },
+        {
+          path: "/talents/:id/reviews",
+          element: <Reviews />,
         },
       ],
     },

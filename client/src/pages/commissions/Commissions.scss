@@ -1,0 +1,64 @@
+.commissions {
+  .commission-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    .commission-item {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--gray-border-light);
+      padding: 20px 0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .commission-item__sample-container {
+        width: 40%;
+        display: flex;
+        justify-content: space-between;
+        margin-right: 60px;
+        height: 100%;
+
+        .commission-item__sample-item {
+          width: 60%;
+          height: 100%;
+          margin: 1px;
+          object-fit: cover;
+          border-radius: 4px;
+          margin-right: 4px;
+        }
+
+        div {
+          display: flex;
+          justify-content: space-between;
+          flex-direction: column;
+          width: 40%;
+
+          .commission-item__sample-item {
+            width: 100%;
+            margin-right: 0;
+
+            &:nth-of-type(1) {
+                margin-bottom: 2px;
+            }
+            &:nth-of-type(2) {
+                margin-top: 2px;
+            }
+          }
+          
+        }
+      }
+
+      .commission-item__details {
+        .commission-item__details__header {
+            margin: 0
+        }
+      }
+
+      .commission-item__book-btn {
+      }
+    }
+  }
+}

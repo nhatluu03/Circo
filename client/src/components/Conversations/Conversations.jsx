@@ -1,12 +1,78 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
+import { UserContext } from "../../contexts/user.context.jsx";
+import Conversation from "../conversation/Conversation.jsx";
 import "./Conversations.scss";
 import axios from "axios";
-import { UserContext } from "../../contexts/user.context.jsx";
+import { io } from "socket.io-client";
+import ChatboxBg from "../../assets/img/chatbox_bg.png";
 
 export default function Conversations() {
+  const [messages, setMessages] = useState([]);
+  const [conversation, setConversation] = useState(null);
+  const [newMessage, setNewMessage] = useState("");
+  const [currentChat, setCurrentChat] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [isOpenConversations, SetIsOpenConversations] = useState(false);
+  let [arrivalMessage, setArrivalMessage] = useState(null);
   const { user } = useContext(UserContext);
+  const scrollRef = useRef();
+
+  //Socket Initialization
+  const socket = useRef();
+  useEffect(() => {
+    socket.current = io("ws://localhost:8900");
+
+    //Get message from server
+    socket.current.on("getMessage", (data) => {
+      setArrivalMessage({
+        senderId: data.senderId,
+        content: data.content,
+        createdAt: Date.now(),
+      });
+      console.log("3");
+    });
+  }, []);
+
+  useEffect(() => {
+    if (arrivalMessage) {
+      // If arrival message is in the current Conversation
+      if (conversation?.otherMember.userId === arrivalMessage.senderId) {
+        setConversation((prevConversation) => ({
+          ...prevConversation,
+          messages: [...prevConversation.messages, arrivalMessage],
+          lastMessage: arrivalMessage, // Update the lastMessage with the new message
+        }));
+      }
+
+      // const fetchConversation = async () => {
+      //   try {
+      //     if (currentChat && user && user._id) {
+      //       const res = await axios.get(
+      //         `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`
+      //       );
+      //       setConversation((prevConversation) => ({
+      //         ...prevConversation,
+      //         messages: [...prevConversation.messages, arrivalMessage],
+      //         lastMessage: arrivalMessage, // Update the lastMessage with the new message
+      //       }));
+      //       console.log('7')
+      //     }
+      //   } catch (error) {
+      //     console.log(error);
+      //   }
+      // };
+      // fetchConversation();
+    }
+  }, [arrivalMessage]);
+
+  //Handle users in a conversation with socket
+  useEffect(() => {
+    if (user) {
+      socket.current.emit("addUser", user._id);
+      socket.current?.on("getUsers", (users) => {});
+      console.log("5");
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -17,26 +83,83 @@ export default function Conversations() {
             `http://localhost:3000/conversations/user/${userId}`
           );
           setConversations(response.data);
-          console.log("conversations: " + response.data);
+          console.log("6");
         }
       } catch (error) {
         console.log(error);
       }
     };
-
     fetchConversations();
-  }, []);
+  }, [isOpenConversations]);
 
+  //Get Messages
+  useEffect(() => {
+    const fetchConversation = async () => {
+      try {
+        if (currentChat && user && user._id) {
+          const res = await axios.get(
+            `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`
+          );
+          setConversation(res.data);
+          console.log("7");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchConversation();
+  }, [currentChat]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const message = {
+      senderId: user._id,
+      content: newMessage,
+    };
+    const receiverId = conversation?.otherMember.userId;
+    console.log("1");
+    console.log(receiverId);
+
+    socket.current.emit("sendMessage", {
+      senderId: user?._id,
+      receiverId,
+      content: newMessage,
+    });
+
+    try {
+      const res = await axios.put(
+        `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`,
+        message
+      );
+      setConversation(res.data);
+      console.log("2");
+      setNewMessage("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [conversation]);
   return (
     <div className="conversations">
-      <button
+      <button onClick={() => {
+        SetIsOpenConversations(!isOpenConversations);
+      }} className="open-conversations-btn">
+        <i class="fa-regular fa-message"
+      ></i>
+      </button>
+      
+
+      {/* <button
         className="open-conversations-btn"
         onClick={() => {
           SetIsOpenConversations(!isOpenConversations);
         }}
       >
         Open conversations
-      </button>
+      </button> */}
 
       {/* {
         "_id": "6586e9f066e3e33b00b4189f",
@@ -56,30 +179,35 @@ export default function Conversations() {
         <div className="conversations-content">
           <div className="conversation-header">
             <h3 className="conversation-header__title">Conversations</h3>
-            <button
-              className="close-modal-ic"
+            <i
+              className="fa-solid fa-xmark close-modal-ic"
               onClick={() => {
                 SetIsOpenConversations(false);
               }}
-            >
-              close
-            </button>
+            ></i>
           </div>
 
           <div className="conversation-container">
+           
+            {conversations.length == 0 && "No conversation found"}
             {conversations.map((conversation, index) => (
-              <div className="conversation-item" key={index}>
+              <div
+                className="conversation-item"
+                key={index}
+                onClick={() => setCurrentChat(conversation._id)}
+              >
                 <img
                   src={conversation.otherMember.avatar}
                   alt=""
                   className="conversation-item__avt"
                 />
+  
                 <div className="conversation-item__info">
                   <p className="conversation-item__info__fullname">
                     {conversation.otherMember.username}
                   </p>
                   <p className="conversation-item__info__last-msg">
-                    {conversation.lastMessage.content}
+                    {conversation.lastMessage?.content}
                   </p>
                 </div>
               </div>
@@ -128,14 +256,34 @@ export default function Conversations() {
           </div> */}
 
           <div className="conversation-details">
-            <img
-              src="https://webaffiliatevn.com/wp-content/uploads/2020/08/IMGLOGO_Primary_CMYK_Blue_Rel_webready.jpg"
-              alt=""
-              className="conversation-details__bg"
-            />
-            <h4>Welcome to ArtHub Chat</h4>
-            <hr />
-            <p>Choose a conversation to start.</p>
+            {currentChat ? (
+              <>
+                <div className="chatBoxTop">
+                  <div>
+                    <Conversation conversation={conversation} />
+                  </div>
+                </div>
+                <div className="chatBoxBottom">
+                  <textarea
+                    placeholder="Write something..."
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    value={newMessage}
+                  ></textarea>
+                  <button onClick={handleSubmit}>Send</button>
+                </div>
+              </>
+            ) : (
+              <div className="conversation-details__default">
+                <img
+                  src={ChatboxBg}
+                  alt=""
+                  className="conversation-details__default__bg"
+                />
+                <h4>Welcome to ArtHub Chat</h4>
+                <hr />
+                <p>Choose a conversation to start.</p>
+              </div>
+            )}
           </div>
         </div>
       )}

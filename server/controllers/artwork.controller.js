@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import Artwork from "../models/artwork.model.js";
 import createError from "../utils/createError.js";
 import Category from "../models/category.model.js";
-
+import { storage, upload } from "../utils/uploadFiles.js";
 class ArtworkController {
   isOwner = (artwork, userId) => {
     return artwork.talent.toString() === userId.toString();
@@ -23,25 +23,38 @@ class ArtworkController {
   };
 
   store = async (req, res, next) => {
-    const { user } = req;
-    if (user.role === "client")
-      return res.status(400).json({
-        error: "You don't have enough permission to create artwork",
-      });
-    const { talent, categoryId, ...artworkData } = req.body; // Destructure talent, category from req.body
-    const category = Category.findById(categoryId);
-    const artwork = new Artwork({
-      talent: user._id, // Convert talent to ObjectId
-      category,
-      ...artworkData,
-    });
+    // const { user } = req;
+    // if (user.role === "client")
+    //   return res.status(400).json({
+    //     error: "You don't have enough permission to create artwork",
+    //   });
+    console.log("BODY");
+    // console.log(req);
+    console.log(req.body);
+    // console.log(req.body.images);
+    // let { categoryId, images, ...artworkData } = req.body; // Destructure talent, category from req.body
+    // let imagePaths = images.map((file) => file.name);
+    // console.log(imagePaths);
+    // let newArtworkData = {
+    //   talent: user._id, // Convert talent to ObjectId
+    //   images: imagePaths,
+    //   ...artworkData,
+    // };
 
-    try {
-      const newArtwork = await artwork.save();
-      res.status(201).json(newArtwork);
-    } catch (error) {
-      next(error);
-    }
+    // if (categoryId) {
+    //   const category = Category.findById(categoryId);
+    //   newArtworkData.category = category;
+    // }
+    // const artwork = new Artwork(newArtworkData);
+
+    // try {
+    //   const newArtwork = await artwork.save();
+    //   console.log(images);
+    //   upload.array(images);
+    //   res.status(201).json(newArtwork);
+    // } catch (error) {
+    //   next(error);
+    // }
   };
 
   show = async (req, res, next) => {
@@ -114,13 +127,24 @@ class ArtworkController {
     const { talentId } = req.params;
     try {
       // Fetch artworks associated with the specified talentId
-      const artworks = await Artwork.find({ talent:talentId });
+      const artworks = await Artwork.find({ talent: talentId });
 
       res.status(200).json(artworks);
     } catch (error) {
       next(error);
     }
   };
+
+  // Additional methods
+  uploadImages = async (req, res, next) => {
+    try {
+      const files = req.files;
+      const imagePaths = files.map((file) => file.path);
+      res.status(200).json(imagePaths);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new ArtworkController();

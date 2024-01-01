@@ -4,10 +4,13 @@
   --gray-text-color-light: #3C3C3C;
   --white-text-color-light: #FFFFFF;
   --green-link-color-light: #0EB75C;
+  --green-light: #31AC9D;
   
   --gray-bg-light: #f0f0f0;
   --black-bg-light: #202024;
   --gray-button-light: #3E3E3E;
+  --gray-border-light: #d5d5d5;
+  --rating-star-light: #FFB70C;
 
   --field-border-light: #d2d2d2;
   --form-field-bg-light: #F7F7F7;
@@ -123,15 +126,45 @@ button {
     transition: 0.05s;
   }
 }
+
 .btn-1 {
+  border: 1px solid var(--field-border-light);
+}
+
+.btn-2 {
   border: 1px solid black;
   // background-color: white;
 }
 
-.btn-2 {
+.btn-3 {
   background-color: var(--black-bg-light);
   color: var(--white-text-color-light);
 }
+
+.btn {
+
+  &.lg {
+    padding: 12px 28px;
+    border-radius: 8px;
+  } 
+
+  &.md {
+    padding: 10px 18px;
+    border-radius: 6px;
+  }
+
+  &.sm {
+    padding: 8px 12px;
+    border-radius: 4px;
+  }
+
+  &.xm {
+    padding: 6px 10px;
+    border-radius: 4px;
+  }
+}
+
+
 
 button:hover {
   opacity: 0.9;
@@ -258,6 +291,27 @@ hr {
   justify-content: space-between;
   flex-wrap: wrap;
   margin-bottom: 16px;
+}
+
+.form-field--upload {
+  text-align: center;
+  padding: 28px;
+  margin: 18px 0;
+  border: 2.5px dashed var(--green-light);
+  border-radius: 8px;
+
+  input {
+    display: none;
+  }
+
+  i {
+    font-size: 3rem;
+  }
+
+  p {
+    opacity: 0.9;
+    margin: 8px 0 0;
+  }
 }
 
 .form-field__label {

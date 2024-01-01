@@ -1,0 +1,16 @@
+.conversation {
+    .conversation-header {
+        background-color: white;
+
+    }
+
+    .conversation-message-container {
+        display: flex;
+        justify-content: space-between;
+        .conversation-message-item {
+            background-color: white;
+    box-shadow: #86beff 0px 5px 8px;
+            
+        }
+    }
+}

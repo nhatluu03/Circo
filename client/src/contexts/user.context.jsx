@@ -1,16 +1,21 @@
-import { createContext, useState } from 'react';
+import { createContext, useState } from "react";
+import Cookies from "universal-cookie";
+
 const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
+  const cookies = new Cookies();
+
   const [user, setUser] = useState(null);
 
   const login = (user) => {
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user));
+    cookies.set("accessToken", user.accessToken);
     setUser(user);
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
     setUser(null);
   };
 

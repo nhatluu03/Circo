@@ -44,6 +44,7 @@ class UserController {
       // }
       // req.user = user;
       // next();
+      console.log(req.cookies);
       const token = req.cookies.accessToken;
       if (!token) return next(createError(401, "You are not authenticated!"));
       jwt.verify(token, process.env.JWT_SECRET, async (error, payload) => {
@@ -155,17 +156,12 @@ class UserController {
           expiresIn: "1d",
         }
       );
-
       const { password, ...others } = user._doc;
-
-      res
-        .cookie("accessToken", accessToken, {
-          httpOnly: true, // This ensures the cookie is only accessible by the server
-          secure: process.env.NODE_ENV === "production", // Use secure cookie in production
-          maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time in milliseconds (1 day in this example)
-        })
-        .status(200)
-        .send(others);
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true, // This ensures the cookie is only accessible by the server
+        maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time in milliseconds (1 day in this example)
+      });
+      res.status(200).send(others);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -175,7 +171,7 @@ class UserController {
     res
       .clearCookie("accessToken", {
         sameSite: "none",
-        secure: true,
+        // secure: true,
       })
       .status(200)
       .send("User has been logged out.");
@@ -233,7 +229,6 @@ class UserController {
 
       // If profile's not belong to talent or self signed
       if (user.role != "talent") {
-
         // If
         return res.status(400).json({
           error: "You cannot view this profile",

@@ -9,6 +9,27 @@
 
 .talent-profile--right {
   width: 72%;
+
+  .talent-profile__bg {
+    position: relative;
+
+    .edit-cover-btn {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      font-size: 1.2rem;
+
+      i {
+        font-size: 1.3rem;
+      }
+    }
+  }
 }
 
 .talent-profile__bg-img {

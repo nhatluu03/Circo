@@ -1,0 +1,12 @@
+.edit-cover-form {
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 35%;
+    border-radius: 8px;
+    background-color: white;
+    z-index: 10000;
+    padding: 16px 30px;
+}

@@ -76,7 +76,8 @@ const UserSchema = new Schema(
 //   next();
 // });
 
-
+// Indexing for searching
+UserSchema.index({ fullname: 'text', username: 'text', bio: 'text' });
 
 const User = mongoose.model("User", UserSchema);
 // Define a discriminator for the "talent" role

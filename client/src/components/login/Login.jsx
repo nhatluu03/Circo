@@ -24,7 +24,6 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
   const internalErrRef = useRef();
   const navigate = useNavigate();
 
-
   function validateInputs() {
     const usernameVal = inputs.username;
     const passwordVal = inputs.password;
@@ -65,15 +64,9 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
       showSuccess(passwordErrRef);
     }
 
-    console.log(
-      isValidUsername,
-      isValidPassword
-    );
+    console.log(isValidUsername, isValidPassword);
 
-    return (
-      isValidUsername &&
-      isValidPassword
-    );
+    return isValidUsername && isValidPassword;
   }
 
   const handleChange = (e) => {
@@ -90,7 +83,7 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
     console.log(others);
 
     // FE validation
-    let isValidLoginInfo = validateInputs();
+    let isValidLoginInfo = true;  //validateInputs()
     if (isValidLoginInfo) {
       try {
         const response = await axios.post(
@@ -123,7 +116,9 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
   };
 
   return (
-    <div className="overlay">
+    <>
+      <div className="overlay" onClick={() => setShowLoginForm(false)}></div>
+
       <div className="authentication login">
         <div className="authentication-left">
           <img src={AuthenticationBg} alt="Background image of Login" />
@@ -190,10 +185,17 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
           </form>
           <p className="form-extra-text">
             Not have an account yet?{" "}
-            <span className="form-extra-text__link" onClick={() => {setShowRegisterForm(true), setShowLoginForm(false)}}>Sign up</span>
+            <span
+              className="form-extra-text__link"
+              onClick={() => {
+                setShowRegisterForm(true), setShowLoginForm(false);
+              }}
+            >
+              Sign up
+            </span>
           </p>
         </div>
       </div>
-    </div>
+    </>
   );
 }

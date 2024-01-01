@@ -5,6 +5,7 @@ import UserController from '../controllers/user.controller.js';
 const router = express.Router();
 
 router.get('/', ArtworkController.index);
+router.post('/images', ArtworkController.uploadImages)
 router.post('/', UserController.allowIfLoggedIn, UserController.grantAccess('createOwn', 'profile'), ArtworkController.store);
 router.get('/:id', ArtworkController.show);
 router.get('/talent/:talentId', ArtworkController.getArtpieces);

@@ -11,6 +11,7 @@ import cors from 'cors'
 
 const app = express();
 
+app.use(cookieParser());
 app.use(cors({
   origin:"http://localhost:5173",
   methods:"GET, HEAD, PUT, PATCH, POST, DELETE",
@@ -18,7 +19,6 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(cookieParser());
 
 const PORT = process.env.PORT || 3000;
 
@@ -28,30 +28,30 @@ mongoose.connect(process.env.MONGO).then(() => {
 
 // app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(async (req, res, next) => {
-  if (req.headers["x-access-token"]) {
-    try {
-      const accessToken = req.headers["x-access-token"];
-      const { userId, exp } = await jwt.verify(
-        accessToken,
-        process.env.JWT_SECRET
-      );
-      // If token has expired
-      if (exp < Date.now().valueOf() / 1000) {
-        return res.status(401).json({
-          error: "JWT token has expired, please login to obtain a new one",
-        });
-      }
-      res.locals.loggedInUser = await User.findById(userId);
+// app.use(async (req, res, next) => {
+//   if (req.headers["x-access-token"]) {
+//     try {
+//       const accessToken = req.headers["x-access-token"];
+//       const { userId, exp } = await jwt.verify(
+//         accessToken,
+//         process.env.JWT_SECRET
+//       );
+//       // If token has expired
+//       if (exp < Date.now().valueOf() / 1000) {
+//         return res.status(401).json({
+//           error: "JWT token has expired, please login to obtain a new one",
+//         });
+//       }
+//       res.locals.loggedInUser = await User.findById(userId);
 
-      next();
-    } catch (error) {
-      next(error);
-    }
-  } else {
-    next();
-  }
-});
+//       next();
+//     } catch (error) {
+//       next(error);
+//     }
+//   } else {
+//     next();
+//   }
+// });
 
 route(app);
 
