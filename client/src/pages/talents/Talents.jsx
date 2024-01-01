@@ -55,7 +55,7 @@ export default function Talents() {
             <img
               src={
                 talent.top3Artworks.length >= 1
-                  ? talent.top3Artworks[1].image
+                  ? talent.top3Artworks[1]?.image
                   : "https://www.hobbycraft.co.uk/dw/image/v2/BHCG_PRD/on/demandware.static/-/Sites-hobbycraft-uk-master/default/dwb4e5319b/images/Ideas/art/main/ideas_main_how-to-create-a-large-scale-abstract-artwork.jpg?sw=680&q=85"
               }
               className="talent-item__bg-item"
@@ -63,7 +63,7 @@ export default function Talents() {
             <img
               src={
                 talent.top3Artworks.length >= 1
-                  ? talent.top3Artworks[2].image
+                  ? talent.top3Artworks[2]?.image
                   : "https://www.hobbycraft.co.uk/dw/image/v2/BHCG_PRD/on/demandware.static/-/Sites-hobbycraft-uk-master/default/dwb4e5319b/images/Ideas/art/main/ideas_main_how-to-create-a-large-scale-abstract-artwork.jpg?sw=680&q=85"
               }
               className="talent-item__bg-item"

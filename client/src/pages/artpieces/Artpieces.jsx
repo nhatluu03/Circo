@@ -38,7 +38,7 @@ export default function Artpieces() {
             src="https://picsum.photos/200"
             alt="Collection background"
           />
-          <span className="collection-item__title">Painting</span>
+          <span className="collection-item__title">All</span>
         </button>
         <button className="collection-item">
           <img
@@ -46,7 +46,7 @@ export default function Artpieces() {
             src="https://picsum.photos/200"
             alt="Collection background"
           />
-          <span className="collection-item__title">Painting</span>
+          <span className="collection-item__title">Illustration</span>
         </button>
         <button className="collection-item">
           <img
@@ -54,7 +54,7 @@ export default function Artpieces() {
             src="https://picsum.photos/200"
             alt="Collection background"
           />
-          <span className="collection-item__title">Painting</span>
+          <span className="collection-item__title">Handmade</span>
         </button>
         <button className="collection-item">
           <img
@@ -62,7 +62,7 @@ export default function Artpieces() {
             src="https://picsum.photos/200"
             alt="Collection background"
           />
-          <span className="collection-item__title">Painting</span>
+          <span className="collection-item__title">Posters</span>
         </button>
         <button
           className="collection-item"
@@ -79,7 +79,8 @@ export default function Artpieces() {
         {artpieces.map((artpiece, index) => {
           return (
             <div className="artpiece-item" key={index}>
-              <img src={artpiece.images[0]} alt="" />
+              {/* <img src={`../../public/uploads/artworks/${artpiece.images[0]}`} alt="" /> */}
+              <img src={`${artpiece.images[0]}`} alt="" />
             </div>
           );
         })}

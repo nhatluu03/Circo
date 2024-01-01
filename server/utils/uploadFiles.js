@@ -1,11 +1,12 @@
 import multer from "multer";
 
+
 export const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "../uploads/artworks/"); // Specify the directory where the files will be stored
+    cb(null, ".././client/public/uploads/artworks");
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "_" + file.originalname); // Use a unique filename
+    cb(null, Date.now() + file.originalname);
   },
 });
 

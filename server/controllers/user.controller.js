@@ -37,19 +37,7 @@ class UserController {
 
   allowIfLoggedIn = async (req, res, next) => {
     try {
-      // const user = res.locals.loggedInUser;
-      // if (!user) {
-      //   return res.status(401).json({
-      //     error: "You need to login to access this resource",
-      //   });
-      // }
-      // req.user = user;
-      // next();
-<<<<<<< HEAD
-      console.log(req.cookies);
-=======
       console.log(req.cookies)
->>>>>>> phap_luu_quoc
       const token = req.cookies.accessToken;
       if (!token) return next(createError(401, "You are not authenticated!"));
       jwt.verify(token, process.env.JWT_SECRET, async (error, payload) => {
@@ -70,7 +58,7 @@ class UserController {
 
   register = async (req, res, next) => {
     try {
-    //   const { username, password, fullname, role } = req.body;
+      const { username, password, fullname, role } = req.body;
 
       // Check if the username already exists
       const existingUser = await User.findOne({ username });
@@ -80,39 +68,39 @@ class UserController {
         });
       }
 
-    //   // Hash the password for security
-    //   const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      // Hash the password for security
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-    //   // Create a new user based on the role
-    //   let newUser;
-    //   switch (role) {
-    //     case "talent":
-    //       newUser = new TalentUser({
-    //         username,
-    //         password: hashedPassword,
-    //         fullname,
-    //         role,
-    //       });
-    //       break;
-    //     case "client":
-    //       newUser = new ClientUser({
-    //         username,
-    //         password: hashedPassword,
-    //         fullname,
-    //         role,
-    //       });
-    //       break;
-    //     case "admin":
-    //       newUser = new AdminUser({
-    //         username,
-    //         password: hashedPassword,
-    //         fullname,
-    //         role,
-    //       });
-    //       break;
-    //     default:
-    //       return res.status(400).json({ error: "Invalid role" });
-    //   }
+      // Create a new user based on the role
+      let newUser;
+      switch (role) {
+        case "talent":
+          newUser = new TalentUser({
+            username,
+            password: hashedPassword,
+            fullname,
+            role,
+          });
+          break;
+        case "client":
+          newUser = new ClientUser({
+            username,
+            password: hashedPassword,
+            fullname,
+            role,
+          });
+          break;
+        case "admin":
+          newUser = new AdminUser({
+            username,
+            password: hashedPassword,
+            fullname,
+            role,
+          });
+          break;
+        default:
+          return res.status(400).json({ error: "Invalid role" });
+      }
 
       const accessToken = jwt.sign(
         { userId: newUser._id },
@@ -175,10 +163,7 @@ class UserController {
     res
       .clearCookie("accessToken", {
         sameSite: "none",
-<<<<<<< HEAD
         // secure: true,
-=======
->>>>>>> phap_luu_quoc
       })
       .status(200)
       .send("User has been logged out.");
@@ -224,30 +209,30 @@ class UserController {
   };
 
   show = async (req, res, next) => {
+    const targetUserId = req.params.id;
+    const currentUserId = res.query?.userId;
+    console.log(currentUserId)
+
     try {
-      const user = await User.findById(req.params.id);
+      const targetUser = await User.findById(targetUserId);
+      const currentUser = await User.findById(currentUserId);
+      console.log(currentUser);
 
       // Check if user exists
-      if (!user) {
+      if (!targetUser) {
         return res.status(404).json({
           error: "User not found",
         });
       }
 
-      // If profile's not belong to talent or self signed
-<<<<<<< HEAD
-      if (user.role != "talent") {
-=======
-      if (user.role == "client" || req.userId !== user._id) {
-
->>>>>>> phap_luu_quoc
-        // If
+      // // Check view profile privillidges
+      if (!((!currentUser && targetUser.role == "talent") || ((targetUser.role == "talent")(currentUserId == targetUserId && currentUser.role == "client")))) {
         return res.status(400).json({
           error: "You cannot view this profile",
         });
       }
 
-      const { accessToken, password, updatedAt, ...other } = user._doc;
+      const { accessToken, password, updatedAt, ...other } = targetUser._doc;
       res.status(200).json(other);
     } catch (error) {
       next(error);

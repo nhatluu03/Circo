@@ -20,7 +20,7 @@ export default function EditCover({setShowEditCoverForm}) {
         <h2 className="form-title">Change cover artwork</h2>
         <div className="form-field">
           <label htmlFor="edit-cover" className="form-field__label">Cover photo</label>
-          <input type="text" id="edit-cover" name="cover" className="form-field__input"/>
+          <input type="file" id="edit-cover" name="cover" className="form-field__input"/>
         </div>
       </form>
     </>

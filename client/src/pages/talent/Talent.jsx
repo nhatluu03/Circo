@@ -22,11 +22,24 @@ export default function Talent() {
   // Toggle display edit-cover-form
   const [showEditCoverForm, setShowEditCoverForm] = useState(false);
 
+  //Toggle active buttons
+  const [activeButton, setActiveButton] = useState("artworks");
+  const handleButtonClick = (buttonName) => {
+    setActiveButton(buttonName);
+  };
+
   useEffect(() => {
     const fetchTalent = async () => {
       try {
-        if(id){
-          const response = await axios.get("http://localhost:3000/users/" + id);
+        if (id) {
+          console.log(id);
+          console.log(user?._id);
+          const response = await axios.get(
+            `http://localhost:3000/users/${id}?userId=${user?._id}`,
+            {
+              widthCredentials: true,
+            }
+          );
           console.log(response.data);
           setTalent(response.data);
         }
@@ -47,7 +60,8 @@ export default function Talent() {
         <div className="talent-profile--right">
           <div className="talent-profile__bg">
             <img
-              src={talent?.bg ? talent.bg : defaultBackground}
+              // src={talent?.bg ? talent.bg : defaultBackground}
+              src="https://i.pinimg.com/564x/95/cf/0b/95cf0b39d3c0d8d54d3a9d02b03b8833.jpg"
               className="talent-profile__bg-img"
             />
             <button
@@ -63,28 +77,38 @@ export default function Talent() {
           <div className="talent-profile__button-container">
             <div className="talent-profile__button-container--left">
               <Link to={`talents/${talent?._id}`}>
-                <button className="talent-profile__button-item active">
+                <button
+                  className={`talent-profile__button-item ${
+                    activeButton === "artworks" ? "active" : ""
+                  }`}
+                >
                   <i className="bx bx-palette"></i>
                   Artworks
                 </button>
               </Link>
 
               <Link to={`talents/${talent?._id}/about`}>
-                <button className="talent-profile__button-item">
+                <button className={`talent-profile__button-item ${
+                    activeButton === "about" ? "active" : ""
+                  }`}>
                   <i className="bx bx-info-circle"></i>
                   About
                 </button>
               </Link>
 
               <Link to={`talents/${talent?._id}/commissions`}>
-                <button className="talent-profile__button-item">
+                <button className={`talent-profile__button-item ${
+                    activeButton === "commissions" ? "active" : ""
+                  }`}>
                   <i className="bx bx-cart"></i>
                   Commissions
                 </button>
               </Link>
 
               <Link to={`talents/${talent?._id}/reviews`}>
-                <button className="talent-profile__button-item">
+                <button className={`talent-profile__button-item ${
+                    activeButton === "reviews" ? "active" : ""
+                  }`}>
                   <i className="bx bx-star"></i>
                   Reviews
                 </button>
@@ -115,7 +139,7 @@ export default function Talent() {
         )}
 
         {showEditCoverForm && (
-         <EditCover setShowEditCoverForm={setShowEditCoverForm}/>
+          <EditCover setShowEditCoverForm={setShowEditCoverForm} />
         )}
       </div>
     </>

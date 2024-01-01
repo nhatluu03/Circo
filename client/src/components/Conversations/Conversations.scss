@@ -34,6 +34,7 @@
     width: 38%;
     background-color: white;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    z-index: 100;
 
     .conversation-header {
       display: flex;
@@ -55,7 +56,8 @@
 
     .conversation-container {
       width: calc(30% - 16px);
-      padding-left: 16px;
+      padding: 12px 0 0 16px;
+
       .conversation-item {
         display: flex;
         align-items: center;
@@ -92,12 +94,11 @@
       }
     }
 
-    .conversation-details {
+    .conversation--right {
       text-align: center;
       width: 70%;
       background-color: var(--gray-bg-light);
       height: 45vh;
-      overflow-y: scroll;
       border-left: 1px solid var(--gray-border-light);
 
       .conversation-details__default {

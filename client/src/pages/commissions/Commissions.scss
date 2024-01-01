@@ -9,13 +9,14 @@
       align-items: center;
       border-bottom: 1px solid var(--gray-border-light);
       padding: 20px 0;
+      // height: 200px;
 
       &:last-child {
         border-bottom: none;
       }
 
       .commission-item__sample-container {
-        width: 40%;
+        width: 35%;
         display: flex;
         justify-content: space-between;
         margin-right: 60px;
@@ -41,19 +42,27 @@
             margin-right: 0;
 
             &:nth-of-type(1) {
-                margin-bottom: 2px;
+              margin-bottom: 2px;
+              height: 50%;
             }
             &:nth-of-type(2) {
-                margin-top: 2px;
+              margin-top: 2px;
+              height: 50%;
             }
           }
-          
         }
       }
 
       .commission-item__details {
+        position: relative;
         .commission-item__details__header {
-            margin: 0
+          margin: 0;
+        }
+
+        i {
+          position: absolute;
+          top: 0;
+          right: 0;
         }
       }
 

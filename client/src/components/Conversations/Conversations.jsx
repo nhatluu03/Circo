@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext, useRef } from "react";
 import { UserContext } from "../../contexts/user.context.jsx";
 import Conversation from "../conversation/Conversation.jsx";
-import "./Conversations.scss";
 import axios from "axios";
 import { io } from "socket.io-client";
 import ChatboxBg from "../../assets/img/chatbox_bg.png";
+import "./Conversations.scss";
 
 export default function Conversations() {
   const [messages, setMessages] = useState([]);
@@ -110,47 +110,21 @@ export default function Conversations() {
     fetchConversation();
   }, [currentChat]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const message = {
-      senderId: user._id,
-      content: newMessage,
-    };
-    const receiverId = conversation?.otherMember.userId;
-    console.log("1");
-    console.log(receiverId);
-
-    socket.current.emit("sendMessage", {
-      senderId: user?._id,
-      receiverId,
-      content: newMessage,
-    });
-
-    try {
-      const res = await axios.put(
-        `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`,
-        message
-      );
-      setConversation(res.data);
-      console.log("2");
-      setNewMessage("");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [conversation]);
   return (
     <div className="conversations">
-      <button onClick={() => {
-        SetIsOpenConversations(!isOpenConversations);
-      }} className="open-conversations-btn">
-        <i class="fa-regular fa-message"
-      ></i>
+      <button
+        onClick={() => {
+          SetIsOpenConversations(!isOpenConversations);
+        }}
+        className="open-conversations-btn"
+      >
+        <i class="fa-regular fa-message"></i>
       </button>
-      
 
       {/* <button
         className="open-conversations-btn"
@@ -187,8 +161,7 @@ export default function Conversations() {
             ></i>
           </div>
 
-          <div className="conversation-container">
-           
+          <div className="conversation--left conversation-container">
             {conversations.length == 0 && "No conversation found"}
             {conversations.map((conversation, index) => (
               <div
@@ -201,7 +174,7 @@ export default function Conversations() {
                   alt=""
                   className="conversation-item__avt"
                 />
-  
+
                 <div className="conversation-item__info">
                   <p className="conversation-item__info__fullname">
                     {conversation.otherMember.username}
@@ -255,23 +228,9 @@ export default function Conversations() {
             </div>
           </div> */}
 
-          <div className="conversation-details">
+          <div className="conversation--right">
             {currentChat ? (
-              <>
-                <div className="chatBoxTop">
-                  <div>
-                    <Conversation conversation={conversation} />
-                  </div>
-                </div>
-                <div className="chatBoxBottom">
-                  <textarea
-                    placeholder="Write something..."
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    value={newMessage}
-                  ></textarea>
-                  <button onClick={handleSubmit}>Send</button>
-                </div>
-              </>
+              <Conversation conversation={conversation} />
             ) : (
               <div className="conversation-details__default">
                 <img

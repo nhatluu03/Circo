@@ -3,12 +3,11 @@ import "./UploadArtwork.scss";
 import { UserContext } from "../../contexts/user.context.jsx";
 import defaultAvatar from "../../assets/img/default_avt.png";
 import axios from "axios";
-import Cookies from "universal-cookie";
+import { makeRequest } from "../../axios.js";
 
 export default function UploadArtwork({ setShowUploadArtworkForm }) {
   const { user, login } = useContext(UserContext);
   const [files, setFiles] = useState([]);
-  const cookies = new Cookies();
 
   // Dropdown list of art categories
   const [categories, setCategories] = useState([]);
@@ -47,35 +46,64 @@ export default function UploadArtwork({ setShowUploadArtworkForm }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // formData.append('description', inputs.description);
-    // let images = []
-    // for (const file of files) {
-    //   images.push(file)
-    // }
-
-    // console.log(formData.get("images"))
-    // const data = {
-    //   images: images,
-    // }
-
     try {
-      // Upload images
-      const images_response = await fetch({
-        method: 'POST',
-        url: 'http://localhost:3000/artworks/images',
-      })
-      // const formData = new FormData();
-      // formData.append("abc", "def");
-      // const response = axios.post("http://localhost:3000/artworks/", formData, {
+      // Step 2: Post image to url2
+      const file = files[0];
+
+      const formData = new FormData();
+      formData.append("file", file);
+      const res1 = await axios.post("http://localhost:3000/artworks/upload", formData, {
+        withCredentials:true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      });
+
+      console.log(user)
+
+      const imgUrl = res1.data.url;
+      console.log(imgUrl)
+
+
+      // Step 1: Post artwork data to url1
+      inputs.images = [
+        imgUrl
+      ]
+      console.log(inputs)
+      console.log(inputs)
+      const res2 = await axios.post('http://localhost:3000/artworks/', inputs, {
+        withCredentials: true
+      });
+      console.log('Artwork Data:', res2.data);
+
+   
+
+
+
+      // const response2 = await axios.post('http://localhost:3000/artworks/uploads', files, {
       //   withCredentials: true,
       //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      //   transformRequest: (data, headers) => {
-      //     return formData;
+      //     'Content-Type': 'multipart/form-data',
       //   },
       // });
-      // console.log(response);
+      // console.log('Image URL:', response2.data.imageUrl);
+    
+
+      // const res = fetch("http://localhost:3000/artworks/upload", {
+      //   method: "POST",
+      //   headers: {
+      //     'Accept': 'application/json',
+      //     'Content-Type': 'application/json'
+      //   },
+      
+      //   //make sure to serialize your JSON body
+      //   body: formData
+      // })
+      // .then( (response) => { 
+      //   console.log(respose)
+      //    //do something awesome that makes the world a better place
+      // });
+
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +118,7 @@ export default function UploadArtwork({ setShowUploadArtworkForm }) {
       <form
         className="form upload-artwork-form"
         onSubmit={handleSubmit}
-        type="multipart/form-data"
+        encType="multipart/form-data"
       >
         <img
           className="form-close-ic"
