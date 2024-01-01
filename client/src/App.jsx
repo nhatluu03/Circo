@@ -17,6 +17,8 @@ import Reviews from "./pages/reviews/Reviews";
 // import Messenger from "./pages/messenger/Messenger";
 import Commissions from "./pages/commissions/Commissions";
 import Layout from "./Layout";
+import Pay from "./pages/pay/Pay";
+import Order from "./pages/order/Order";
 
 // import Success from "./pages/success/Success";
 
@@ -47,6 +49,14 @@ function App() {
         {
           path: "/artworks",
           element: <Artworks />,
+        },
+        {
+          path: '/order',
+          element: <Order/>
+        },
+        {
+          path: '/order/pay',
+          element: <Pay/>
         },
         // {
         //   path: "/messenger",

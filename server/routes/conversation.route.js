@@ -12,7 +12,7 @@ const router = express.Router();
 router.get('/user/:userId', ConversationController.getConversationsByUserId);
 router.get('/:id', ConversationController.getConversationById);
 router.post('/', ConversationController.createConversation);
-router.put('/:id', ConversationController.sendMessage);
+router.put('/:id',UserController.allowIfLoggedIn, ConversationController.sendMessage);
 router.put('/:id/messages/:messageId/react', ConversationController.reactOnMessage);
 
 // router.get('/', ConversationController.index);

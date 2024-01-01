@@ -12,6 +12,7 @@ import roles from "../roles.js";
 import "mongoose";
 import "../utils/loadEnv.js";
 import createError from "../utils/createError.js";
+import 'cookie-parser'
 
 class UserController {
   async validatePassword(plaintPassword, hashedPassword) {
@@ -44,7 +45,11 @@ class UserController {
       // }
       // req.user = user;
       // next();
+<<<<<<< HEAD
       console.log(req.cookies);
+=======
+      console.log(req.cookies)
+>>>>>>> phap_luu_quoc
       const token = req.cookies.accessToken;
       if (!token) return next(createError(401, "You are not authenticated!"));
       jwt.verify(token, process.env.JWT_SECRET, async (error, payload) => {
@@ -65,7 +70,7 @@ class UserController {
 
   register = async (req, res, next) => {
     try {
-      const { username, password, fullname, role } = req.body;
+    //   const { username, password, fullname, role } = req.body;
 
       // Check if the username already exists
       const existingUser = await User.findOne({ username });
@@ -75,39 +80,39 @@ class UserController {
         });
       }
 
-      // Hash the password for security
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    //   // Hash the password for security
+    //   const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-      // Create a new user based on the role
-      let newUser;
-      switch (role) {
-        case "talent":
-          newUser = new TalentUser({
-            username,
-            password: hashedPassword,
-            fullname,
-            role,
-          });
-          break;
-        case "client":
-          newUser = new ClientUser({
-            username,
-            password: hashedPassword,
-            fullname,
-            role,
-          });
-          break;
-        case "admin":
-          newUser = new AdminUser({
-            username,
-            password: hashedPassword,
-            fullname,
-            role,
-          });
-          break;
-        default:
-          return res.status(400).json({ error: "Invalid role" });
-      }
+    //   // Create a new user based on the role
+    //   let newUser;
+    //   switch (role) {
+    //     case "talent":
+    //       newUser = new TalentUser({
+    //         username,
+    //         password: hashedPassword,
+    //         fullname,
+    //         role,
+    //       });
+    //       break;
+    //     case "client":
+    //       newUser = new ClientUser({
+    //         username,
+    //         password: hashedPassword,
+    //         fullname,
+    //         role,
+    //       });
+    //       break;
+    //     case "admin":
+    //       newUser = new AdminUser({
+    //         username,
+    //         password: hashedPassword,
+    //         fullname,
+    //         role,
+    //       });
+    //       break;
+    //     default:
+    //       return res.status(400).json({ error: "Invalid role" });
+    //   }
 
       const accessToken = jwt.sign(
         { userId: newUser._id },
@@ -123,7 +128,6 @@ class UserController {
       res
         .cookie("accessToken", accessToken, {
           httpOnly: true, // This ensures the cookie is only accessible by the server
-          secure: process.env.NODE_ENV === "production", // Use secure cookie in production
           maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time in milliseconds (1 day in this example)
         })
         .status(200)
@@ -171,7 +175,10 @@ class UserController {
     res
       .clearCookie("accessToken", {
         sameSite: "none",
+<<<<<<< HEAD
         // secure: true,
+=======
+>>>>>>> phap_luu_quoc
       })
       .status(200)
       .send("User has been logged out.");
@@ -228,7 +235,12 @@ class UserController {
       }
 
       // If profile's not belong to talent or self signed
+<<<<<<< HEAD
       if (user.role != "talent") {
+=======
+      if (user.role == "client" || req.userId !== user._id) {
+
+>>>>>>> phap_luu_quoc
         // If
         return res.status(400).json({
           error: "You cannot view this profile",

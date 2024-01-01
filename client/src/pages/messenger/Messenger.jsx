@@ -76,21 +76,21 @@ export default function Messenger() {
       text: newMessage,
     };
 
+    socket.current.emit("sendMessage", {
+      senderId: currentUser._id,
+      receiverId,
+      content: newMessage,
+    });
     try {
       const res = await axios.post("http://localhost:3000/messages", message);
       setMessages([...messages, res.data]);
-      setNewMessage("");
     } catch (error) {
       console.log(error);
     }
     const receiverId = currentChat.members.find(
       (member) => member !== currentUser._id
     );
-    socket.current.emit("sendMessage", {
-      senderId: currentUser._id,
-      receiverId,
-      text: newMessage,
-    });
+    setNewMessage("");
     console.log(receiverId);
   };
 
