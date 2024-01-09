@@ -16,6 +16,7 @@ export default function Sidebar({ talent }) {
 
   return (
     <div className="sidebar">
+      <i className="fa-solid fa-pen-to-square edit-profile-ic"></i>
       <div className="profile-basics">
         <img
           src={talent.avatar}

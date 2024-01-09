@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Logo from "../../assets/img/logo.png";
 import Avt from "../../assets/img/avt.png";
 import Menu from "../menu/Menu.jsx";
+import Cart from "../cart/Cart.jsx";
 import "./Navbar.scss";
 import Register from "../register/Register.jsx";
 import Login from "../login/Login.jsx";
@@ -128,6 +129,8 @@ const Navbar = () => {
     }, 100);
   };
 
+  const [showCart, setShowCart] = useState(false);
+
   return (
     <nav className="nav">
       <div className="nav-left">
@@ -201,24 +204,17 @@ const Navbar = () => {
           </li>
           <li
             className={`nav-right-item ${
+              location.pathname.includes("/artworks") ? "active" : ""
+            }`}
+          >
+            <Link to="/marketplace">Marketplace</Link>
+          </li>
+          <li
+            className={`nav-right-item ${
               location.pathname.includes("/talents") ? "active" : ""
             }`}
           >
             <Link to="/talents">Talents</Link>
-          </li>
-          <li
-            className={`nav-right-item ${
-              location.pathname.includes("/collections") ? "active" : ""
-            }`}
-          >
-            <Link to="/collections">Collections</Link>
-          </li>
-          <li
-            className={`nav-right-item ${
-              location.pathname.includes("/challenges") ? "active" : ""
-            }`}
-          >
-            <Link to="/challenges">Challenges</Link>
           </li>
           <li
             className={`nav-right-item ${
@@ -235,8 +231,9 @@ const Navbar = () => {
           <div className="nav-right-icon-item">
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAWVJREFUSEvN1TFIlVEYxvGfuBkOitBQWgYKQkN7DYKKQ4uiiM6ubSm1qYMICo7i3BIi4ioqCgnuDgoOhkKgBIJB0BBUfPF9d/juPfc7V7noOz/n+T/nPe85p0Gdq6HO/moBjOFTGmgCmzHhYgBNmMQ8mlPTH5jDKn5VAxUB+vEZbQGT7xjFQQhSDTCMdTRiAyvYS4368A5D+I232KkECQEe4wyP8B7LgYQzmMUVuvAzrwsBljCFNYwXHOYWBkNBQoALdOAVjgoAA9jGIV7H7uBvKkz6/6cA0Ipr3KClVkDRlGV+WaAyfcgguCCwm4cFeIbzNGmtLXqOZEBKlTd4ii/oxDFexrw3OEEPvuINLrN1ecApuisJC0BP0mAv8sHygOyw2vEtMn0mq9jaEKBG7zJ5yTcP2EfvHd13kdzu/xU7JbdmxgI+YiFH+YDFInIsINElL+xIapj8D9PIhiLIiQUUBb0/wD/3oz4ZE6fqJQAAAABJRU5ErkJggg==" />
           </div>
-          <div className="nav-right-icon-item">
+          <div className="nav-right-icon-item" onClick={() => {setShowCart(true)}}>
             <i className="fa-solid fa-cart-shopping"></i>
+            {showCart && <Cart setShowCart={setShowCart}/>}
           </div>
         </div>
 

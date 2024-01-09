@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import Cookies from "universal-cookie";
+import axios from "axios";
 
 const UserContext = createContext();
 
@@ -14,7 +15,10 @@ const UserProvider = ({ children }) => {
     setUser(user);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const response = await axios.post("http://localhost:3000/users/logout", {}, {withCredentials: true})
+    console.log(response)
+    cookies.remove("accessToken");
     localStorage.removeItem("user");
     setUser(null);
   };

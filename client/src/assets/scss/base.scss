@@ -5,6 +5,7 @@
   --white-text-color-light: #FFFFFF;
   --green-link-color-light: #0EB75C;
   --green-light: #31AC9D;
+  --price-color-light: #ec4a3f;
   
   --gray-bg-light: #f0f0f0;
   --black-bg-light: #202024;
@@ -16,6 +17,8 @@
   --form-field-bg-light: #F7F7F7;
   --form-submit-btn-light: #252525;
 
+  --badge-bg-light: #ECF1FF;
+  --badge-text-light: #006CEA;
   // Dark theme colors
 
 }
@@ -124,6 +127,16 @@ button {
     opacity: 0.8;
     cursor: pointer;
     transition: 0.05s;
+  }
+}
+
+.add-btn {
+  margin-left: 10px;
+  width: 10px;
+
+  i {
+    margin: 0;
+    font-size: 1.2rem;
   }
 }
 
@@ -363,4 +376,90 @@ input[type="submit"]:hover {
 .form-field__error {
   color: #dc3d3d;
   margin-top: 4px;
+}
+
+
+
+// Field slider
+.field-slider-container {
+  width: 100%;
+  position: relative;
+  overflow: auto;
+  white-space: nowrap; /* Ensure the items stay in a single line */
+  // overflow: auto; /* or overflow: hidden; */
+
+
+  .field-container {
+    position: relative;
+    display: flex;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+
+    .field-item {
+      // display: inline-block;
+      padding: 4px;
+      padding-right: 8px;
+      border: 1px solid var(--gray-border-light);
+      display: flex;
+      align-items: center;
+      background-color: transparent;
+      border-radius: 8px;
+      margin-right: 16px;
+
+      &:nth-child(2) {
+        margin-left: 116px;
+      }
+
+      .field-item__title {
+        margin: 0;
+        line-height: unset;
+        white-space: nowrap;
+      }
+
+      .field-item__img {
+        line-height: 28px;
+        margin: 0;
+        margin-right: 12px;
+        width: 32px;
+        height: 32px;
+        object-fit: cover;
+        border-radius: 6px;
+      }
+    }
+  }
+  .field__btn {
+    position: absolute;
+    border-radius: 50%;
+    background-color: white;
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--gray-border-light);
+    top: 50%;
+    transform: translateY(-50%);
+    line-height: 3rem;
+    text-align: center;
+    margin-right: 0;
+
+    &:hover {
+      cursor: pointer;
+      opacity: 0.8;
+      background-color: var(--gray-border-light);
+    }
+
+    &.prev {
+      left: 100px;
+    }
+
+    &.next {
+      right: 0;
+    }
+  }
+
+  .fixed-item {
+    position: absolute;
+    top: 0;
+    width: 100px;
+    margin-right: 20px;
+    left: 0;
+  }
 }

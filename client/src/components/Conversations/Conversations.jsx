@@ -126,29 +126,6 @@ export default function Conversations() {
         <i class="fa-regular fa-message"></i>
       </button>
 
-      {/* <button
-        className="open-conversations-btn"
-        onClick={() => {
-          SetIsOpenConversations(!isOpenConversations);
-        }}
-      >
-        Open conversations
-      </button> */}
-
-      {/* {
-        "_id": "6586e9f066e3e33b00b4189f",
-        "otherMember": {
-            "userId": "658062207c52175e9fb6c2ce",
-            "username": "talentUser1",
-            "avatar": "https://sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png"
-        },
-        "lastMessage": {
-            "senderId": "6586a99657c844a8dca8ea73",
-            "content": "This is a newwwww msg",
-            "reactions": ""
-        }
-    }, */}
-
       {isOpenConversations && (
         <div className="conversations-content">
           <div className="conversation-header">

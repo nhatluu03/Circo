@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Artwork from "../models/artwork.model.js";
 import createError from "../utils/createError.js";
-import Category from "../models/category.model.js";
+import Field from "../models/field.model.js";
 
 class ArtworkController {
   isOwner = (artwork, userId) => {
@@ -23,21 +23,22 @@ class ArtworkController {
   };
 
   store = async (req, res, next) => {
+    const user = req.user;
     if (user.role === "client") {
       return res.status(400).json({
         error: "You don't have enough permission to create artwork",
       });
     }
 
-    let { categoryId, ...artworkData } = req.body; // Destructure talent, category from req.body
+    let { fieldId, ...artworkData } = req.body; // Destructure talent, field from req.body
     let newArtworkData = {
       talent: user._id, // Convert talent to ObjectId
       ...artworkData,
     };
 
-    if (categoryId) {
-      const category = Category.findById(categoryId);
-      newArtworkData.category = category;
+    if (fieldId) {
+      const field = Field.findById(fieldId);
+      newArtworkData.field = field;
     }
     const artwork = new Artwork(newArtworkData);
 
@@ -115,12 +116,30 @@ class ArtworkController {
   };
 
   // Additional custom methods
-  getArtpieces = async (req, res, next) => {
+  getArtworks = async (req, res, next) => {
     const { talentId } = req.params;
-    console.log(talentId)
+    const { forSelling } = req.query;
+
+    console.log("Talent ID: " + talentId)
+    console.log("forSelling: " + forSelling)
+    
     try {
+      let artworks;
+      if (forSelling) {
+        artworks= await Artwork.find({ talent: talentId, forSelling: true })
+        // .populate({
+        //   path: "Field",
+        //   select: "_id title"
+        // });
+      } else {
+        artworks = await Artwork.find({ talent: talentId, forSelling: false})
+        // .populate({
+        //   path: "Field",
+        //   select: "_id title"
+        // });
+      }
+
       // Fetch artworks associated with the specified talentId
-      const artworks = await Artwork.find({ talent: talentId });
       console.log(artworks)
       res.status(200).json(artworks);
     } catch (error) {
@@ -134,20 +153,34 @@ class ArtworkController {
   //   res.status(200).json(file.filename);
   // });
 
-  uploadImages = async (req, res) => {
-    const images = req.body.images;
-    console.log(images)
-    console.log(images[0])
-    console.log(images[0].name)
-    const fileNames = images.map(file => file.filename);
+  // uploadImages = async (req, res) => {
+  //   const images = req.body.images;
+  //   console.log(images)
+  //   console.log(images[0])
+  //   console.log(images[0].name)
+  //   const fileNames = images.map(file => file.filename);
 
+  //   try {
+  //   res.status(200).json(fileNames);
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ success: false, error: "Internal Server Error" });
+  //   }
+  // };
+
+  uploadImages = async (req, res) => {
     try {
-    res.status(200).json(fileNames);
+      console.log("REQ.FILES")
+      console.log(req.files);
+      // Perform any additional processing or validation here
+      // const filePaths = req.files.map(file => ({ url: file.filename }));
+      // res.status(200).json({ imagePaths: filePaths });
     } catch (error) {
+      // Handle any errors that may occur during the upload process
       console.error(error);
-      res.status(500).json({ success: false, error: "Internal Server Error" });
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-  };
+  }
 
   uploadImage = async (req, res) => {
     console.log(req.file);

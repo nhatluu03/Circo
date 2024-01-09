@@ -5,6 +5,20 @@
 
   background-color: var(--gray-bg-light);
   border: 1px solid #e7e7e7;
+  position: relative;
+
+  .edit-profile-ic {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    color: var(--gray-text-color-light);
+    font-size: 1.8rem;
+
+    &:hover {
+      opacity: 0.8;
+      cursor: pointer;
+    }
+  }
 
   .profile-basics {
     text-align: center;
@@ -12,6 +26,7 @@
     img {
       width: 120px;
       height: 120px;
+      object-fit: cover;
       border-radius: 50%;
       border: 3px solid white;
     }

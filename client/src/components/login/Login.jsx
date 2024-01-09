@@ -88,7 +88,8 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
       try {
         const response = await axios.post(
           "http://localhost:3000/users/login",
-          others
+          others,
+          {withCredentials: true}
         );
         console.log(response.data);
         console.log(response);

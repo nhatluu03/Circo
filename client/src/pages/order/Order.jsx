@@ -98,7 +98,10 @@ function Order() {
           <div className="orderSummary">
             <span>Order Summary</span>
             <div className="container">
-              <div className="artworks">
+              <div className="artwork-container">
+                <div className="artwork-item">
+                  
+                </div>
               </div>
               <div className="coupons">
                 <div className="couponsLabel">

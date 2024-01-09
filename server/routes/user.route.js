@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.post('/register', UserController.register);
 router.post('/login', UserController.login);
-router.post('/logout', UserController.allowIfLoggedIn, UserController.logout);
+router.post('/logout', UserController.logout);
 router.get('/:id', UserController.show);
 router.get('/', UserController.index);
 router.put('/:id', UserController.allowIfLoggedIn, UserController.grantAccess('updateOwn', 'profile'), UserController.update);

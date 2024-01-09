@@ -9,19 +9,19 @@ export default function UploadArtwork({ setShowUploadArtworkForm }) {
   const { user, login } = useContext(UserContext);
   const [files, setFiles] = useState([]);
 
-  // Dropdown list of art categories
-  const [categories, setCategories] = useState([]);
+  // Dropdown list of art fields
+  const [fields, setFields] = useState([]);
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchFields = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/categories");
+        const response = await axios.get("http://localhost:3000/fields");
         console.log(response.data);
-        setCategories(response.data);
+        setFields(response.data);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchCategories();
+    fetchFields();
   }, []);
 
   const handleFileChange = (e) => {
@@ -151,19 +151,19 @@ export default function UploadArtwork({ setShowUploadArtworkForm }) {
         </div>
         <div className="upload-artwork__btn-container">
           <select
-            name="category"
-            className="category-container upload-artwork__btn-item add-hashtag-btn"
+            name="field"
+            className="field-container upload-artwork__btn-item add-hashtag-btn"
             defaultValue={"DEFAULT"}
           >
-            <option value="DEFAULT">Add category</option>
-            {categories.map((category) => (
-              <option value={category._id}>{category.title}</option>
+            <option value="DEFAULT">Add field</option>
+            {fields.map((field) => (
+              <option value={field._id}>{field.name}</option>
             ))}
           </select>
           {/* <button
-            className="upload-artwork__btn-item add-category-btn"
+            className="upload-artwork__btn-item add-field-btn"
           >
-            <i className="fa-regular fa-hashtag"></i> Add categories
+            <i className="fa-regular fa-hashtag"></i> Add fields
             
           </button> */}
 

@@ -10,7 +10,7 @@ const CollectionSchema = new Schema(
     },
     cover: { type: mongoose.Schema.Types.ObjectId, ref: "Artwork" },
     title: { type: String, required: true, maxlength: 50 },
-    status: {
+    visibility: {
       type: String,
       default: "public",
       enum: ["public", "private"],

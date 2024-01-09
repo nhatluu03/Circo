@@ -5,42 +5,23 @@ import axios from "axios";
 import sampleArtwork01 from "../../assets/img/artwork_01.png";
 import sampleArtwork02 from "../../assets/img/artwork_02.png";
 
-export default function AddCollection({ setShowAddCollectionForm }) {
+export default function AddCollection({ setShowAddCollectionForm, artpieces}) {
   const { user, login } = useContext(UserContext);
   const [masterpieces, setMasterpieces] = useState([]);
 
-  const imageData = [
-    { id: 1, src: sampleArtwork01 },
-    { id: 2, src: sampleArtwork02 },
-    { id: 3, src: sampleArtwork01 },
-    { id: 4, src: sampleArtwork02 },
-    { id: 5, src: sampleArtwork01 },
-  ];
-
   const handleCheckboxChange = (imageId) => {
+    console.log(imageId)
     const isSelected = masterpieces.includes(imageId);
 
     if (isSelected) {
       // Remove from the array if already selected
       setMasterpieces((prevSelected) =>
-        prevSelected.filter((id) => id !== imageId)
+        prevSelected.filter((_id) => _id !== imageId)
       );
     } else {
       // Add to the array if not selected
       setMasterpieces((prevSelected) => [...prevSelected, imageId]);
     }
-  };
-
-  const handleFileChange = (e) => {
-    const selectedFiles = e.target.files;
-    setFiles([...files, ...selectedFiles]);
-    console.log(files);
-  };
-
-  const handleFileDelete = (index) => {
-    const updatedFiles = [...files];
-    updatedFiles.splice(index, 1);
-    setFiles(updatedFiles);
   };
 
   const [inputs, setInputs] = useState({});
@@ -56,10 +37,10 @@ export default function AddCollection({ setShowAddCollectionForm }) {
     const fd = new FormData();
     fd.append("talent", user._id);
     fd.append("description", inputs.description);
-    fd.append("images", JSON.stringify(files.map((file) => file.name)));
+    fd.append("artworks", masterpieces);
 
     try {
-      const response = await axios.post("http://localhost:3000/collections/");
+      const response = await axios.post("http://localhost:3000/collections/", fd, {withCredentials: true});
       console.log(user);
       console.log(response);
     } catch (error) {
@@ -68,6 +49,21 @@ export default function AddCollection({ setShowAddCollectionForm }) {
   };
 
   return (
+    // talent: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "User",
+    //   required: true,
+    // },
+    // cover: { type: mongoose.Schema.Types.ObjectId, ref: "Artwork" },
+    // title: { type: String, required: true, maxlength: 50 },
+    // visibility: {
+    //   type: String,
+    //   default: "public",
+    //   enum: ["public", "private"],
+    // },
+    // description: { type: String },
+    // artworks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Artwork" }],
+    
     <>
       <div
         className="overlay"
@@ -88,7 +84,6 @@ export default function AddCollection({ setShowAddCollectionForm }) {
           </label>
           <input
             type="text"
-            _
             className="form-field__input"
             name="description"
             placeholder="Enter the title of your collection"
@@ -99,18 +94,45 @@ export default function AddCollection({ setShowAddCollectionForm }) {
             Choose masterpieces
           </label>
           <div className="masterpiece-container">
-            {imageData.map((image) => (
-              <div key={image.id} className={`masterpiece-item ${masterpieces.includes(image.id) ? 'active' : ''}`} onClick={() => handleCheckboxChange(image.id)}>
-                <img src={image.src} alt={`Image ${image.id}`} class="masterpiece-item__img"/>
+            {artpieces.map((artpiece) => (
+              // <div
+              //   key={image.id}
+              //   className={`masterpiece-item ${
+              //     masterpieces.includes(image.id) ? "active" : ""
+              //   }`}
+              //   onClick={() => handleCheckboxChange(image.id)}
+              // >
+              //   <img
+              //     src={image.src}
+              //     alt={`Image ${image.id}`}
+              //     class="masterpiece-item__img"
+              //   />
+              //   <div className="checkbox-overlay">
+              //     {masterpieces.includes(image.id) ? (
+              //       <i class="fa-regular fa-square-check"></i>
+              //     ) : (
+              //       <i class="fa-regular fa-square"></i>
+              //     )}
+              //   </div>
+              // </div>
+
+              <div
+                key={artpiece._id}
+                className={`masterpiece-item ${
+                  masterpieces.includes(artpiece._id) ? "active" : ""
+                }`}
+                onClick={() => handleCheckboxChange(artpiece._id)}
+              >
+                <img
+                  src={`../../public/uploads/artworks/${artpiece.images[0]}`}
+                  alt={`Artwork ${artpiece._id}`}
+                  class="masterpiece-item__img"
+                />
                 <div className="checkbox-overlay">
-                  {masterpieces.includes(image.id) ? (
-                    <i
-                      class="fa-regular fa-square-check"
-                    ></i>
+                  {masterpieces.includes(artpiece._id) ? (
+                    <i class="fa-regular fa-square-check"></i>
                   ) : (
-                    <i
-                      class="fa-solid fa-cart-shopping"
-                    ></i>
+                    <i class="fa-regular fa-square"></i>
                   )}
                 </div>
               </div>
@@ -118,11 +140,7 @@ export default function AddCollection({ setShowAddCollectionForm }) {
           </div>
         </div>
         <div className="form-field">
-          <input
-            type="submit"
-            value="Confirm"
-            className="form-field__input"
-          />
+          <input type="submit" value="Confirm" className="form-field__input" />
         </div>
       </form>
     </>

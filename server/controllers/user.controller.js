@@ -163,7 +163,7 @@ class UserController {
     res
       .clearCookie("accessToken", {
         sameSite: "none",
-        // secure: true,
+        secure: true,
       })
       .status(200)
       .send("User has been logged out.");
@@ -279,6 +279,8 @@ class UserController {
       next(error);
     }
   };
+
+  // Additional methods
 }
 
 export default new UserController();

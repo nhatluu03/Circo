@@ -3,7 +3,7 @@
   height: 100%;
   .conversation-details__header {
     background-color: white;
-    padding: 6px 10px;
+    border-bottom: 1px solid var(--gray-border-light);
   }
 
   .conversation-details__message-container {
