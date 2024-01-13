@@ -1,5 +1,4 @@
 body{
-    overflow: hidden;
 }
 .order{
     background-color: #F5F5F5;
@@ -157,14 +156,39 @@ body{
                     background-color: white;
                     padding: 20px 35px;
                     border-radius: 8px;
-                    display: flex;
-                    align-items: center;
                     gap: 6px;
+                    .options{
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        margin-bottom: 15px;
+                        .methodForm{
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+                        }
+                    }
                     span{
                         font-size: 14px;
                     }
                     input{
                         accent-color: #202020;
+                    }
+                    .pay{
+                        #submit{
+                            width: 20%;
+                            text-align: center;
+                            padding: 8px;
+                            border-radius: 8px;
+                            border: 1px solid #1D1D1D;
+                            background: #2C2C2C;
+                            transition: 0.2s;
+                            margin-top: 10px;
+                        }
+                        #button-text{
+                            font-weight: 400;
+                            color: white;
+                        }
                     }
                 }
                   

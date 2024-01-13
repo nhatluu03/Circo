@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "./Order.scss";
+import Pay from "../pay/Pay.jsx";
 function Order() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
   const options = ["Standard Packaging"];
 
@@ -13,6 +15,9 @@ function Order() {
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsOpen(false);
+  };
+  const handleRadioChange = () => {
+    setShowForm(!showForm);
   };
   return (
     <div className="order">
@@ -89,8 +94,21 @@ function Order() {
           <div className="paymentMethod">
             <span>Banking method</span>
             <div className="paymentOption">
-              <input checked type="radio" />
-              <span>Credit card</span>
+              <div className="options">
+                <div className="methodForm">
+                  <input type="radio" onChange={handleRadioChange} />
+                  <span>Credit card</span>
+                </div>
+                <div className="methodForm">
+                  <input type="radio" onChange={handleRadioChange} />
+                  <span>Visa card</span>
+                </div>
+              </div>
+              {showForm && (
+                <div className="payForm">
+                  <Pay />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -98,12 +116,11 @@ function Order() {
           <div className="orderSummary">
             <span>Order Summary</span>
             <div className="container">
-              <div className="artworks">
-              </div>
+              <div className="artworks"></div>
               <div className="coupons">
                 <div className="couponsLabel">
                   <span className="mainLabel">Coupons</span>
-                  <span >--</span>
+                  <span>--</span>
                 </div>
                 <div className="couponsRight"></div>
               </div>
@@ -115,17 +132,12 @@ function Order() {
                 <div className="deliverDetail">
                   <span>VN-EXPRESS</span>
                   <span>Deliver to 406 Le Loi, TP Quang Ngai, Viet Nam</span>
-
                 </div>
               </div>
               <div className="subtotal">
                 <div className="subtotalInfo">
-                  <span className="subtotalLabel">
-                    Subtotal
-                  </span>
-                  <span className="subtotalPrice">
-                    $118.50
-                  </span>
+                  <span className="subtotalLabel">Subtotal</span>
+                  <span className="subtotalPrice">$118.50</span>
                 </div>
                 <div className="packagingInfo">
                   <span className="packagingLabel">Packaging</span>
