@@ -8,9 +8,13 @@ import Register from "../register/Register.jsx";
 import Login from "../login/Login.jsx";
 import Cookies from "js-cookie";
 import { UserContext } from "../../contexts/user.context.jsx";
+import { io } from "socket.io-client";
 
-const Navbar = () => {
+const Navbar = ({ socketNavbar }) => {
   const { user, login, logout } = useContext(UserContext);
+  const [notifications, setNotifications] = useState([]);
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
     if (localStorage.getItem("user")) {
       login(JSON.parse(localStorage.getItem("user")));
@@ -21,7 +25,14 @@ const Navbar = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [searchOptions, setSearchOptions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-
+  //Socket initialization
+  socketNavbar = io("ws://localhost:8900");
+  //Socket notification
+  useEffect(() => {
+    socketNavbar.on("getNotification", (data) => {
+      setNotifications((prev) => [...prev, data]);
+    });
+  }, [socketNavbar]);
   // Toggle display menu
   const menuRef = useRef();
   const [showMenu, setShowMenu] = useState(false);
@@ -232,7 +243,7 @@ const Navbar = () => {
         <hr className="hor-hr" />
 
         <div className="nav-right-icon-container">
-          <div className="nav-right-icon-item">
+          <div onClick={() => setOpen(!open)} className="nav-right-icon-item">
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAWVJREFUSEvN1TFIlVEYxvGfuBkOitBQWgYKQkN7DYKKQ4uiiM6ubSm1qYMICo7i3BIi4ioqCgnuDgoOhkKgBIJB0BBUfPF9d/juPfc7V7noOz/n+T/nPe85p0Gdq6HO/moBjOFTGmgCmzHhYgBNmMQ8mlPTH5jDKn5VAxUB+vEZbQGT7xjFQQhSDTCMdTRiAyvYS4368A5D+I232KkECQEe4wyP8B7LgYQzmMUVuvAzrwsBljCFNYwXHOYWBkNBQoALdOAVjgoAA9jGIV7H7uBvKkz6/6cA0Ipr3KClVkDRlGV+WaAyfcgguCCwm4cFeIbzNGmtLXqOZEBKlTd4ii/oxDFexrw3OEEPvuINLrN1ecApuisJC0BP0mAv8sHygOyw2vEtMn0mq9jaEKBG7zJ5yTcP2EfvHd13kdzu/xU7JbdmxgI+YiFH+YDFInIsINElL+xIapj8D9PIhiLIiQUUBb0/wD/3oz4ZE6fqJQAAAABJRU5ErkJggg==" />
           </div>
           <div className="nav-right-icon-item">

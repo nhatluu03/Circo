@@ -7,7 +7,7 @@ import { Conversation } from "../conversation/Conversation";
 import { io } from "socket.io-client";
 
 
-export default function Conversations() {
+export default function Conversations({ socketConversation }) {
   const [messages, setMessages] = useState([]);
   const [conversation, setConversation] = useState(null);
   const [newMessage, setNewMessage] = useState("");
@@ -70,13 +70,6 @@ export default function Conversations() {
   
   
   //Handle users in a conversation with socket
-  useEffect(() => {
-    if(user){
-      socket.current.emit("addUser", user._id);
-      socket.current?.on("getUsers", (users) => {});
-      console.log('5')
-    }
-  }, [user]);
 
   useEffect(() => {
     const fetchConversations = async () => {

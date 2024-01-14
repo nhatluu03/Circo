@@ -35,18 +35,34 @@ io.on("connection", (socket) => {
   //Take userId and socketId form user
   socket.on("addUser", (userId) => {
     addUser(userId, socket.id);
+    console.log(users)
     io.emit("getUsers", users);
   });
   // Send and get messages
   socket.on("sendMessage", ({ senderId, receiverId, content }) => {
     const user = getUser(receiverId);
-    console.log(users)
-    console.log(user)
+    
     io.to(user?.socketId).emit("getMessage",{
         senderId,
         content,
       })
     console.log('getting')
+  });
+  //Send Notification
+  socket.on("sendNotification", ({ senderId, receiverId }) => {
+    const receiver = getUser(receiverId);
+    io.to(receiver.socketId).emit("getNotification", {
+      senderId,
+    });
+    console.log('1')
+  });
+  //Send Text
+  socket.on("sendText", ({ senderId, receiverId, text }) => {
+    const receiver = getUser(receiverId);
+    io.to(receiver.socketId).emit("getText", {
+      senderId,
+      text,
+    });
   });
   socket.on("disconnect", () => {
     console.log("A user disconnected");

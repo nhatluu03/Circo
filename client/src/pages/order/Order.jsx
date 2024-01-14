@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "./Order.scss";
 import Pay from "../pay/Pay.jsx";
+import { UserContext } from "../../contexts/user.context";
+import { io } from "socket.io-client";
+
 function Order() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [showForm, setShowForm] = useState(false);
-
+  const { user } = useContext(UserContext);
+  const mockTalent = '655c8afe9f5ae05cb5fc89fb'
   const options = ["Standard Packaging"];
-
+  const socket = useRef();
   const handleToggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsOpen(false);
@@ -19,6 +22,16 @@ function Order() {
   const handleRadioChange = () => {
     setShowForm(!showForm);
   };
+
+  const handleNotification = ()=>{
+    socket.current.emit("sendNotification", {
+      senderId: user._id,
+      receiverId: mockTalent
+    });
+  }
+  useEffect(()=>{
+    socket.current = io("ws://localhost:8900");
+  })
   return (
     <div className="order">
       <div className="container">
@@ -149,7 +162,7 @@ function Order() {
                   <span className="totalLabel">Total(USD)</span>
                   <span className="totalPrice">$138.50</span>
                 </div>
-                <button className="confirmButton">Confirm Order</button>
+                <button onClick={() => handleNotification()} className="confirmButton">Confirm Order</button>
               </div>
             </div>
           </div>
