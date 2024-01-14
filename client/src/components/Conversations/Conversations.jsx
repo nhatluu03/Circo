@@ -70,6 +70,13 @@ export default function Conversations({ socketConversation }) {
   
   
   //Handle users in a conversation with socket
+  useEffect(() => {
+    if(user){
+      socket.current.emit("addUser", user._id);
+      socket.current?.on("getUsers", (users) => {});
+      console.log('5')
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -141,6 +148,7 @@ export default function Conversations({ socketConversation }) {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [conversation]);
+
   return (
     <div className="conversations">
       <button

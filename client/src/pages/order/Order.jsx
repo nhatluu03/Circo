@@ -24,6 +24,7 @@ function Order() {
   };
 
   const handleNotification = ()=>{
+    socket.current.emit('addUser', mockTalent)
     socket.current.emit("sendNotification", {
       senderId: user._id,
       receiverId: mockTalent

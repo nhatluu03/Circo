@@ -138,6 +138,13 @@ const Navbar = ({ socketNavbar }) => {
       setShowDropdown(isFocused && userInput.length > 0);
     }, 100);
   };
+  console.log(notifications);
+
+  const displayNotification = ({ senderId }) => {
+    return (
+      <span className="notification">{`${senderId} your post.`}</span>
+    );
+  };
 
   return (
     <nav className="nav">
@@ -245,6 +252,16 @@ const Navbar = ({ socketNavbar }) => {
         <div className="nav-right-icon-container">
           <div onClick={() => setOpen(!open)} className="nav-right-icon-item">
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAWVJREFUSEvN1TFIlVEYxvGfuBkOitBQWgYKQkN7DYKKQ4uiiM6ubSm1qYMICo7i3BIi4ioqCgnuDgoOhkKgBIJB0BBUfPF9d/juPfc7V7noOz/n+T/nPe85p0Gdq6HO/moBjOFTGmgCmzHhYgBNmMQ8mlPTH5jDKn5VAxUB+vEZbQGT7xjFQQhSDTCMdTRiAyvYS4368A5D+I232KkECQEe4wyP8B7LgYQzmMUVuvAzrwsBljCFNYwXHOYWBkNBQoALdOAVjgoAA9jGIV7H7uBvKkz6/6cA0Ipr3KClVkDRlGV+WaAyfcgguCCwm4cFeIbzNGmtLXqOZEBKlTd4ii/oxDFexrw3OEEPvuINLrN1ecApuisJC0BP0mAv8sHygOyw2vEtMn0mq9jaEKBG7zJ5yTcP2EfvHd13kdzu/xU7JbdmxgI+YiFH+YDFInIsINElL+xIapj8D9PIhiLIiQUUBb0/wD/3oz4ZE6fqJQAAAABJRU5ErkJggg==" />
+          </div>
+          <div>
+            {open && (
+              <div className="notifications">
+                {notifications.map((n) => displayNotification(n))}
+                <button className="nButton">
+                  Mark as read
+                </button>
+              </div>
+            )}
           </div>
           <div className="nav-right-icon-item">
             Cart

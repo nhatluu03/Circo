@@ -28,25 +28,23 @@ const getUser = (userId) => {
   return users.find((user) => user.userId === userId);
 };
 
-
 // Handle connection events
 io.on("connection", (socket) => {
   console.log("A user connected");
+  console.log(users)
   //Take userId and socketId form user
   socket.on("addUser", (userId) => {
     addUser(userId, socket.id);
-    console.log(users)
     io.emit("getUsers", users);
   });
   // Send and get messages
   socket.on("sendMessage", ({ senderId, receiverId, content }) => {
     const user = getUser(receiverId);
-    
     io.to(user?.socketId).emit("getMessage",{
-        senderId,
-        content,
-      })
-    console.log('getting')
+      senderId,
+      content,
+    })
+    console.log(users)
   });
   //Send Notification
   socket.on("sendNotification", ({ senderId, receiverId }) => {
