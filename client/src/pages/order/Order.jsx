@@ -24,7 +24,6 @@ function Order() {
   };
 
   const handleNotification = ()=>{
-    socket.current.emit('addUser', mockTalent)
     socket.current.emit("sendNotification", {
       senderId: user._id,
       receiverId: mockTalent
@@ -33,6 +32,11 @@ function Order() {
   useEffect(()=>{
     socket.current = io("ws://localhost:8900");
   })
+  useEffect(() => {
+    if(user){
+      socket.current.emit("addUser", user._id);
+    }
+  }, [socket, user]);
   return (
     <div className="order">
       <div className="container">

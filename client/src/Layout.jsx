@@ -18,7 +18,9 @@ export default function Layout ({ showSidebar, talent }) {
   }, []);
 
   useEffect(() => {
-    socket?.emit("addUser", user?._id);
+    if(user){
+      socket?.emit("addUser", user._id);
+    }
   }, [socket, user]);
 
   return (

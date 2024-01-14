@@ -32,7 +32,7 @@ const Navbar = ({ socketNavbar }) => {
     socketNavbar.on("getNotification", (data) => {
       setNotifications((prev) => [...prev, data]);
     });
-  }, [socketNavbar]);
+  }, []);
   // Toggle display menu
   const menuRef = useRef();
   const [showMenu, setShowMenu] = useState(false);
@@ -138,7 +138,6 @@ const Navbar = ({ socketNavbar }) => {
       setShowDropdown(isFocused && userInput.length > 0);
     }, 100);
   };
-  console.log(notifications);
 
   const displayNotification = ({ senderId }) => {
     return (

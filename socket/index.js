@@ -49,7 +49,7 @@ io.on("connection", (socket) => {
   //Send Notification
   socket.on("sendNotification", ({ senderId, receiverId }) => {
     const receiver = getUser(receiverId);
-    io.to(receiver.socketId).emit("getNotification", {
+    io.to(receiver?.socketId).emit("getNotification", {
       senderId,
     });
     console.log('1')
@@ -65,6 +65,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("A user disconnected");
     removeUser(socket.id);
+    console.log(users)
     io.emit("getUsers", users);
   });
 });
