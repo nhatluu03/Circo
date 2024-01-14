@@ -28,6 +28,8 @@ function Order() {
       senderId: user._id,
       receiverId: mockTalent
     });
+
+    console.log('First')
   }
   useEffect(()=>{
     socket.current = io("ws://localhost:8900");

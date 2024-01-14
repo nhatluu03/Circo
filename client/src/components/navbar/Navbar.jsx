@@ -10,7 +10,7 @@ import Cookies from "js-cookie";
 import { UserContext } from "../../contexts/user.context.jsx";
 import { io } from "socket.io-client";
 
-const Navbar = ({ socketNavbar }) => {
+const Navbar = ({ socket }) => {
   const { user, login, logout } = useContext(UserContext);
   const [notifications, setNotifications] = useState([]);
   const [open, setOpen] = useState(false);
@@ -26,15 +26,16 @@ const Navbar = ({ socketNavbar }) => {
   const [searchOptions, setSearchOptions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   //Socket initialization
-  socketNavbar = io("ws://localhost:8900");
   //Socket notification
   useEffect(() => {
-    socketNavbar.on("getNotification", (data) => {
-      console.log(data)
+    socket = io("ws://localhost:8900");
+
+    socket.on("getNotification", (data) => {
+      console.log('Third')
       setNotifications((prev) => [...prev, data]);
-      console.log('Getting')
     });
   }, []);
+
   // Toggle display menu
   const menuRef = useRef();
   const [showMenu, setShowMenu] = useState(false);
@@ -146,7 +147,7 @@ const Navbar = ({ socketNavbar }) => {
       <span className="notification">{`${senderId} your post.`}</span>
     );
   };
-  console.log(socketNavbar)
+  console.log(socket)
   return (
     <nav className="nav">
       <div className="nav-left">
