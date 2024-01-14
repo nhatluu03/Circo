@@ -148,7 +148,7 @@ export default function Conversations({ socketConversation }) {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [conversation]);
-
+  console.log(arrivalMessage)
   return (
     <div className="conversations">
       <button

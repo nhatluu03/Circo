@@ -30,7 +30,9 @@ const Navbar = ({ socketNavbar }) => {
   //Socket notification
   useEffect(() => {
     socketNavbar.on("getNotification", (data) => {
+      console.log(data)
       setNotifications((prev) => [...prev, data]);
+      console.log('Getting')
     });
   }, []);
   // Toggle display menu
@@ -144,7 +146,7 @@ const Navbar = ({ socketNavbar }) => {
       <span className="notification">{`${senderId} your post.`}</span>
     );
   };
-
+  console.log(socketNavbar)
   return (
     <nav className="nav">
       <div className="nav-left">
