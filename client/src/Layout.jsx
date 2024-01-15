@@ -1,7 +1,7 @@
 // Components
 import Navbar from "./components/navbar/Navbar";
 import Sidebar from "./components/sidebar/Sidebar";
-import Conversations from "./components/conversations/Conversations";
+import Conversations from "./components/Conversations/Conversations";
 import { Outlet } from "react-router-dom";
 import Talent from "./pages/talent/Talent";
 import { io } from "socket.io-client";

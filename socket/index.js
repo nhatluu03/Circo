@@ -46,13 +46,14 @@ io.on("connection", (socket) => {
     })
   });
   //Send Notification
-  socket.on("sendNotification", ({ senderId, receiverId }) => {
+  socket.on("sendNotification", ({ senderName, receiverId, orderId }) => {
     const receiver = getUser(receiverId);
-    console.log('Second')
+    const message = senderName + ' ordered this'
     io.to(receiver?.socketId).emit("getNotification", {
-      senderId,
+      senderName,
+      message,
+      orderId
     });
-    console.log(users)
   });
   //Send Text
   socket.on("sendText", ({ senderId, receiverId, text }) => {

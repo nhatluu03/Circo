@@ -12,6 +12,7 @@ import { io } from "socket.io-client";
 
 const Navbar = () => {
   const { user, login, logout } = useContext(UserContext);
+  const [arrivalNotification, setArrivalNotification] = useState(null)
   const [notifications, setNotifications] = useState([]);
   const [open, setOpen] = useState(false);
   let socket = useRef(null);
@@ -31,10 +32,22 @@ const Navbar = () => {
     socket.current = io("ws://localhost:8900");
 
     socket.current.on("getNotification", (data) => {
-      console.log('Third')
-      setNotifications((prev) => [...prev, data]);
+      setArrivalNotification({
+        senderName: data.senderName,
+        message: data.message,
+        orderId: data.orderId,
+        createdAt: Date.now()
+      })
+      console.log(data)
     });
   }, []);
+
+  useEffect(()=>{
+    if(arrivalNotification){
+      notifications.push(arrivalNotification)
+    }
+    console.log(notifications)
+  },[arrivalNotification])
   useEffect(() => {
     if(user){
       socket.current.emit("addUser", user._id);
@@ -149,11 +162,14 @@ const Navbar = () => {
     }, 100);
   };
 
-  const displayNotification = ({ senderId }) => {
+  const displayNotification = ({ message, orderId }) => {
     return (
-      <span className="notification">{`${senderId} your post.`}</span>
+      <Link to={`/order_dashboard/:${orderId}`}>
+        <span className="notification">{message}</span>
+      </Link>
     );
   };
+  console.log(arrivalNotification)
   return (
     <nav className="nav">
       <div className="nav-left">

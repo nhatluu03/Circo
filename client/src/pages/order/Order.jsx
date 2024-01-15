@@ -25,8 +25,9 @@ function Order() {
 
   const handleNotification = ()=>{
     socket.current.emit("sendNotification", {
-      senderId: user._id,
-      receiverId: mockTalent
+      senderName: user.username,
+      receiverId: mockTalent,
+      orderId:'6566c74f06c1d9563f003817',
     });
 
     console.log('First')
