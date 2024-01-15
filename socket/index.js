@@ -44,7 +44,6 @@ io.on("connection", (socket) => {
       senderId,
       content,
     })
-    console.log(users)
   });
   //Send Notification
   socket.on("sendNotification", ({ senderId, receiverId }) => {
@@ -53,7 +52,7 @@ io.on("connection", (socket) => {
     io.to(receiver?.socketId).emit("getNotification", {
       senderId,
     });
-    console.log('1')
+    console.log(users)
   });
   //Send Text
   socket.on("sendText", ({ senderId, receiverId, text }) => {

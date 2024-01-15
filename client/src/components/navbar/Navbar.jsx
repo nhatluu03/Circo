@@ -10,11 +10,11 @@ import Cookies from "js-cookie";
 import { UserContext } from "../../contexts/user.context.jsx";
 import { io } from "socket.io-client";
 
-const Navbar = ({ socket }) => {
+const Navbar = () => {
   const { user, login, logout } = useContext(UserContext);
   const [notifications, setNotifications] = useState([]);
   const [open, setOpen] = useState(false);
-
+  let socket = useRef(null);
   useEffect(() => {
     if (localStorage.getItem("user")) {
       login(JSON.parse(localStorage.getItem("user")));
@@ -28,13 +28,20 @@ const Navbar = ({ socket }) => {
   //Socket initialization
   //Socket notification
   useEffect(() => {
-    socket = io("ws://localhost:8900");
+    socket.current = io("ws://localhost:8900");
 
-    socket.on("getNotification", (data) => {
+    socket.current.on("getNotification", (data) => {
       console.log('Third')
       setNotifications((prev) => [...prev, data]);
     });
   }, []);
+  useEffect(() => {
+    if(user){
+      socket.current.emit("addUser", user._id);
+      socket.current.on("getUsers", (users) => {});
+      console.log('5')
+    }
+  }, [user]);
 
   // Toggle display menu
   const menuRef = useRef();
@@ -147,7 +154,6 @@ const Navbar = ({ socket }) => {
       <span className="notification">{`${senderId} your post.`}</span>
     );
   };
-  console.log(socket)
   return (
     <nav className="nav">
       <div className="nav-left">
