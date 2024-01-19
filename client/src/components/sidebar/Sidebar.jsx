@@ -1,9 +1,17 @@
-import {useState, useContext, useRef } from "react";
+import { useState, useContext, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import EditTalentInfo from "../../components/crudTalentProfile/editTalentInfo/EditTalentInfo.jsx";
 import "./Sidebar.scss";
+import axios from "axios";
+import { UserContext } from "../../contexts/user.context.jsx";
 
-export default function Sidebar({ talent, handleSubmitTalentInfo, fetchTalent, talentInfoMutation }) {
+export default function Sidebar({
+  talent,
+  handleSubmitTalentInfo,
+  fetchTalent,
+  talentInfoMutation,
+}) {
+  const { user, login, logout } = useContext(UserContext);
   if (!talent) {
     // talent = {
     //   fullname: "Luu Quoc Nhat",
@@ -18,12 +26,30 @@ export default function Sidebar({ talent, handleSubmitTalentInfo, fetchTalent, t
 
   // Toggle display edit-talent-profile-infor form
   const [showEditTalentInfoForm, setShowEditTalentInfoForm] = useState(false);
-
+  const chatCreating = async () => {
+    const res2 = await axios.post(
+      "http://localhost:3000/conversations",
+      {
+        members: [
+          {
+            user: user?._id,
+          },
+          {
+            user: talent._id,
+          },
+        ],
+      },
+      { withCredentials: true }
+    );
+  };
   return (
     <div className="sidebar">
-      <i className="fa-solid fa-pen-to-square edit-profile-ic" onClick={() => {
-                setShowEditTalentInfoForm(true);
-              }}></i>
+      <i
+        className="fa-solid fa-pen-to-square edit-profile-ic"
+        onClick={() => {
+          setShowEditTalentInfoForm(true);
+        }}
+      ></i>
       <div className="profile-basics">
         <img src={talent.avatar} className="profile-basics__avt" alt="Avatar" />
         <h3 className="profile-basics__fullname">{talent.username}</h3>
@@ -39,7 +65,7 @@ export default function Sidebar({ talent, handleSubmitTalentInfo, fetchTalent, t
       </div>
 
       <div className="profile-buttons">
-        <button className="btn btn-2 chat-btn">
+        <button className="btn btn-2 chat-btn" onClick={chatCreating}>
           <i className="fa-regular fa-message"></i>
           Chat
         </button>
@@ -118,12 +144,12 @@ export default function Sidebar({ talent, handleSubmitTalentInfo, fetchTalent, t
       </div>
       {/* Modal forms */}
       {showEditTalentInfoForm && (
-          <EditTalentInfo
-            setShowEditTalentInfoForm={setShowEditTalentInfoForm}
-            handleSubmitTalentInfo={handleSubmitTalentInfo}
-            talentInfoMutation={talentInfoMutation}
-          />
-        )}
+        <EditTalentInfo
+          setShowEditTalentInfoForm={setShowEditTalentInfoForm}
+          handleSubmitTalentInfo={handleSubmitTalentInfo}
+          talentInfoMutation={talentInfoMutation}
+        />
+      )}
     </div>
   );
 }

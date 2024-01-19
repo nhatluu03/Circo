@@ -8,34 +8,7 @@ export default function Conversation({ conversation }) {
   }
   const { user } = useContext(UserContext);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const message = {
-      senderId: user._id,
-      content: newMessage,
-    };
-    const receiverId = conversation?.otherMember.userId;
-    console.log("1");
-    console.log(receiverId);
-
-    socket.current.emit("sendMessage", {
-      senderId: user?._id,
-      receiverId,
-      content: newMessage,
-    });
-
-    try {
-      const res = await axios.put(
-        `http://localhost:3000/conversations/${currentChat}?userId=${user._id}`,
-        message
-      );
-      setConversation(res.data);
-      console.log("2");
-      setNewMessage("");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  
 
   return (
     <div className="conversation-details">
@@ -76,43 +49,7 @@ export default function Conversation({ conversation }) {
         })}
       </div>
 
-      <form className="new-message-form" onSubmit={handleSubmit}>
-        <div className="new-message-form--left">
-        <div className="form-field">
-          <i class="fa-solid fa-plus open-media-ic"></i>
-        </div>
-
-        <div className="form-field">
-          <input
-            type="text"
-            id="new-message"
-            className="form-field__input"
-            placeholder="Type a message"
-          />
-        </div>
-    
-        </div>
-       
-       <div className="new-message-form--right">
-       <div className="form-field">
-        <i class="fa-regular fa-face-smile open-icons-ic"></i>
-        </div>
-       <div className="form-field">
-          <label htmlFor="new-message-submit-btn" className="form-field__label">
-          <i class="fa-regular fa-paper-plane"></i>
-            </label>
-          <input
-          type="submit"
-          id="new-message-submit-btn"
-          name="message"
-          value="Send"
-          className="form-field__input"
-        />
-        </div>
-
-       </div>
-       
-      </form>
+      
     </div>
   );
 }

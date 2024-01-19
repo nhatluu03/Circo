@@ -46,54 +46,5 @@
     }
   }
 
-  .new-message-form {
-    position: absolute;
-    bottom: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 10px;
-    background-color: white;
-    width: 100%;
-
-    .form-field {
-      margin-bottom: 0;
-
-      .form-field__label {
-        margin-bottom: 0;
-      }
-
-      .form-field__input {
-        background-color: transparent;
-        border: none;
-      }
-    }
-
-    .new-message-form--left {
-      display: flex;
-      align-items: center;
-    }
-
-    .new-message-form--right {
-      display: flex;
-      align-items: center;
-    }
-
-    input[type="submit"] {
-      display: none;
-    }
-
-    .open-icons-ic {
-      font-size: 1.6rem;
-    }
-
-    .open-media-ic {
-      color: white;
-      padding: 6px;
-      display: inline-block;
-      background-color: #2395ff;
-      border-radius: 50%;
-      font-size: 1.4rem;
-    }
-  }
+  
 }
