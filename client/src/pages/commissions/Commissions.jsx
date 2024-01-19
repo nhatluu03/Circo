@@ -1,141 +1,197 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { useParams } from "react-router-dom";
 import "./Commissions.scss";
+import AddCommission from "../../components/crudCommission/addCommission/AddCommission.jsx";
+import { UserContext } from "../../contexts/user.context.jsx";
+// C:\Users\A\Circo\client\src\components\crudCommission\addCommission\AddCommission.jsx
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import axios from "axios";
 
 export default function Commissions() {
+  const { id } = useParams();
+  const { user } = useContext(UserContext);
+  const [showAddCommissionForm, setShowAddCommissionForm] = useState(false);
+
+  const fetchCommissions = async () => {
+    console.log("Getting all store items");
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/commissions/talent/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddCommission = async (files, inputs) => {
+    try {
+      // Step 2: Post image to url2
+      const uploadFiles = async () => {
+        let imagePaths = [];
+        for (const file of files) {
+          const formData = new FormData();
+          formData.append("file", file);
+
+          try {
+            const res1 = await axios.post(
+              "http://localhost:3000/commissions/upload",
+              formData,
+              {
+                withCredentials: true,
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+
+            imagePaths.push(res1.data.url);
+          } catch (error) {
+            console.error("Error uploading file:", error);
+          }
+        }
+        return imagePaths;
+      };
+
+      const uploadFilesAndCreateArtwork = async () => {
+        try {
+          let imagePaths = await uploadFiles();
+
+          inputs.images = imagePaths;
+          inputs.forSelling = true;
+
+          const res2 = await axios.post(
+            "http://localhost:3000/commissions/",
+            inputs,
+            {
+              withCredentials: true,
+            }
+          );
+
+          console.log("Commission Data:", res2.data);
+          return res2.data;
+        } catch (error) {
+          console.error("Error:", error);
+          // Handle the error as needed
+        }
+      };
+
+      // Await the result of uploadFilesAndCreateArtwork
+      const output = await uploadFilesAndCreateArtwork();
+      console.log("Output", output);
+      return output;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const queryClient = useQueryClient();
+
+  const { data: commissions, isLoading } = useQuery({
+    queryKey: ["commissions"],
+    queryFn: fetchCommissions,
+  });
+
+  const mutation = useMutation({
+    mutationFn: handleAddCommission,
+    onSuccess: async () => {
+      // Invalidate and refetch
+      alert("Handle submit in parent component");
+      await queryClient.invalidateQueries({ queryKey: ["commissions"] });
+    },
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="commissions">
-      <h3 className="profile-page__header">Commissions</h3>
+      <h3 className="profile-page__header">
+        Commissions
+        {user?._id == id && (
+          <button
+            className="btn btn-1 add-btn"
+            onClick={() => {
+              setShowAddCommissionForm(true);
+            }}
+          >
+            <i className="fa-solid fa-plus"></i>
+          </button>
+        )}
+      </h3>
       <div className="commission-container">
-        <div className="commission-item">
-          <div className="commission-item__sample-container">
-            <img
-              src="https://i.pinimg.com/736x/2f/5f/60/2f5f60ad8cf31a5efce8a434522cf30d.jpg"
-              alt=""
-              className="commission-item__sample-item large"
-            />
-            <div>
-              <img
-                src="https://i.pinimg.com/736x/83/b5/c7/83b5c76f1718d9b6a4b283c2673aa401.jpg"
-                alt=""
-                className="commission-item__sample-item"
-              />
-              <img
-                src="https://i.pinimg.com/736x/86/e7/56/86e756be27a76e56066c8586d26e2d0f.jpg"
-                alt=""
-                className="commission-item__sample-item"
-              />
+        {commissions.map((commission) => {
+          return (
+            <div className="commission-item">
+              <div className="commission-item__sample-container">
+                {/* {commission.images.map((image) => {
+                  return  (<img
+                  src={`../../public/uploads/commissions/${image[0]}`}
+                  alt=""
+                  className="commission-item__sample-item large"
+                />)
+                })} */}
+                <img
+                  src={`../../public/uploads/commissions/${commission.images[0]}`}
+                  alt=""
+                  className="commission-item__sample-item large"
+                />
+                <div>
+                  <img
+                    src={`../../public/uploads/commissions/${commission.images[1]}`}
+                    alt=""
+                    className="commission-item__sample-item"
+                  />
+                  <img
+                    src={`../../public/uploads/commissions/${commission.images[2]}`}
+                    alt=""
+                    className="commission-item__sample-item"
+                  />
+                </div>
+              </div>
+              <div className="commission-item__details">
+                <h2 className="commission-item__details__header">
+                  {commission.title}
+                </h2>
+                {commission.materials?.length > 0 && (
+                  <p>
+                    <strong>Materials: </strong>
+                    {commission.materials.join(",")}
+                  </p>
+                )}
+
+                {commission.fields?.length > 0 && (
+                  <p>
+                    <strong>Fields: </strong>
+                    {commission.fields.map((field) => {
+                      return (<>{field.name + ", "}</>);
+                    })}
+                  </p>
+                )}
+                <span className="extra-msg gray italic">*Notes: {commission.note}</span>
+                <br></br>
+                <button className="btn btn-3 commission-item__book-btn">
+                  Book commission
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="commission-item__details">
-            <h4 className="commission-item__details__header">
-              Scenery paintings
-            </h4>
-            <p className="commission-item__details__style">
-              <strong>Styles: </strong>Sketch, Realistic
-            </p>
-            <p className="commission-item__details__materials">
-              <strong>Materials: </strong>Watercolor, oil
-            </p>
-            <p className="commission-item__details__pricing">
-              <strong>Price: </strong>40$ - 99$
-            </p>
-            <p className="commission-item__details__notes">
-              *Note: The above price applied for one object per A5 frame. For
-              more, a price of 20% applied for the total price.
-            </p>
-            <button className="commission-item__book-btn btn-3 btn lg">
-              Book commission
-            </button>
-            <i class="fa-solid fa-ellipsis commission-item__edit-ic"></i>
-          </div>
-        </div>
-        <div className="commission-item">
-          <div className="commission-item__sample-container">
-            <img
-              src="https://i.pinimg.com/564x/dd/cc/28/ddcc28637a3598e1fd3625c70af72213.jpg"
-              alt=""
-              className="commission-item__sample-item large"
-            />
-            <div>
-              <img
-                src="https://i.pinimg.com/736x/01/85/3f/01853fb047209c0ab87744af4cbb63fc.jpg"
-                alt=""
-                className="commission-item__sample-item"
-              />
-              <img
-                src="https://i.pinimg.com/564x/b6/7b/b7/b67bb7639a218fd36362f3301fce846d.jpg"
-                alt=""
-                className="commission-item__sample-item"
-              />
-            </div>
-          </div>
-          <div className="commission-item__details">
-            <h4 className="commission-item__details__header">
-              Realistic drawings
-            </h4>
-            <p className="commission-item__details__style">
-              <strong>Materials: </strong>Lorem Ipsum is simply dummy
-            </p>
-            <p className="commission-item__details__materials">
-              <strong>Materials: </strong>watercolor, pencil, digital
-            </p>
-            <p className="commission-item__details__pricing">
-              <strong>Price: </strong>100.000 - 400.000 VND
-            </p>
-            <p className="commission-item__details__notes">
-              *Note: The above price applied for one portrait per A4 frame. For
-              more, a price of 50% applied for the total price.
-            </p>
-            <button className="commission-item__book-btn btn-3 btn lg">
-              Book commission
-            </button>
-            <i class="fa-solid fa-ellipsis commission-item__edit-ic"></i>
-          </div>
-        </div>
-        <div className="commission-item">
-          <div className="commission-item__sample-container">
-            <img
-              src="https://i.pinimg.com/564x/4f/ff/55/4fff55d1f335f8c74ec5f56d4d16933f.jpg"
-              alt=""
-              className="commission-item__sample-item large"
-            />
-            <div>
-              <img
-                src="https://i.pinimg.com/564x/51/d1/dd/51d1ddc3a060f0d9f4ba54f03909df99.jpg"
-                alt=""
-                className="commission-item__sample-item"
-              />
-              <img
-                src="https://i.pinimg.com/564x/14/80/8f/14808f0a5906689f7b686106ae667685.jpg"
-                alt=""
-                className="commission-item__sample-item"
-              />
-            </div>
-          </div>
-          <div className="commission-item__details">
-            <h4 className="commission-item__details__header">
-              Realistic drawings
-            </h4>
-            <p className="commission-item__details__style">
-              <strong>Materials: </strong>Lorem Ipsum is simply dummy
-            </p>
-            <p className="commission-item__details__materials">
-              <strong>Materials: </strong>watercolor, pencil, digital
-            </p>
-            <p className="commission-item__details__pricing">
-              <strong>Price: </strong>100.000 - 400.000 VND
-            </p>
-            <p className="commission-item__details__notes">
-              *Note: The above price applied for one portrait per A4 frame. For
-              more, a price of 50% applied for the total price.
-            </p>
-            <button className="commission-item__book-btn btn-3 btn lg">
-              Book commission
-            </button>
-            <i class="fa-solid fa-ellipsis commission-item__edit-ic"></i>
-          </div>
-        </div>
+          );
+        })}
       </div>
+
+      {/* Modal forms */}
+      {showAddCommissionForm && (
+        <AddCommission
+          setShowAddCommissionForm={setShowAddCommissionForm}
+          handleAddCommission={handleAddCommission}
+          mutation={mutation}
+        />
+      )}
     </div>
   );
 }

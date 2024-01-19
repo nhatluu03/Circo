@@ -170,19 +170,20 @@
       .nav-right-icon-item {
         border: 1px solid var(--field-border-light);
         border-radius: 8px;
-        padding: 6px 8px;
+        padding: 7px 9px;
         margin: 6px;
 
         &:hover {
-          opacity: 0.8;
+          i {
+            opacity: 0.8;
+          }
           cursor: pointer;
         }
 
-        img {
-          width: 18px;
-          height: 18px;
-          object-fit: cover;
+        i {
+          font-size: 1.6rem;
           display: block;
+          margin: 0;
         }
       }
     }

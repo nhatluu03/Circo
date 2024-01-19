@@ -30,6 +30,12 @@ const ArtworkSchema = new Schema(
       },
     },
     forSelling: { type: Boolean, default: false, required: true },
+    reacts: [{user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }}],
+    comments: [{
+      user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+      content: { type: String, required: true },
+      created_at: { type: Date, default: Date.now },
+    }]
   },
   { timestamps: true }
 );
@@ -39,3 +45,4 @@ ArtworkSchema.index({ description: 'text' });
 
 const Artwork = mongoose.model("Artwork", ArtworkSchema);
 export default Artwork;
+

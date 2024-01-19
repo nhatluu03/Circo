@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Artwork from "../models/artwork.model.js";
+import { User } from "../models/user.model.js";
 import createError from "../utils/createError.js";
 import Field from "../models/field.model.js";
 
@@ -15,6 +16,7 @@ class ArtworkController {
         path: "talent",
         select: "avatar username", // get the fields avatar and username only
       });
+      console.log(artworks);
       res.status(200).json(artworks);
     } catch (error) {
       console.error(error);
@@ -116,23 +118,26 @@ class ArtworkController {
   };
 
   // Additional custom methods
-  getArtworks = async (req, res, next) => {
+  getArtworksByTalentId = async (req, res, next) => {
     const { talentId } = req.params;
     const { forSelling } = req.query;
 
-    console.log("Talent ID: " + talentId)
-    console.log("forSelling: " + forSelling)
-    
     try {
       let artworks;
       if (forSelling) {
-        artworks= await Artwork.find({ talent: talentId, forSelling: true })
+        artworks = await Artwork.find({
+          talent: talentId,
+          forSelling: true,
+        }).populate("fields", "name");
         // .populate({
         //   path: "Field",
         //   select: "_id title"
         // });
       } else {
-        artworks = await Artwork.find({ talent: talentId, forSelling: false})
+        artworks = await Artwork.find({
+          talent: talentId,
+          forSelling: false,
+        }).populate("fields", "name");
         // .populate({
         //   path: "Field",
         //   select: "_id title"
@@ -140,7 +145,7 @@ class ArtworkController {
       }
 
       // Fetch artworks associated with the specified talentId
-      console.log(artworks)
+      // console.log(artworks)
       res.status(200).json(artworks);
     } catch (error) {
       next(error);
@@ -170,7 +175,7 @@ class ArtworkController {
 
   uploadImages = async (req, res) => {
     try {
-      console.log("REQ.FILES")
+      console.log("REQ.FILES");
       console.log(req.files);
       // Perform any additional processing or validation here
       // const filePaths = req.files.map(file => ({ url: file.filename }));
@@ -178,13 +183,86 @@ class ArtworkController {
     } catch (error) {
       // Handle any errors that may occur during the upload process
       console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: "Internal Server Error" });
     }
-  }
+  };
 
   uploadImage = async (req, res) => {
     console.log(req.file);
-    res.status(200).json({url: req.file.filename});
+    res.status(200).json({ url: req.file.filename });
+  };
+
+  commentOnArtwork = async (req, res) => {
+    console.log("COMMENT")
+    const artworkId = req.params.id;
+    const { userId, content } = req.body;
+
+    try {
+      // Find the artwork by ID
+      const artwork = await Artwork.findById(artworkId);
+      const user = await User.findById(userId);
+
+      if (!artwork) {
+        return res.status(404).json({ error: "Artwork not found" });
+      }
+
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Create a new comment
+      const newComment = {
+        user: user,
+        content,
+      };
+
+      // Add the comment to the artwork's comments array
+      artwork.comments.push(newComment);
+
+      // Save the artwork with the new comment
+      await artwork.save();
+
+      return res.status(201).json(artwork);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+
+  reactOnArtwork = async (req, res) => {
+    const artworkId = req.params.id;
+    const { userId, content } = req.body;
+
+    try {
+      // Find the artwork by ID
+      const artwork = await Artwork.findById(artworkId);
+      const user = await User.findById(userId);
+
+      if (!artwork) {
+        return res.status(404).json({ error: "Artwork not found" });
+      }
+
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Create a new comment
+      const newReact = {
+        user: user,
+        content,
+      };
+
+      // Add the comment to the artwork's comments array
+      artwork.reacts.push(newReact);
+
+      // Save the artwork with the new comment
+      await artwork.save();
+
+      return res.status(201).json(artwork);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
   };
 }
 

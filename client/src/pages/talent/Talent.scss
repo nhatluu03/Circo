@@ -12,6 +12,8 @@
 
   .talent-profile__bg {
     position: relative;
+  margin-bottom: 24px;
+
 
     .edit-cover-btn {
       position: absolute;
@@ -50,7 +52,7 @@
   border: 1px solid var(--field-border-light);
   border-radius: 6px;
   font-weight: 500;
-  margin: 24px 12px 0px 0;
+  margin: 0 12px 0px 0;
   display: inline-flex;
   align-items: center;
 

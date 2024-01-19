@@ -1,66 +1,66 @@
-import Category from "../models/field.model.js";
+import Field from "../models/field.model.js";
 
-class CategoryController {
+class FieldController {
   index = async (req, res, next) => {
-    const categories = await Category.find()
-    res.status(200).json(categories);
+    const fields = await Field.find()
+    res.status(200).json(fields);
   };
 
   store = async (req, res, next) => {
-    const category = new Category({
+    const field = new Field({
       ...req.body,
     });
-    await category.save();
-    res.status(200).json(category);
+    await field.save();
+    res.status(200).json(field);
   };
 
   show = async (req, res, next) => {
     try {
-      const category = await Category.findById(req.params.id);
-      if (!category) {
+      const field = await Field.findById(req.params.id);
+      if (!field) {
         return res.status(404).json({
-          error: "Category not found",
+          error: "Creative field not found",
         });
       }
-      res.status(200).json(category);
+      res.status(200).json(field);
     } catch (error) {
       next(error)      
     }
   };
 
   update = async (req, res, next) => {
-    const category = await Category.findById(req.params.id);
-    if (!category) {
+    const field = await Field.findById(req.params.id);
+    if (!field) {
       return res.status(404).json({
-        error: "Category not found",
+        error: "Creative field not found",
       });
     }
     try {
-      const updatedCategory = await Category.findByIdAndUpdate(
+      const updatedField = await Field.findByIdAndUpdate(
         req.params.id,
         { $set: req.body },
         { new: true }
       );
-      res.status(200).json(updatedCategory);
+      res.status(200).json(updatedField);
     } catch (error) {
       next(error);
     }
   };
 
   destroy = async (req, res, next) => {
-    const category = await Category.findById(req.params.id);
-    if (!category) {
+    const field = await Field.findById(req.params.id);
+    if (!field) {
       return res.status(404).json({
-        error: "Category not found",
+        error: "Creative field not found",
       });
     }
     try {
-      await Category.findByIdAndDelete(req.params.id);
-      res.status(200).json("Deleting a category");
+      await Field.findByIdAndDelete(req.params.id);
+      res.status(200).json("Deleting a field");
     } catch (error) {
       next(error);
     }
   };
 }
 
-export default new CategoryController();
+export default new FieldController();

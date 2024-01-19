@@ -64,7 +64,7 @@ class CouponController {
           error: "Coupon not found",
         });
       await Coupon.findByIdAndDelete(req.params.id);
-      res.status(200).json("Deleting a coupon");
+      res.status(200).json("Successfully deleted the coupon");
     } catch (error) {
       next(error);
     }

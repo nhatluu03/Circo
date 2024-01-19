@@ -5,6 +5,8 @@ import axios from "axios";
 
 export default function UploadSellingArtwork({
   setShowUploadSellingArtworkForm,
+  handleUploadSellingArtwork,
+  mutation,
 }) {
   const { user, login } = useContext(UserContext);
   const [files, setFiles] = useState([]);
@@ -37,104 +39,33 @@ export default function UploadSellingArtwork({
   };
 
   const [inputs, setInputs] = useState({});
+  const [selectedFields, setSelectedFields] = useState([]);
   const handleChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setInputs((values) => ({ ...values, [name]: value }));
+    const { name, value, checked } = e.target;
+
+    if (name === "fields") {
+      if (checked) {
+        // If checkbox is checked, add the value to the selectedMaterials array
+        setSelectedFields((prevFields) => [...prevFields, value]);
+      } else {
+        // If checkbox is unchecked, remove the value from the selectedMaterials array
+        setSelectedFields((prevFields) =>
+          prevFields.filter((field) => field !== value)
+        );
+      }
+    } else {
+      setInputs((values) => ({ ...values, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      // Step 2: Post image to url2
-      // const formData = new FormData();
-      const uploadFiles = async () => {
-        let imagePaths = [];
-        for (const file of files) {
-          const formData = new FormData();
-          formData.append("file", file);
-
-          try {
-            const res1 = await axios.post(
-              "http://localhost:3000/artworks/upload",
-              formData,
-              {
-                withCredentials: true,
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              }
-            );
-
-            imagePaths.push(res1.data.url);
-          } catch (error) {
-            console.error("Error uploading file:", error);
-            // Handle the error as needed
-          }
-        }
-         return imagePaths;
-      }
-
-      // Call the async function
-      // let imagePaths = uploadFiles().then(imagePaths => {
-      //   console.log(imagePaths);
-      // });;
-
-      const uploadFilesAndCreateArtwork = async () => {
-        try {
-          let imagePaths = await uploadFiles();
-      
-          console.log(imagePaths);
-      
-          inputs.images = imagePaths;
-          inputs.forSelling = true;
-      
-          console.log("Inputs");
-          console.log(inputs);
-      
-          const res2 = await axios.post('http://localhost:3000/artworks/', inputs, {
-            withCredentials: true,
-          });
-      
-          console.log('Artwork Data:', res2.data);
-        } catch (error) {
-          console.error("Error:", error);
-          // Handle the error as needed
-        }
-      };
-      
-      // Call the async function
-      uploadFilesAndCreateArtwork();
-
-      // // Step 1: Post artwork data
-      
-
-      // const response2 = await axios.post('http://localhost:3000/artworks/uploads', files, {
-      //   withCredentials: true,
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      // });
-      // console.log('Image URL:', response2.data.imageUrl);
-
-      // const res = fetch("http://localhost:3000/artworks/upload", {
-      //   method: "POST",
-      //   headers: {
-      //     'Accept': 'application/json',
-      //     'Content-Type': 'application/json'
-      //   },
-
-      //   //make sure to serialize your JSON body
-      //   body: formData
-      // })
-      // .then( (response) => {
-      //   console.log(respose)
-      //    //do something awesome that makes the world a better place
-      // });
-    } catch (error) {
-      console.log(error);
-    }
+    inputs.fields = selectedFields
+    console.log(files)
+    console.log(inputs)
+    // alert("Handle submit in child component");
+    // const output = await handleUploadSellingArtwork(files, inputs);
+    // mutation.mutate(output);
   };
 
   return (
@@ -144,7 +75,7 @@ export default function UploadSellingArtwork({
         onClick={() => setShowUploadSellingArtworkForm(false)}
       ></div>
       <form
-        className="form upload-artwork-form"
+        className="form modal-form upload-selling-artwork-form"
         onSubmit={handleSubmit}
         encType="multipart/form-data"
       >
@@ -157,7 +88,9 @@ export default function UploadSellingArtwork({
         />
         <h2 className="form-title">Upload artwork for sell</h2>
         <div className="form-field">
-          <label htmlFor="title" className="form-field__label">Title</label>
+          <label htmlFor="title" className="form-field__label">
+            Title
+          </label>
           <input
             type="text"
             className="form-field__input"
@@ -168,7 +101,9 @@ export default function UploadSellingArtwork({
           {/* <span ref={usernameErrRef} className="form-field__error"></span> */}
         </div>
         <div className="form-field">
-          <label htmlFor="title" className="form-field__label">Price ($)</label>
+          <label htmlFor="price" className="form-field__label">
+            Price ($)
+          </label>
           <input
             type="number"
             className="form-field__input"
@@ -178,28 +113,41 @@ export default function UploadSellingArtwork({
           />
           {/* <span ref={usernameErrRef} className="form-field__error"></span> */}
         </div>
-        <div className="upload-artwork__btn-container">
-          <select
+        <div className="form-field">
+          <label htmlFor="creative-field" className="form-field__label">
+            Creative Field
+          </label>
+          {fields.map((field) => {
+            return (
+              <>
+                <div class="form-field__checkbox">
+                  <input
+                    type="checkbox"
+                    name="fields"
+                    id={field._id}
+                    value={field._id}
+                  />
+                  <label for={field._id}>{field.name}</label>
+                </div>
+              </>
+            );
+          })}
+          {/* <select
             name="fields[]"
-            className="field-container upload-artwork__btn-item add-hashtag-btn"
+            className="form-field__input field-container upload-artwork__btn-item add-hashtag-btn"
             defaultValue={"DEFAULT"}
             onChange={handleChange}
           >
             <option value="DEFAULT">Add field</option>
-            {fields.map((field) => (
-              <option value={field._id}>{field.name}</option>
+            {fields.map((field, index) => (
+              <option key={index} value={field._id}>{field.name}</option>
             ))}
-          </select>
+          </select> */}
           {/* <button
             className="upload-artwork__btn-item add-field-btn"
           >
             <i className="fa-regular fa-hashtag"></i> Add fields
-            
           </button> */}
-
-          <button className="upload-artwork__btn-item add-hashtag-btn">
-            <i className="fa-regular fa-hashtag"></i> Add hashtags
-          </button>
         </div>
 
         <div className="form-field--upload">

@@ -6,6 +6,12 @@ const CouponSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    code: {
+      type: String,
+      required: true,
+      minLength: [5, "Coupon code must have at least 5 characters"],
+      maxLength: [10, "Coupon code cannot exceed 5 characters"],
+    },
     type: {
       type: String,
       enum: ["percentage", "amount"],

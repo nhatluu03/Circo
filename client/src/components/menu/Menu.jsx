@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useContext } from "react";
+import { Link } from "react-router-dom";
 import "./Menu.scss";
 import { UserContext } from "../../contexts/user.context.jsx";
 
@@ -15,9 +16,9 @@ export default function Menu() {
 
   useEffect(() => {
     const toggleDisplayMenu = () => {
-      console.log(menuContent)
-      console.log(appearanceMenu)
-      console.log(languageMenu)
+      console.log(menuContent);
+      console.log(appearanceMenu);
+      console.log(languageMenu);
       if (appearanceMenu) {
         appearanceMenuRef.current.classList.add("active");
         menuContentRef.current.classList.remove("active");
@@ -54,13 +55,20 @@ export default function Menu() {
           <div>nhat_luu@gmail.com</div>
           <div className="menu-container">
             <hr />
-            <a
-              href={`http://localhost:3000/users/${user?._id}`}
-              className="menu-item"
-            >
-              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAZxJREFUSEu11L1vjWEYx/HPSecmmgpCajHUaOofIF5K01EbU/8CidCkpoYNIQzduyojUukLo9UmBgtB21RIGQnPldxtTh7nPveTU+da7/v6fa/3lj5bq8/6mgImq0Bu4kQK6D3m8bwUYBPAHG5nhGZxvxukBDiPF9hAgFaS2DncwRGcwXoOUgKsJoFpPK6JTGEJy7jYK+AbDlRlGMTPmsgwtvEZx3oFbOIQDuJrBhB/olQdrVSiqPlZRDmeZEoUPbrQK6C9yTEx0ZOBBL2Lw/ttcgR2DSEWwu32u+pLQB/uZ0x3fUdxHTGev/Ayzf+7/7FoJY2u792aHOMZUY/hVJqmdrEtvMHrlM2PTqQcIKZiMTWxSQaxCzNYq3/uBJjAs/TxKW4hjtv3mnNkGMcv3sMnLAKLsd2zOmAIb1PkcWtuNAkf91I5v+BkNXk7u351wFU8wCucbige30InljIO35Vq8xdygDhol0rLkwGPp8P3CJdzgA8YQZSqXvNSQkfxCR9xPAf4kx5KNyoH+8e/V6FSNtkpauzY9GPfM/gL5dBHGcZ57nQAAAAASUVORK5CYII=" />
-              <span className="title">Profile</span>
-            </a>
+            {user?.role == "client" ? (
+              <Link to={`/users/${user?._id}`} className="menu-item">
+                {" "}
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAZxJREFUSEu11L1vjWEYx/HPSecmmgpCajHUaOofIF5K01EbU/8CidCkpoYNIQzduyojUukLo9UmBgtB21RIGQnPldxtTh7nPveTU+da7/v6fa/3lj5bq8/6mgImq0Bu4kQK6D3m8bwUYBPAHG5nhGZxvxukBDiPF9hAgFaS2DncwRGcwXoOUgKsJoFpPK6JTGEJy7jYK+AbDlRlGMTPmsgwtvEZx3oFbOIQDuJrBhB/olQdrVSiqPlZRDmeZEoUPbrQK6C9yTEx0ZOBBL2Lw/ttcgR2DSEWwu32u+pLQB/uZ0x3fUdxHTGev/Ayzf+7/7FoJY2u792aHOMZUY/hVJqmdrEtvMHrlM2PTqQcIKZiMTWxSQaxCzNYq3/uBJjAs/TxKW4hjtv3mnNkGMcv3sMnLAKLsd2zOmAIb1PkcWtuNAkf91I5v+BkNXk7u351wFU8wCucbige30InljIO35Vq8xdygDhol0rLkwGPp8P3CJdzgA8YQZSqXvNSQkfxCR9xPAf4kx5KNyoH+8e/V6FSNtkpauzY9GPfM/gL5dBHGcZ57nQAAAAASUVORK5CYII=" />
+                <span className="title">Profile</span>
+              </Link>
+            ) : (
+              <Link to={`/talents/${user?._id}`} className="menu-item">
+                {" "}
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAZxJREFUSEu11L1vjWEYx/HPSecmmgpCajHUaOofIF5K01EbU/8CidCkpoYNIQzduyojUukLo9UmBgtB21RIGQnPldxtTh7nPveTU+da7/v6fa/3lj5bq8/6mgImq0Bu4kQK6D3m8bwUYBPAHG5nhGZxvxukBDiPF9hAgFaS2DncwRGcwXoOUgKsJoFpPK6JTGEJy7jYK+AbDlRlGMTPmsgwtvEZx3oFbOIQDuJrBhB/olQdrVSiqPlZRDmeZEoUPbrQK6C9yTEx0ZOBBL2Lw/ttcgR2DSEWwu32u+pLQB/uZ0x3fUdxHTGev/Ayzf+7/7FoJY2u792aHOMZUY/hVJqmdrEtvMHrlM2PTqQcIKZiMTWxSQaxCzNYq3/uBJjAs/TxKW4hjtv3mnNkGMcv3sMnLAKLsd2zOmAIb1PkcWtuNAkf91I5v+BkNXk7u351wFU8wCucbige30InljIO35Vq8xdygDhol0rLkwGPp8P3CJdzgA8YQZSqXvNSQkfxCR9xPAf4kx5KNyoH+8e/V6FSNtkpauzY9GPfM/gL5dBHGcZ57nQAAAAASUVORK5CYII=" />
+                <span className="title">Profile</span>
+              </Link>
+            )}
+
             <div
               className="menu-item"
               onClick={() => {
@@ -70,10 +78,12 @@ export default function Menu() {
               <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAkBJREFUSEu11UvojlsUBvCfDjkSEqLcJnIpZ2SATBQpJZQiIYVyS0ghA0zkVoo4h1wyIClCGLkMhGOkxARJJwZCyDWSYy/tT6/X+30vg/+efN9+91rr2etZz1q7nTZe7do4vjqAPpiBsRiGgfgTn3Ab57AXT5pdtBXAVBxGt5os32El9lfZNQNYh03Z4T5O4Tqu4CX6YRbmYXC225wyC78fVhXAhmSxMVvtSwGX42OTLDpgLdajPbbm/XfzMsA4XMwB5ybej2fLPViCv7EU5f0UnM62s3G0gVAEiBs8SkWLwq7G9sKt/y/8D5/yPo7XJAFsSdQFpUMaNkWAaTiBe1kxXwpB6zII06ArLtgb43EpPhYBgo7pWIbdFTT8Sss06ncQC8oAkdog/IU7TWioAxme++MuhpYBXqML/kiqCHrKtNQFj/Nowg94g65lgOfokY2aybIIEsHGYBTepsIeS83WFzfxCt3LAP9hQFZAFLpVBtHlhxpBKlK7kBpzQhngLCYl9BXJcWeLGvTPUuyIbfg38R4KnJnpfZD3t8oAC/PguoHRLTKIzo2xcARz6gpTlGlnPEyBe2XHCFC1GtStSoXc8TsAYRvDKzT8LGcR6ZbXotRM/+B8prQlRtWwO5OUMBkv8u+1UoSeqYke43OWYrHjfwKrAuiUmu0kJuZCX84SDBE8xcg0Cq5mgJD1+1YptHpwFuc34ZueK9auPMp/m6KiQwSfjxjHI9K8j+yiXw5k8OJUrQSqe5PrRFJ73uYAXwELH3UZoHMS+gAAAABJRU5ErkJggg==" />
               <span className="title">Appearance</span>
             </div>
-            <div className="menu-item"
+            <div
+              className="menu-item"
               onClick={() => {
                 setLanguageMenu(true);
-              }}>
+              }}
+            >
               <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAqxJREFUSEu11V3o33MUB/DXtDw0rJFNHppStqw8LFcj4UJMLlCY50V5KFtKtiLPccFcmMhDW8is1dZak6gVaVFSzAUT5QZjGuUhY8znvc5P3337/X5/F/t/bn79vufzOe9zzvt9zpliks+USfZvIoBDcAUuwuk4CXvxNT7Gm9iAv0YFOg7gYjxbTscl+iVuw5Zhl0YBPNgifaAe/IZpFeWZ+Buf4GAMbLl6N1b0QYYBxHEAfsYynI+rm8PHGsi95eBxLK/ybMaTOApL2+/TXZA+wKXYhN9xAb7Cd1X3E/BDPZ5ePByBExHbOzgU52LrAKQLkMtf4Nj2+Ca8jFvwYkUasrtnFRZXtg/Vm9XY3u6fhj9zuQtwe5H6Kc7AP3i9ynMz4rB7Btm+jwU4CNswr3F0WfOxsQ/wBhZiCVaWp88wtwBDbPck05QvXM0oQ4h+Ai802619gG+a4bieszxOvY/Bj0Nk+Esj+PCW+UzsxFn4sHokituvRCH2sAPU2T+VqvYDGERzIDDi68h+BmH/lF6JdmBWU9Lx+HYIcsp2dCnv+ybx+fgI4e7UPsBrTabX4E48U85yOY+ikqile0LsrpJj9J8ZdVeL/Cm8ghv7ANeXIWqJTHPSCze0BrujZfLcCJmmqc4p2+dN2nNaBle1DNb1AUJwypTOXNTkuRbR/0utdGtwbQ8g32PPWEmjXYdXq1nTaLv7APl/Id6qUXF2m5LhIFr/tYAj25yUJ5ykNKn1yViPqW1knIf3BsEMG3YZaI+W7u/BlbUPHu5M2Psr6g9qJ2RAppO7/O3DGDWu78MjFcVgJCflLJ28ybLJMvqjsgjBmaSDCfBfNcctnEvwfEl0XG9k4WQovjvs0kQrMzW+vGZUiJtdcswYj4TfrqG2Z1QEEwGMi/x/2SYd4F9DQooZvsQXDgAAAABJRU5ErkJggg==" />
               <span className="title">Language</span>
             </div>
@@ -182,8 +192,6 @@ export default function Menu() {
             </div>
           </div>
         </div>
-
-
       </div>
     </>
   );

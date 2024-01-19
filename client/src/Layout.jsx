@@ -4,14 +4,16 @@ import Sidebar from "./components/sidebar/Sidebar";
 import Conversations from "./components/conversations/Conversations";
 import { Outlet } from "react-router-dom";
 import Talent from "./pages/talent/Talent";
+import Client from "./pages/client/Client";
 import FieldSlider from "./components/fieldSlider/FieldSlider";
 
-export default function Layout({ showSidebar, showFilterBar }) {
+export default function Layout({ showSidebar, userRole, showFilterBar }) {
   return (
     <div className={`app ${showSidebar ? "with-sidebar" : "without-sidebar"}`}>
       <Navbar />
       <Conversations />
-      {showSidebar ? <Talent /> : <Outlet />}
+      {showSidebar ? 
+      (userRole == "talent" && <Talent />) || (userRole == "client" && <Client />) : <Outlet />}
       {/* {showFilterBar ? (
         <>
           <FieldSlider showFilterBar={showFilterBar} fields={fields} setShowFilterBar={setShowFilterBar} />

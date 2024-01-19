@@ -2,16 +2,22 @@ import mongoose from "mongoose";
 
 const CommissionSchema = new mongoose.Schema(
   {
+    title: { type: String, required: true, maxLength: [100, "Title of the commission cannot exceed 100 characters"]},
     talent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    category: {
+    fields: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: "ArtCategory",
+      ref: "Field",
       required: true,
-    },
+    }],
+    materials: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Material",
+      required: true,
+    }],
     price: {
       type: Number,
     },
@@ -20,6 +26,16 @@ const CommissionSchema = new mongoose.Schema(
       type: Number,
       required: true,
       default: 1,
+    },
+    priceFrom: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    priceTo: {
+      type: Number,
+      required: true,
+      default: 0,
     },
     note: { type: String },
   },

@@ -123,7 +123,7 @@ export default function Conversations() {
         }}
         className="open-conversations-btn"
       >
-        <i class="fa-regular fa-message"></i>
+        <i className="fa-regular fa-message"></i>
       </button>
 
       {isOpenConversations && (

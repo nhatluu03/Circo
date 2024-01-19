@@ -90,6 +90,27 @@ class CommissionController {
       next(error);
     }
   };
+
+  uploadImage = async (req, res) => {
+    // console.log(req.file);
+    res.status(200).json({url: req.file.filename});
+  };
+
+  // Additional methods
+  getCommissionsByTalentId = async (req, res, next) => {
+    const { talentId } = req.params;
+
+    try {
+      let commissions = await Commission.find({ talent: talentId }).populate({
+        path: "fields",
+        select: "name", 
+      });;
+      // console.log(commissions)
+      res.status(200).json(commissions);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new CommissionController();

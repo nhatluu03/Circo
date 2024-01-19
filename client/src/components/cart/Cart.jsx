@@ -1,36 +1,27 @@
+// Inside Cart.jsx
+
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./Cart.scss";
+import CartItem from "../cartItem/CartItem.jsx";
+import CartItems from "../cartItems/CartItems.jsx";
 
-export default function Cart({setShowCart}) {
-  const [cartItems, setCartItems] = useState(JSON.parse(localStorage.getItem("cartItems")) ? JSON.parse(localStorage.getItem("cartItems")) : []);
-  
-  // useEffect(() => {
-  //   const fetchCartItems = async () => {
-  //     try {
-  //       const storedCartItems = localStorage.getItem("cartItems");
-  //       console.log("Stored Cart Items:", storedCartItems);
-  //       storedCartItems.map(storedItem => {
-  //         console.log(storedCartItem)
-  //       })
-  //       const parsedCartItems = JSON.parse(storedCartItems) || [];
-  //       setCartItems(parsedCartItems);
-  //     } catch (error) {
-  //       // console.log(error);
-  //     }
-  //   };
 
-  //   fetchCartItems();
-  // }, [cartItems]);
-  
+export default function Cart({ setShowCart }) {
+  const [cartItems, setCartItems] = useState([]);
+
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartItems(storedCart);
+  }, []);
+
   return (
     <div className="cart">
-      <div className="cart-container">
-        {cartItems.length > 0 && cartItems.map(cartItem => (
-          <div className="cart-item" key={cartItem.id}>
-            <span>{cartItem.title}</span>
-            <span>{cartItem.quantity}</span>
-          </div>
-        ))}
+      <div className="cart-content">
+        <CartItems cartItems={cartItems} setCartItems={setCartItems}/>
+        <Link to="/checkout">
+          <button className="btn btn-3 w-100 checkout-btn">Checkout</button>
+        </Link>
       </div>
     </div>
   );

@@ -42,8 +42,6 @@ const UserSchema = new Schema(
         platform: { type: String }, 
         url: { type: String }, 
       },
-
-
     ],
     bookmark: [
       { type: mongoose.Schema.Types.ObjectId, ref: 'Artwork' }

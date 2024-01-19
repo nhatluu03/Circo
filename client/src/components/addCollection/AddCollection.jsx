@@ -5,7 +5,7 @@ import axios from "axios";
 import sampleArtwork01 from "../../assets/img/artwork_01.png";
 import sampleArtwork02 from "../../assets/img/artwork_02.png";
 
-export default function AddCollection({ setShowAddCollectionForm, artpieces}) {
+export default function AddCollection({ setShowAddCollectionForm, showcasingArtworks}) {
   const { user, login } = useContext(UserContext);
   const [masterpieces, setMasterpieces] = useState([]);
 
@@ -94,7 +94,7 @@ export default function AddCollection({ setShowAddCollectionForm, artpieces}) {
             Choose masterpieces
           </label>
           <div className="masterpiece-container">
-            {artpieces.map((artpiece) => (
+            {showcasingArtworks.map((showcasingArtwork) => (
               // <div
               //   key={image.id}
               //   className={`masterpiece-item ${

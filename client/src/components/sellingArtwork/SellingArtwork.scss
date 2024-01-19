@@ -75,6 +75,15 @@
     .add-to-cart-btn {
       width: 100%;
     }
+
+    .selling-artwork-item__action {
+      display: flex;
+      justify-content: space-between;
+
+      button {
+        width: 48%;
+      }
+    }
   }
 
   //   .selling-artwork-item__sample-container {
