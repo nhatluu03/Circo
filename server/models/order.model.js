@@ -1,31 +1,32 @@
-import mongoose, { Types } from "mongoose";
+import mongoose from "mongoose";
 
 const OrderSchema = new mongoose.Schema(
   {
-    talent: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
     client: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    type: {
-      // Modify the 'type' field to dynamically reference either Artwork or Commission model
-      artwork: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Artwork",
+
+    // Array of objects with itemId and quantity
+    items: [
+      {
+        type: {
+          type: String, // Assuming 'artwork' or 'commission'
+          required: true,
+          default: "artwork",
+          enum: ['artwork', 'commission'],
+        },
+        itemId: {
+          type: mongoose.Schema.Types.ObjectId,
+          refPath: 'type', // Dynamically reference either 'Artwork' or 'Commission'
+        },
+        quantity: {
+          type: Number,
+          default: 1, // Default quantity is 1 if not specified
+        },
       },
-      commission: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Commission",
-      },
-    },
-    price: {
-      type: Number,
-      required: true,
-    },
+    ],
     rating: {
       type: Number,
       enum: [1, 2, 3, 4, 5],
@@ -34,14 +35,50 @@ const OrderSchema = new mongoose.Schema(
       type: String,
     },
     media: [{ type: String, maxlength: 3 }],
-    isCompleted: {
-      type: Boolean,
-      default: false,
+    status: {
+      type: String, 
+      enum: ['pending', 'confirmed', 'in-delivery', 'complete'],
+      required: true,
+    },
+    
+    // Delivery information
+    recipientName: {
+      type: String,
+      required: true,
+    },
+    mobileNumber: {
+      type: String,
+      required: true,
+    },
+    streetNo: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    province: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    
+    // Packaging information
+    packaging: {
+      type: String,
+      enum: ['1', '2', '3', '4'],
+    },
+    packingNote: {
+      type: String,
+      maxLength: [100, "Maximum length of packing note is 100 characters"],
+    },
+
+    total: {
+      type: Number,
       required: true,
     },
     payment_intent: { 
       type: String, 
-      required: true,
     },
   },
   {

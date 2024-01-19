@@ -1,0 +1,132 @@
+.conversations {
+  width: 38%;
+  overflow: hidden;
+
+  .open-conversations-btn {
+    position: fixed;
+    right: 40px;
+    bottom: 28px;
+    width: 50px;
+    height: 50px;
+    background-color: #087be5;
+    border-radius: 50%;
+    color: white;
+    /* border-radius: 10px; */
+    padding: 12px 16px;
+    text-align: center;
+    box-shadow: #86beff 0px 5px 8px;
+
+    &:hover {
+      opacity: 1;
+      background-color: #1c82e1;
+    }
+  }
+
+  .conversations-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    position: fixed;
+    right: 100px;
+    bottom: 28px;
+    border: 1px solid var(--field-border-light);
+    border-radius: 10px;
+    width: 38%;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    z-index: 100;
+
+    .conversation-header {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      padding: 14px 18px;
+      // background-color: white;
+      border-bottom: 1px solid var(--gray-border-light);
+
+      .conversation-header__title {
+        font-size: 1.6rem;
+        margin: 0;
+      }
+
+      .close-modal-ic {
+        margin-right: 0;
+      }
+    }
+
+    .conversation-container {
+      width: calc(30% - 16px);
+      padding: 12px 0 0 16px;
+
+      .conversation-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+
+        &:hover {
+          cursor: pointer;
+          opacity: 0.8;
+        }
+
+        .conversation-item__avt {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-right: 10px;
+        }
+
+        .conversation-item__info {
+          p {
+            margin: 0;
+          }
+
+          .conversation-item__info__fullname {
+            font-weight: 600;
+          }
+
+          .conversation-item__info__last-msg {
+            font-weight: 500;
+            opacity: 0.8;
+            font-size: 1.3rem;
+          }
+        }
+      }
+    }
+
+    .conversation--right {
+      text-align: center;
+      width: 70%;
+      background-color: var(--gray-bg-light);
+      height: 45vh;
+      border-left: 1px solid var(--gray-border-light);
+
+      .conversation-details__default {
+        padding: 40px;
+        text-align: center;
+        margin-top: 40%;
+        transform: translateY(-50%);
+
+        .conversation-details__default__bg {
+          width: 70%;
+          height: 70%;
+          object-fit: cover;
+          border-radius: 4px;
+        }
+
+        h4 {
+          margin-bottom: 0px;
+        }
+
+        hr {
+          margin: 12px 0 12px 50%;
+          height: 4px;
+          background-color: var(--gray-border-light);
+          transform: translateX(-50%);
+          width: 10%;
+          border-radius: 4px;
+        }
+      }
+    }
+  }
+}

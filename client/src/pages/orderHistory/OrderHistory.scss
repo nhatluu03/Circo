@@ -1,0 +1,24 @@
+.order-history {
+    .order-history-container {
+        .order-history-item {
+            display: flex;
+            align-items: center;
+            .order-history-item__sample-img {
+                width: 200px;
+                height: 200px;
+                margin-right: 50px;
+            }
+            margin-top: 28px;
+            padding-top: 28px;
+            border-top: 1px solid var(--gray-border-light);
+
+            .order-history-item__price {
+              color: var(--red-color);
+            }
+
+            .order-history-item__btn {
+                margin-right: 12px !important; 
+            }
+        }
+    }
+}

@@ -1,20 +1,35 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import "./Layout.scss";
+// Components
+import Navbar from "./components/navbar/Navbar";
+import Sidebar from "./components/sidebar/Sidebar";
+import Conversations from "./components/conversations/Conversations";
+import { Outlet } from "react-router-dom";
+import Talent from "./pages/talent/Talent";
+import Client from "./pages/client/Client";
+import FieldSlider from "./components/fieldSlider/FieldSlider";
 
-const Layout = ({ children, showSidebar }) => {
+export default function Layout({ showSidebar, userRole, showFilterBar }) {
   return (
-    <div className="app-container">
-      <nav className="navbar">
-        <NavLink to="/">Home</NavLink>
-        <NavLink to="/page1">Page 1</NavLink>
-        <NavLink to="/page2">Page 2</NavLink>
-        {/* Add more links as needed */}
-      </nav>
-      {showSidebar && <div className="sidebar">Sidebar Content</div>}
-      <div className="content">{children}</div>
+    <div className={`app ${showSidebar ? "with-sidebar" : "without-sidebar"}`}>
+      <Navbar />
+      <Conversations />
+      {showSidebar ? 
+      (userRole == "talent" && <Talent />) || (userRole == "client" && <Client />) : <Outlet />}
+      {/* {showFilterBar ? (
+        <>
+          <FieldSlider showFilterBar={showFilterBar} fields={fields} setShowFilterBar={setShowFilterBar} />
+            
+          <div className="layout-with-filter-bar">
+            <div className="layout-with-filter-bar--left">
+              FILTERBAR
+            </div>
+            <div className="layout-with-filter-bar--right">
+              <Outlet />
+            </div>
+          </div>
+        </>
+      ) : (
+        <Outlet />
+      )} */}
     </div>
   );
-};
-
-export default Layout;
+}

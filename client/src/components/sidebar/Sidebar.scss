@@ -1,8 +1,24 @@
 .sidebar {
-  width: 25%;
-  background-color: var(--gray-bg-light);
+  // width: 25%;
   border-radius: 12px;
   padding: 40px 48px;
+
+  background-color: var(--gray-bg-light);
+  border: 1px solid #e7e7e7;
+  position: relative;
+
+  .edit-profile-ic {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    color: var(--gray-text-color-light);
+    font-size: 1.8rem;
+
+    &:hover {
+      opacity: 0.8;
+      cursor: pointer;
+    }
+  }
 
   .profile-basics {
     text-align: center;
@@ -10,6 +26,7 @@
     img {
       width: 120px;
       height: 120px;
+      object-fit: cover;
       border-radius: 50%;
       border: 3px solid white;
     }
@@ -20,6 +37,7 @@
     }
 
     .profile-basics__username {
+      margin-top: 8px;
       color: var(--gray-text-color-light);
     }
     .profile-basics__job {
@@ -36,6 +54,7 @@
     .btn {
       margin: 0 6px;
       min-width: 40%;
+      font-weight: 600;
     }
   }
 
@@ -80,15 +99,51 @@
   }
 
   .profile-section {
+    margin-bottom: 28px;
+
     h4 {
       margin: 0;
     }
 
     hr {
-        background-color: var(--field-border-light);
-        border: none;
-        outline: none;
-        height: 1px;
+      background-color: var(--field-border-light);
+      border: none;
+      outline: none;
+      height: 1px;
+      margin: 6px 0 8px;
+    }
+
+    &.socials p {
+      display: flex;
+      align-items: center;
+
+      img {
+        border-style: none;
+        margin-right: 8px;
+        height: 22px;
+        object-fit: cover;
+      }
+    }
+
+    &.achievements {
+      li {
+        display: flex;
+      }
+    }
+
+    &.extra {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      hr {
+        width: 2px;
+        height: 20px;
+      }
+
+      p {
+        margin: 0 12px;
+      }
     }
   }
 }

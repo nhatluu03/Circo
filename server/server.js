@@ -2,33 +2,51 @@ import { User } from "./models/user.model.js";
 import express from "express";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 import roles from "./roles.js";
 import path from "path";
 import route from "./routes/index.js";
 import "./utils/loadEnv.js";
 import cookieParser from "cookie-parser";
 import cors from 'cors'
+import multer from "multer";
 
 const app = express();
 
+app.use(cookieParser());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", true);
+  next();
+});
+app.use(express.json());
 app.use(cors({
   origin:"http://localhost:5173",
-  methods:"GET, HEAD, PUT, PATCH, POST, DELETE",
   credentials: true,
 }));
 
-app.use(express.json());
-app.use(cookieParser());
-
 const PORT = process.env.PORT || 3000;
+
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "./uploads/artworks");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, Date.now() + file.originalname);
+//   },
+// });
+
+// const upload = multer({ storage: storage });
+
+// app.post("/upload", upload.single("file"), (req, res) => {
+//   const file = req.file;
+//   res.status(200).json(file.filename);
+// });
+
 
 mongoose.connect(process.env.MONGO).then(() => {
   console.log("Connected to the Database successfully");
 });
 
 // app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(async (req, res, next) => {
   if (req.headers["x-access-token"]) {
     try {
@@ -52,7 +70,6 @@ app.use(async (req, res, next) => {
     next();
   }
 });
-
 route(app);
 
 app.listen(PORT, () => {

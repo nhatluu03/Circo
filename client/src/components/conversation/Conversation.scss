@@ -1,22 +1,99 @@
-.conversation{
+.conversation-details {
+  position: relative;
+  height: 100%;
+  .conversation-details__header {
+    background-color: white;
+    border-bottom: 1px solid var(--gray-border-light);
+  }
+
+  .conversation-details__message-container {
+    padding: 6px 10px;
+    display: block;
+    height: calc(100% - 84px);
+    overflow-y: scroll;
+    justify-content: start;
+    flex-wrap: wrap;
+
+    .conversation-details__message-item {
+      width: 100%;
+      //   position: relative;
+      //   background-color: white;
+      //   box-shadow: #86beff 0px 5px 8px;
+
+      .conversation-details__message-item__content {
+        span {
+          padding: 8px 10px;
+          background-color: white;
+          border-radius: 8px;
+          box-shadow: #d3e7fd 0px 4px 5px;
+        }
+      }
+
+      &.left {
+        text-align: left;
+      }
+
+      &.right {
+        .conversation-details__message-item__content {
+          text-align: right;
+
+          span {
+            background-color: #2395ff;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+
+  .new-message-form {
+    position: absolute;
+    bottom: 0;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    cursor: pointer;
-    transition: 0.2s;
-    border-radius: 10px;
-    &:hover{
-        background-color:  lightgrey;
+    padding: 8px 10px;
+    background-color: white;
+    width: 100%;
+
+    .form-field {
+      margin-bottom: 0;
+
+      .form-field__label {
+        margin-bottom: 0;
+      }
+
+      .form-field__input {
+        background-color: transparent;
+        border: none;
+      }
     }
-    img{
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit:  cover;
-        margin-right: 20px;
+
+    .new-message-form--left {
+      display: flex;
+      align-items: center;
     }
-    span{
-        font-weight: 500;
-        font-size: 14px;
+
+    .new-message-form--right {
+      display: flex;
+      align-items: center;
     }
+
+    input[type="submit"] {
+      display: none;
+    }
+
+    .open-icons-ic {
+      font-size: 1.6rem;
+    }
+
+    .open-media-ic {
+      color: white;
+      padding: 6px;
+      display: inline-block;
+      background-color: #2395ff;
+      border-radius: 50%;
+      font-size: 1.4rem;
+    }
+  }
 }

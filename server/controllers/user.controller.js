@@ -4,12 +4,16 @@ import {
   ClientUser,
   AdminUser,
 } from "../models/user.model.js";
+import Artwork from "../models/artwork.model.js";
+import Commission from "../models/commission.model.js";
+import Order from "../models/order.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import roles from "../roles.js";
 import "mongoose";
 import "../utils/loadEnv.js";
 import createError from "../utils/createError.js";
+import "cookie-parser";
 
 class UserController {
   async validatePassword(plaintPassword, hashedPassword) {
@@ -34,15 +38,9 @@ class UserController {
 
   allowIfLoggedIn = async (req, res, next) => {
     try {
-      // const user = res.locals.loggedInUser;
-      // if (!user) {
-      //   return res.status(401).json({
-      //     error: "You need to login to access this resource",
-      //   });
-      // }
-      // req.user = user;
-      // next();
+      // console.log(req.cookies)
       const token = req.cookies.accessToken;
+      console.log(token);
       if (!token) return next(createError(401, "You are not authenticated!"));
       jwt.verify(token, process.env.JWT_SECRET, async (error, payload) => {
         if (error) return next(createError(403, "Token is not valid"));
@@ -61,72 +59,79 @@ class UserController {
   };
 
   register = async (req, res, next) => {
-    // try {
-    //   const { username, password, fullname, role } = req.body;
+    try {
+      const { username, password, fullname, role } = req.body;
 
-    //   // Check if the username already exists
-    //   const existingUser = await User.findOne({ username });
-    //   if (existingUser) {
-    //     return res.status(400).json({
-    //       error: "Username already exists",
-    //     });
-    //   }
+      // Check if the username already exists
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        res.status(400).json({
+          error: "Username already exists",
+        });
+      }
 
-    //   // Hash the password for security
-    //   const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      // Hash the password for security
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-    //   // Create a new user based on the role
-    //   let newUser;
-    //   switch (role) {
-    //     case "talent":
-    //       newUser = new TalentUser({
-    //         username,
-    //         password: hashedPassword,
-    //         fullname,
-    //         role,
-    //       });
-    //       break;
-    //     case "client":
-    //       newUser = new ClientUser({
-    //         username,
-    //         password: hashedPassword,
-    //         fullname,
-    //         role,
-    //       });
-    //       break;
-    //     case "admin":
-    //       newUser = new AdminUser({
-    //         username,
-    //         password: hashedPassword,
-    //         fullname,
-    //         role,
-    //       });
-    //       break;
-    //     default:
-    //       return res.status(400).json({ error: "Invalid role" });
-    //   }
+      // Create a new user based on the role
+      let newUser;
+      switch (role) {
+        case "talent":
+          newUser = new TalentUser({
+            username,
+            password: hashedPassword,
+            fullname,
+            role,
+          });
+          break;
+        case "client":
+          newUser = new ClientUser({
+            username,
+            password: hashedPassword,
+            fullname,
+            role,
+          });
+          break;
+        case "admin":
+          newUser = new AdminUser({
+            username,
+            password: hashedPassword,
+            fullname,
+            role,
+          });
+          break;
+        default:
+          return res.status(400).json({ error: "Invalid role" });
+      }
 
-    //   const accessToken = jwt.sign(
-    //     { userId: newUser._id },
-    //     process.env.JWT_SECRET,
-    //     { expiresIn: "1d" }
-    //   );
-    //   newUser.accessToken = accessToken;
+      const accessToken = jwt.sign(
+        { userId: newUser._id },
+        process.env.JWT_SECRET,
+        { expiresIn: "90d" }
+      );
+      newUser.accessToken = accessToken;
 
-    //   // Save the user to the database
-    //   await newUser.save();
-    //   this.login(username, password);
+      // Save the user to the database
+      await newUser.save();
+      const { password: userPassword, ...others } = newUser._doc;
 
-    //   res.status(200).json({ message: "You have registered successfully" });
-    // } catch (error) {
-    //   res.status(500).json({ error: error.message });
-    // }
-    res.status(200).json("abc")
+      res
+        .cookie("accessToken", accessToken, {
+          httpOnly: true, // This ensures the cookie is only accessible by the server
+          maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time in milliseconds (1 day in this example)
+        })
+        .status(200)
+        .send(others);
+
+      // res.status(200).json({ message: "You have registered successfully" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   };
 
   login = async (req, res, next) => {
     try {
-      const user = await User.findOne({username: req.body.username });
+      const user = await User.findOne({ username: req.body.username });
       if (!user)
         return res.status(404).json({
           error: "User not found",
@@ -145,15 +150,12 @@ class UserController {
           expiresIn: "1d",
         }
       );
-
       const { password, ...others } = user._doc;
-
-
       res.cookie("accessToken", accessToken, {
         httpOnly: true, // This ensures the cookie is only accessible by the server
-        secure: process.env.NODE_ENV === "production", // Use secure cookie in production
         maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time in milliseconds (1 day in this example)
-      }).status(200).send(others);
+      });
+      res.status(200).send(others);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -170,46 +172,96 @@ class UserController {
   };
 
   index = async (req, res, next) => {
-    const users = await User.find();
-    res.status(200).json(users);
+    try {
+      const talents = await User.find({ role: "talent" });
+      const result = [];
+
+      // Iterate through each talent
+      for (var i = 0; i < talents.length; i++) {
+        const talent = talents[i];
+        // Find the top 3 artworks loved by other people for each talent
+        const top3Artworks = await Artwork.find({ talent: talent._id })
+          .sort({ likes: -1 })
+          .limit(3)
+          .exec();
+
+        // Count the number of commissions for each talent
+        const commissions = await Commission.countDocuments({
+          talent: talent._id,
+        });
+
+        // Push talent's information, top 3 loved artworks, and commission count to the result array
+        result.push({
+          talent,
+          top3Artworks: top3Artworks.map((artwork) => ({
+            _id: artwork._id,
+            image: artwork.images[0],
+            // image: () => { return artwork.images.length > 0 ? artwork.images[0] : "https://th.bing.com/th/id/OIP.Z_PIeIRDajXPmZHROt-T_QHaEK?w=324&h=182&c=7&r=0&o=5&pid=1.7"},
+          })),
+          commissions: commissions,
+        });
+      }
+
+      // Send the result as JSON response
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   };
 
   show = async (req, res, next) => {
-    //Get user by query
-    const userId = req.query.userId;
-    const username = req.query.username;
+    const targetUserId = req.params.id;
+    const currentUserId = res.query?.userId;
+    // console.log("TARGETUSERID: " + targetUserId);
+    // console.log("USERID: " + currentUserId);
+
     try {
-      const user = userId
-        ? await User.findById(userId)
-        : await User.findOne({ username: username });
-      const { password, updatedAt, ...other } = user._doc;
+      const targetUser = await User.findById(targetUserId);
+      const currentUser = await User.findById(currentUserId);
+      // console.log("targetUser: " + targetUser);
+      // console.log("currentUser: " + currentUser);
+      // console.log(currentUser);
+
+      // Check if user exists
+      if (!targetUser) {
+        return res.status(404).json({
+          error: "User not found",
+        });
+      }
+
+      // // Check view profile privillidges
+      // if (
+      //   !(
+      //     (!currentUser && targetUser.role == "talent") ||
+      //     targetUser.role == "talent" ||
+      //     (currentUserId == targetUserId && currentUser.role == "client") ||
+      //     currentUser.role == "admin"
+      //   )
+      // ) {
+      //   return res.status(400).json({
+      //     error: "You cannot view this profile",
+      //   });
+      // }
+
+      const { accessToken, password, updatedAt, ...other } = targetUser._doc;
       res.status(200).json(other);
     } catch (error) {
       next(error);
     }
-    // try {
-    //   const user = await User.findById(req.params.id);
-    //   if (!user) {
-    //     return res.status(404).json({
-    //       error: "User not found",
-    //     });
-    //   }
-    //   const {accessToken, password, _id, ...userData} = user._doc
-    //   res.status(200).send(userData);
-    // } catch (error) {
-    //   next(error)
-    // }
   };
 
   update = async (req, res, next) => {
     const user = await User.findById(req.params.id);
+    console.log(req.body);
+    console.log("BACKGROUND PHOTO: " + req.body.bg);
     if (!user) {
       return res.status(404).json({
         error: "User not found",
       });
     }
     if (req.user._id.toString() !== req.params.id)
-      return res.status(400).send("You can update only your account");
+      return res.status(400).send("You can update your account only");
     try {
       //Update User
       const updatedUser = await User.findByIdAndUpdate(
@@ -217,7 +269,7 @@ class UserController {
         { $set: req.body },
         { new: true }
       );
-      res.status(200).send(updatedUser);
+      res.status(200).json(updatedUser);
     } catch (error) {
       next(error);
     }
@@ -237,6 +289,36 @@ class UserController {
       //Delete user
       await User.findByIdAndDelete(req.params.id);
       res.status(200).send("User has been deleted");
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Additional methods
+  editCover = async (req, res) => {
+    console.log(req.file);
+    res.status(200).json({ url: req.file.filename });
+  };
+
+  getFeedbacks = async (req, res, next) => {
+    try {
+      // Find all orders where the talent's ID is in the items.itemId field
+      const orders = await Order.model("Order").find({
+        "items.itemId": this._id,
+        rating: { $exists: true }, // Filter orders with ratings
+        review: { $exists: true }, // Filter orders with reviews
+      }).populate({
+        path: 'client',
+        select: 'fullname username avatar', // Specify the fields you want to select
+      });;
+  
+      // Extract ratings and reviews from orders
+      const feedbacks = orders.map((order) => ({
+        rating: order.rating,
+        review: order.review,
+      }));
+      console.log(feedbacks)
+      res.status(200).json(feedbacks);
     } catch (error) {
       next(error);
     }

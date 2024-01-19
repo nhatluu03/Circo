@@ -18,32 +18,35 @@ class CollectionController {
   };
 
   store = async (req, res, next) => {
-    const user = await User.findById(req.userId);
-    //Client cannot create a collection
-    if (user.role !== "talent")
-      return res.status(401).json({
-        error: "You don't have enough permission to perform this action",
-      });
+    // console.log(req.body.talent)
+    // console.log(req.body.title)
+    // console.log(req.body.artworks)
+    // const user = await User.findById(req.talent);
+    // //Client cannot create a collection
+    // if (user.role !== "talent")
+    //   return res.status(401).json({
+    //     error: "You don't have enough permission to perform this action",
+    //   });
 
-    try {
-      const { artworks, ...collectionData } = req.body; //Destructuring artworks from req.body
-      const artworkIds = await artworks.map(
-        (artworkId) => new mongoose.Types.ObjectId(artworkId)
-      );
-      // Create a new collection instance using the Collection model
-      const collection = new Collection({
-        ...collectionData,
-        talent: user._id,
-        artworks: artworkIds,
-      });
+    // try {
+    //   const { artworks, ...collectionData } = req.body; //Destructuring artworks from req.body
+    //   const artworkIds = await artworks.map(
+    //     (artworkId) => new mongoose.Types.ObjectId(artworkId)
+    //   );
+    //   // Create a new collection instance using the Collection model
+    //   const collection = new Collection({
+    //     ...collectionData,
+    //     talent: user._id,
+    //     artworks: artworkIds,
+    //   });
 
-      // Save the collection to the database
-      await collection.save();
+    //   // Save the collection to the database
+    //   await collection.save();
 
-      res.status(200).json("New collection created successfully");
-    } catch (error) {
-      next(error);
-    }
+    //   res.status(200).json("New collection created successfully");
+    // } catch (error) {
+    //   next(error);
+    // }
   };
 
   show = async (req, res, next) => {
