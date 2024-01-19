@@ -12,10 +12,11 @@ import { UserContext } from "../../contexts/user.context.jsx";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import "./Talent.scss";
 
-export default function Talent() {
+export default function Talent({showNewConversation}) {
   const { id } = useParams();
   const { user } = useContext(UserContext);
   const queryClient = useQueryClient();
+  const [showCreatedConversation, setShowCreatedConversation] = useState(null)
 
   // // Toggle display add-commssion-form
   // const [showAddCommissionForm, setShowAddCommissionForm] = useState(false);
@@ -205,11 +206,16 @@ export default function Talent() {
     },
   });
 
+  const handleChildEvent = (data) =>{
+    setShowCreatedConversation(data)
+    showNewConversation(data)
+  }
+
   return (
     <>
       <div className="talent-profile">
         <div className="talent-profile--left">
-          <Sidebar talent={talent} talentInfoMutation={talentInfoMutation} handleSubmitTalentInfo={handleSubmitTalentInfo}/>
+          <Sidebar showCreatedConversation={handleChildEvent} talent={talent} talentInfoMutation={talentInfoMutation} handleSubmitTalentInfo={handleSubmitTalentInfo}/>
         </div>
 
         <div className="talent-profile--right">

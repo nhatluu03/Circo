@@ -10,6 +10,7 @@ export default function Sidebar({
   handleSubmitTalentInfo,
   fetchTalent,
   talentInfoMutation,
+  showCreatedConversation
 }) {
   const { user, login, logout } = useContext(UserContext);
   if (!talent) {
@@ -41,6 +42,8 @@ export default function Sidebar({
       },
       { withCredentials: true }
     );
+    const createdConversation = res2.data._id
+    showCreatedConversation(createdConversation)
   };
   return (
     <div className="sidebar">
