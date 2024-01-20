@@ -13,7 +13,7 @@ router.get('/:id', UserController.show);
 router.get('/', UserController.index);
 router.get('/filters', UserController.getTalentsByFilters);
 router.put('/:id/editCover', UserController.allowIfLoggedIn, UserController.grantAccess('updateOwn', 'profile'), uploadMiddleware.single("file"), UserController.editCover);
-router.put('/:id', UserController.allowIfLoggedIn, UserController.grantAccess('updateOwn', 'profile'), UserController.update);
+router.put('/:id', UserController.allowIfLoggedIn, UserController.grantAccess('updateOwn', 'profile'), uploadMiddleware.single("file"), UserController.update);
 router.delete('/:id', UserController.allowIfLoggedIn, UserController.grantAccess('deleteOwn', 'profile'), UserController.destroy);
 
 export default router;

@@ -58,8 +58,6 @@ export default function Talent({showNewConversation}) {
   const fetchCoverPhoto = async () => {
     try {
       if (id) {
-        console.log(id);
-        console.log(user?._id);
         const response = await axios.get(`http://localhost:3000/users/${id}`, {
           widthCredentials: true,
         });

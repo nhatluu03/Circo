@@ -8,9 +8,13 @@ export default function EditTalentInfo({
   handleSubmitTalentInfo,
   profileInfoMutation,
 }) {
-  const { user } = useContext(UserContext);
+  const [image, setImage] = useState(null);
+  const { user, fetchUser } = useContext(UserContext);
   const [files, setFiles] = useState([]);
-
+  const [update, setUpdate] = useState(false)
+  const [fullname, setFullname] = useState('')
+  const [jobTitle, setJobTitle] = useState('')
+  const [bio, setBio] = useState('')
   // Dropdown list of art fields
   const [fields, setFields] = useState([]);
   useEffect(() => {
@@ -38,20 +42,27 @@ export default function EditTalentInfo({
     setFiles(updatedFiles);
   };
 
-  const [inputs, setInputs] = useState({});
-  const handleChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setInputs((values) => ({ ...values, [name]: value }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Handle submit in child component");
-    const output = await handleUploadSellingArtwork(files, inputs);
-    mutation.mutate(output);
+    const formData = new FormData();
+    formData.append("file", image);
+    formData.append("fullname", fullname);
+    formData.append("jobTitle", jobTitle);
+    formData.append("bio", bio);
+    const response = await axios.put(`http://localhost:3000/users/${user?._id}`, formData,{
+      withCredentials: true
+    })
+    fetchUser()
+    setBio(response.data.bio)
+    setFullname(response.data.fullname)
+    setJobTitle(response.data.jobTitle)
+    window.location.reload()
+    // const output = await handleUploadSellingArtwork(files, formData);
+    // mutation.mutate(output);
   };
-
+  console.log(fullname)
+  console.log(jobTitle)
+  console.log(bio)
   return (
     <>
       <div
@@ -72,6 +83,20 @@ export default function EditTalentInfo({
         />
         <h2 className="form-title">Edit profile information</h2>
         <div className="form-field">
+          <label htmlFor="avatar" className="form-field__label avatar__label">
+            {image ? <img className="avatarImg" src={URL.createObjectURL(image)} /> : "Change your avatar"}
+          </label>
+          <input
+            id="avatar"
+            type="file"
+            className="form-field__input"
+            style={{display:"none"}}
+            name="avatar"
+            onChange={(e) => setImage(e.target.files[0])}
+          />
+          {/* <span ref={usernameErrRef} className="form-field__error"></span> */}
+        </div>
+        <div className="form-field">
           <label htmlFor="fullname" className="form-field__label">
             Full name
           </label>
@@ -79,9 +104,8 @@ export default function EditTalentInfo({
             type="text"
             className="form-field__input"
             name="fullname"
-            value={user.fullname ? user.fullname : "Freelance artist"}
             placeholder="Enter your full name"
-            onChange={handleChange}
+            onChange={(e) => setFullname(e.target.value)}
           />
           {/* <span ref={usernameErrRef} className="form-field__error"></span> */}
         </div>
@@ -93,9 +117,9 @@ export default function EditTalentInfo({
             type="text"
             className="form-field__input"
             name="title"
-            value={user.title ? user.title : "Freelance artist"}
+            value={user.jobTitle || "Freelancer"}
             placeholder="Enter your job title"
-            onChange={handleChange}
+            onChange={(e) => setJobTitle(e.target.value)}
           />
           {/* <span ref={usernameErrRef} className="form-field__error"></span> */}
         </div>
@@ -107,9 +131,8 @@ export default function EditTalentInfo({
             type="text"
             className="form-field__input"
             name="bio"
-            value={user.bio ? user.bio : ""}
             placeholder="Tell ArtHub-er something about you"
-            onChange={handleChange}
+            onChange={(e)=> setBio(e.target.value)}
           />
           {/* <span ref={usernameErrRef} className="form-field__error"></span> */}
         </div>

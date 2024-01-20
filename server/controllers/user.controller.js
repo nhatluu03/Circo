@@ -270,7 +270,6 @@ class UserController {
   update = async (req, res, next) => {
     const user = await User.findById(req.params.id);
     console.log(req.body);
-    console.log("BACKGROUND PHOTO: " + req.body.bg);
     if (!user) {
       return res.status(404).json({
         error: "User not found",
@@ -285,9 +284,10 @@ class UserController {
         { $set: req.body },
         { new: true }
       );
+      console.log(updatedUser)
       res.status(200).json(updatedUser);
     } catch (error) {
-      next(error);
+      console.log(error)
     }
   };
 
