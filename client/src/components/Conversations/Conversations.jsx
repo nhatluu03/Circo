@@ -6,7 +6,7 @@ import { io } from "socket.io-client";
 import ChatboxBg from "../../assets/img/chatbox_bg.png";
 import "./Conversations.scss";
 
-export default function Conversations() {
+export default function Conversations({showCreatedConversation}) {
   const [messages, setMessages] = useState([]);
   const [conversation, setConversation] = useState(null);
   const [newMessage, setNewMessage] = useState("");
@@ -32,7 +32,12 @@ export default function Conversations() {
       console.log("3");
     });
   }, []);
-
+  useEffect(()=>{
+    if(showCreatedConversation){
+      SetIsOpenConversations(true)
+      setCurrentChat(showCreatedConversation)
+    }
+  },[showCreatedConversation])
   useEffect(() => {
     if (arrivalMessage) {
       // If arrival message is in the current Conversation

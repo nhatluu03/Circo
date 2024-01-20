@@ -6,14 +6,20 @@ import { Outlet } from "react-router-dom";
 import Talent from "./pages/talent/Talent";
 import Client from "./pages/client/Client";
 import FieldSlider from "./components/fieldSlider/FieldSlider";
+import { useState } from "react";
 
 export default function Layout({ showSidebar, userRole, showFilterBar }) {
+  const [showNewConversation, setShowNewConversation] = useState(null)
+  const handleChildEvent = (data) =>{
+    setShowNewConversation(data)
+  }
+  console.log(showNewConversation)
   return (
     <div className={`app ${showSidebar ? "with-sidebar" : "without-sidebar"}`}>
       <Navbar />
-      <Conversations />
+      <Conversations showCreatedConversation={showNewConversation} />
       {showSidebar ? 
-      (userRole == "talent" && <Talent />) || (userRole == "client" && <Client />) : <Outlet />}
+      (userRole == "talent" && <Talent showNewConversation={handleChildEvent} />) || (userRole == "client" && <Client />) : <Outlet />}
       {/* {showFilterBar ? (
         <>
           <FieldSlider showFilterBar={showFilterBar} fields={fields} setShowFilterBar={setShowFilterBar} />

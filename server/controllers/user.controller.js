@@ -210,6 +210,22 @@ class UserController {
     }
   };
 
+  getTalentsByFilters = async (req, res, next) =>{
+    const q = req.query;
+    const filters = {
+      ...(q.creative && { creativeFields: q.creative }),
+      ...(q.badges && { badges: q.badges }),
+      ...((q.rating) && { rating: q.rating }),
+      ...(q.search && { username: { $regex: q.search, $options: "i" } }),
+    };
+    try {
+      const talents = await User.find(filters).sort({ [q.sort]: -1 });
+      res.status(200).send(talents);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   show = async (req, res, next) => {
     const targetUserId = req.params.id;
     const currentUserId = res.query?.userId;

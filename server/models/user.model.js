@@ -85,8 +85,12 @@ const TalentUser = User.discriminator(
     // Add role-specific fields here
     rating: {type: Number, default: 5, min: [0, "Rating cannot be negative"], max: [5, "Rating cannot exceed 5"] },
     creativeFields: [
-      {type: String, default: "Freelance artist"}
+      { type: mongoose.Schema.Types.ObjectId, ref: 'Field' }
     ],
+    badges: {
+      type: String,
+      enum: ['trusted', 'topContributor', 'emerging']
+    },
   })
 );
 
