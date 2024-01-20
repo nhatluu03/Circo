@@ -15,7 +15,7 @@ class ArtworkController {
     const filters = {
       forSelling: true,
       ...((q.from || q.to) && {
-        price: { ...(q.from && { $gt: q.from }), ...(q.to && { $lt: q.to }) },
+        price: { ...(q.from && { $gt: q.from - 1 }), ...(q.to && { $lt: q.to -1  }) },
       }),
       ...(q.search && { title: { $regex: q.search, $options: "i" } }),
     };
