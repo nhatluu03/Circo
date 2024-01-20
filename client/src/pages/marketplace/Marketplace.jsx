@@ -48,9 +48,11 @@ export default function Martketplace() {
     fetchSellingArtworks();
   }, []);
   const apply = async()=>{
+    console.log(fromRef)
+    console.log(toRef)
     try {
       const response = await axios.get(
-        `http://localhost:3000/artworks?forSelling=true`
+        `http://localhost:3000/artworks?forSelling=true&from=${fromRef.current.value}&to=${toRef.current.value}`
       );
       console.log(response.data);
       setSellingArtworks(response.data);

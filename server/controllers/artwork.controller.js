@@ -19,6 +19,7 @@ class ArtworkController {
       }),
       ...(q.search && { title: { $regex: q.search, $options: "i" } }),
     };
+    console.log(q)
     try {
       let artworks;
       if (forSelling) {
