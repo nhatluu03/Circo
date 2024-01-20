@@ -9,7 +9,7 @@ export default function EditTalentInfo({
   profileInfoMutation,
 }) {
   const [image, setImage] = useState(null);
-  const { user } = useContext(UserContext);
+  const { user, fetchUser } = useContext(UserContext);
   const [files, setFiles] = useState([]);
 
   // Dropdown list of art fields
@@ -26,33 +26,45 @@ export default function EditTalentInfo({
     };
     fetchFields();
   }, []);
+  useEffect(() => {
+    setInputs({
+      fullname: user.fullname || "",
+      bio: user.bio || "",
+      jobTitle: user.jobTitle || "",
+    });
+  }, [user]);
 
-  const handleFileChange = (e) => {
-    const selectedFiles = e.target.files;
-    setFiles([...files, ...selectedFiles]);
-    console.log(files);
-  };
-
-  const handleFileDelete = (index) => {
-    const updatedFiles = [...files];
-    updatedFiles.splice(index, 1);
-    setFiles(updatedFiles);
-  };
-
-  const [inputs, setInputs] = useState({});
+  const [inputs, setInputs] = useState({
+    fullname: "",
+    bio: "",
+    jobTitle: "",
+  });
   const handleChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setInputs((values) => ({ ...values, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    const inputValue = type === "checkbox" ? checked : value;
+
+    setInputs((prevInputs) => ({
+      ...prevInputs,
+      [name]: inputValue,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("file", image);
+
+    // Add other data to formData if needed
+    formData.append("fullname", inputs.fullname);
+    formData.append("bio", inputs.bio);
+    formData.append("jobTitle", inputs.jobtitle);
+    const response = await axios.put(`http://localhost:3000/users/${user._id}`, formData,{
+      withCredentials: true
+    })
+    fetchUser(user._id)
     alert("Handle submit in child component");
-    const output = await handleUploadSellingArtwork(files, inputs);
-    mutation.mutate(output);
+
+    // Handle the form submission
   };
   console.log(inputs)
   return (
@@ -83,7 +95,7 @@ export default function EditTalentInfo({
             type="file"
             className="form-field__input"
             style={{display:"none"}}
-            name="avatar"
+            name="file"
             onChange={(e) => setImage(e.target.files[0])}
           />
           {/* <span ref={usernameErrRef} className="form-field__error"></span> */}
@@ -96,7 +108,7 @@ export default function EditTalentInfo({
             type="text"
             className="form-field__input"
             name="fullname"
-            value={user.fullname ? user.fullname : "Freelance artist"}
+            value={inputs.fullname}
             placeholder="Enter your full name"
             onChange={handleChange}
           />
@@ -110,7 +122,7 @@ export default function EditTalentInfo({
             type="text"
             className="form-field__input"
             name="title"
-            value={user.title ? user.title : "Freelance artist"}
+            value={inputs.jobTitle}
             placeholder="Enter your job title"
             onChange={handleChange}
           />
@@ -124,7 +136,7 @@ export default function EditTalentInfo({
             type="text"
             className="form-field__input"
             name="bio"
-            value={user.bio ? user.bio : ""}
+            value={inputs.bio}
             placeholder="Tell ArtHub-er something about you"
             onChange={handleChange}
           />

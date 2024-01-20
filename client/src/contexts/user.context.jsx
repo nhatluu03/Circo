@@ -22,11 +22,16 @@ const UserProvider = ({ children }) => {
     localStorage.removeItem("user");
     setUser(null);
   };
-
+  const fetchUser = async (userId) => {
+    const response = await axios.get(`http://localhost:3000/users/${userId}`)
+    login(response.data)
+    setUser(response.data);
+  };
   const value = {
     user,
     login,
     logout,
+    fetchUser
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
