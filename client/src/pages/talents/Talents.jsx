@@ -7,7 +7,7 @@ import defaultAvatar from "./../../assets/img/default_avt.png";
 
 export default function Talents() {
   const [talents, setTalents] = useState([]);
-
+  const [allTalents, setAllTalents] = useState([])
   const [showFilterBar, setShowFilterBar] = useState(false);
   const [fields, setFields] = useState([]);
   const [filters, setFilters] = useState({
@@ -56,7 +56,7 @@ export default function Talents() {
   //   const selectedCreativeFields = Object.entries(filters.creativeFields)
   //     .filter(([field, checked]) => checked)
   //     .map(([field]) => field);
-  
+
   //   // Apply filters to talents array and update state
   //   const filteredTalents = talents.filter((talent) => {
   //     const talentCreativeFields = talent.creativeFields?.map((field) => field.name) || [];
@@ -64,46 +64,51 @@ export default function Talents() {
   //       talentCreativeFields.includes(selectedField)
   //     );
   //   });
-  
+
   //   setTalents(filteredTalents);
-  // };  
+  // };
   const handleFilteringSubmit = () => {
     // Get selected creative fields
     const selectedCreativeFields = Object.entries(filters.creativeFields)
       .filter(([field, checked]) => checked)
       .map(([field]) => field);
-  
     // Get selected badges
     const selectedBadges = Object.entries(filters.badges)
       .filter(([badge, checked]) => checked)
       .map(([badge]) => badge);
-  
+
     // Apply filters to talents array and update state
-    const filteredTalents = talents.filter((talent) => {
-      const talentCreativeFields = talent.creativeFields?.map((field) => field.name) || [];
-      const talentBadges = talent.badges || [];
-  
-      const creativeFieldsMatch = selectedCreativeFields.length === 0 ||
-        selectedCreativeFields.some((selectedField) => talentCreativeFields.includes(selectedField));
-  
-      const badgesMatch = selectedBadges.length === 0 ||
-        selectedBadges.every((selectedBadge) => talentBadges.includes(selectedBadge));
-  
+    const filteredTalents = allTalents.filter((talent) => {
+      const talentCreativeFields = Array.isArray(talent.talent.creativeFields)
+        ? talent.talent.creativeFields.map((field) => field)
+        : [];
+      console.log(talentCreativeFields);
+
+      const talentBadge = talent.talent.badge
+        ? talent.talent.badge
+        : talent.talent.badge;
+      const creativeFieldsMatch =
+        selectedCreativeFields.length === 0 ||
+        selectedCreativeFields.some((selectedField) =>
+          talentCreativeFields.includes(selectedField)
+        );
+
+      const badgesMatch =
+        selectedBadges.length === 0 ||
+        (talentBadge &&
+          typeof talentBadge === "string" &&
+          selectedBadges.includes(talentBadge.trim()));
       return creativeFieldsMatch && badgesMatch;
     });
-  
     setTalents(filteredTalents);
   };
-  
-
-
 
   useEffect(() => {
     const fetchTalents = async () => {
       try {
         const response = await axios.get("http://localhost:3000/users");
-        console.log(response.data);
         setTalents(response.data);
+        setAllTalents(response.data)
       } catch (error) {
         console.log(error);
       }
