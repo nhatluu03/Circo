@@ -13,7 +13,6 @@ export default function Layout({ showSidebar, userRole, showFilterBar }) {
   const handleChildEvent = (data) =>{
     setShowNewConversation(data)
   }
-  console.log(showNewConversation)
   return (
     <div className={`app ${showSidebar ? "with-sidebar" : "without-sidebar"}`}>
       <Navbar />

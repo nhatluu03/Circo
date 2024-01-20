@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./Marketplace.scss";
@@ -10,15 +10,10 @@ export default function Martketplace() {
 
   const [showFilterBar, setShowFilterBar] = useState(false);
   const [fields, setFields] = useState([]);
-  const [filters, setFilters] = useState({
-    creativeFields: {},
-    badges: {
-      trusted: false,
-      topContributor: false,
-      emerging: false,
-    },
-  });
 
+  const fromRef = useRef();
+  const toRef = useRef();
+  
   useEffect(() => {
     const fetchFields = async () => {
       try {
@@ -29,10 +24,7 @@ export default function Martketplace() {
         });
 
         setFields(response.data);
-        setFilters({
-          ...filters,
-          creativeFields: initialCreativeFields,
-        });
+        
       } catch (error) {
         console.log(error);
       }
@@ -55,6 +47,17 @@ export default function Martketplace() {
     };
     fetchSellingArtworks();
   }, []);
+  const apply = async()=>{
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/artworks?forSelling=true`
+      );
+      console.log(response.data);
+      setSellingArtworks(response.data);
+    } catch (error) {
+      console.log(error);
+    };
+  }
 
   return (
     <div className="marketplace">
@@ -65,6 +68,46 @@ export default function Martketplace() {
       />
 
       <div className="talents-content">
+        <div
+          className={`talents-content--left ${showFilterBar ? "stretch" : ""}`}
+        >
+          <div className="talents-content--left filter-bar-container">
+            <div className="filter-bar-item">
+              <h4 className="filter-bar-item__header">
+                <i class="fa-solid fa-award"></i> Price range
+              </h4>
+              <hr />
+              <div className="filter-bar-item__option-container">
+                {/* <p className="filter-bar-item__option-item">Trusted</p>
+                <p className="filter-bar-item__option-item">Top contributor</p>
+                <p className="filter-bar-item__option-item">Emerging</p> */}
+                {/* {Object.entries(filters.badges).map(([badge, checked]) => (
+                  <div className="form-field filter-bar-item__option-item">
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => handleCheckboxChange("badges", badge)}
+                      id={`filtering-${badge}`}
+                    />
+                    <label htmlFor={`filtering-${badge}`} key={badge}>
+                      {badge}
+                    </label>
+                  </div>
+                ))} */}
+                <input type="number" placeholder="from" ref={fromRef}/>
+                <input type="number" placeholder="to" ref={toRef}/>
+              </div>
+            </div>
+
+            <button
+              onClick={apply}
+              className="filtering-submit-btn btn btn-3"
+            >
+              Apply Filters
+            </button>
+          </div>
+        </div>
+
         <div
           className={`talents-content--right ${
             !showFilterBar ? "stretch" : ""

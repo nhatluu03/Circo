@@ -11,13 +11,18 @@ class ArtworkController {
 
   index = async (req, res) => {
     const { forSelling } = req.query;
-
+    const q = req.query;
+    const filters = {
+      forSelling: true,
+      ...((q.from || q.to) && {
+        price: { ...(q.from && { $gt: q.from }), ...(q.to && { $lt: q.to }) },
+      }),
+      ...(q.search && { title: { $regex: q.search, $options: "i" } }),
+    };
     try {
       let artworks;
       if (forSelling) {
-        artworks = await Artwork.find({
-          forSelling: true,
-        }).populate("fields", "name");
+        artworks = await Artwork.find(filters).populate("fields", "name");
         // .populate({
         //   path: "Field",
         //   select: "_id title"
@@ -29,8 +34,6 @@ class ArtworkController {
           select: "avatar username", // get the fields avatar and username only
         });
       }
-
-      console.log(artworks);
       res.status(200).json(artworks);
     } catch (error) {
       console.error(error);
