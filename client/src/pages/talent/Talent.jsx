@@ -228,7 +228,7 @@ export default function Talent({showNewConversation}) {
               }
               className="talent-profile__bg-img"
             />
-            {user._id === id && (
+            {user?._id === id && (
               <button
                 className="talent-profile__bg-btn edit-cover-btn"
                 onClick={() => {
