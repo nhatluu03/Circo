@@ -45,6 +45,7 @@ export default function Sidebar({
     const createdConversation = res2.data._id
     showCreatedConversation(createdConversation)
   };
+  console.log(showCreatedConversation)
   return (
     <div className="sidebar">
       <i

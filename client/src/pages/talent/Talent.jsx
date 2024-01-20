@@ -214,7 +214,7 @@ export default function Talent({showNewConversation}) {
     <>
       <div className="talent-profile">
         <div className="talent-profile--left">
-          <Sidebar talent={talent} talentInfoMutation={talentInfoMutation} handleSubmitTalentInfo={handleSubmitTalentInfo}/>
+          <Sidebar showCreatedConversation={handleChildEvent} talent={talent} talentInfoMutation={talentInfoMutation} handleSubmitTalentInfo={handleSubmitTalentInfo}/>
         </div>
 
         <div className="talent-profile--right">
