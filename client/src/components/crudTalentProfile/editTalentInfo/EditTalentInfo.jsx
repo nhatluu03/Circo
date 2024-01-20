@@ -57,7 +57,7 @@ export default function EditTalentInfo({
     // Add other data to formData if needed
     formData.append("fullname", inputs.fullname);
     formData.append("bio", inputs.bio);
-    formData.append("jobTitle", inputs.jobtitle);
+    formData.append("jobTitle", inputs.jobTitle);
     const response = await axios.put(`http://localhost:3000/users/${user._id}`, formData,{
       withCredentials: true
     })
@@ -122,7 +122,7 @@ export default function EditTalentInfo({
             type="text"
             className="form-field__input"
             name="title"
-            value={inputs.jobTitle}
+            value={inputs.jobTitle||"Freelancer"}
             placeholder="Enter your job title"
             onChange={handleChange}
           />
