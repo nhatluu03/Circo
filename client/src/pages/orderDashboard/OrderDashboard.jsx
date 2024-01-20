@@ -31,25 +31,23 @@ export default function OrderDashboard() {
     fetchOrders();
   }, []);
 
-  
   // Toggle display add feedback form
   const [showAddFeedbackForm, setShowAddFeedbackForm] = useState(false);
   const [selectedOrderToFeedback, setSelectedOrderToFeedback] = useState(false);
-  
 
   return (
     <div className="order-history">
-      <h3 className="profile-page__header">Your orders ({orders?.length})</h3>
+      <h3 className="profile-page__header">Order Dashboard ({orders?.length})</h3>
       <div className="order-history-container">
         {orders?.length > 0 ? (
           orders?.map((order) => {
             return (
               <div className="order-history-item">
-                <img
+                {/* <img
                   src={`../../public/uploads/${order.items[0].type}s/${order.items[0].itemId.images[0]}`}
                   alt=""
                   className="order-history-item__sample-img"
-                />
+                /> */}
                 <div className="order-history-item__info">
                   <h4 className="order-history-item__title">
                     {order?.items[0]?.title}
@@ -58,16 +56,36 @@ export default function OrderDashboard() {
                     ${order.total?.toFixed(2) || order.items[0].itemId.price}
                   </p>
                   <p className="order-history-item__status">
-                    {order.status == "pending" &&
-                      "Waiting for artist 's confirmation"}
+                    {(order.status == "pending" &&
+                      "Waiting for artist 's confirmation") ||
+                      (order.status == "confirmed" &&
+                        "Artist is working in progress") ||
+                      (order.status == "in-delivery" &&
+                        "The order is in delivery") ||
+                      (order.status == "complete" &&
+                        "The order has been delivered to customer")}
                   </p>
-                  <button className="order-history-item__btn btn btn-3">
-                    Confirm
-                  </button>
+                  {order.status == "pending" && (
+                    <>
+                      <button className="order-history-item__btn btn btn-3">
+                        Confirm
+                      </button>
+                      <button className="order-history-item__btn btn btn-1">
+                        Cancel
+                      </button>
+                    </>
+                  )}
                   <button className="order-history-item__btn btn btn-1">
-                    Cancel
+                    View order details
                   </button>
-                  <button className="order-history-item__btn btn btn-1" onClick={() => {setShowAddFeedbackForm(true); setSelectedOrderToFeedback(order._id)}}>
+
+                  <button
+                    className="order-history-item__btn btn btn-1"
+                    onClick={() => {
+                      setShowAddFeedbackForm(true);
+                      setSelectedOrderToFeedback(order._id);
+                    }}
+                  >
                     Deliver artwork
                   </button>
                   <button className="order-history-item__btn btn btn-1">
@@ -78,13 +96,16 @@ export default function OrderDashboard() {
             );
           })
         ) : (
-          <p>No orders yet</p>
+          <p>You have no orders.</p>
         )}
       </div>
 
-       {/* Modal forms */}
-       {showAddFeedbackForm && (
-        <AddFeedback setShowAddFeedbackForm={setShowAddFeedbackForm} selectedOrderToFeedback={selectedOrderToFeedback}/>
+      {/* Modal forms */}
+      {showAddFeedbackForm && (
+        <AddFeedback
+          setShowAddFeedbackForm={setShowAddFeedbackForm}
+          selectedOrderToFeedback={selectedOrderToFeedback}
+        />
       )}
     </div>
   );

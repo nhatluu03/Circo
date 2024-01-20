@@ -101,12 +101,13 @@ export default function Store() {
     },
   });
 
-  const [showUploadSellingArtworkForm, setShowUploadSellingArtworkForm] = useState(false);
+  const [showUploadSellingArtworkForm, setShowUploadSellingArtworkForm] =
+    useState(false);
 
   return (
     <div className="store">
       <h3 className="profile-page__header">
-        Store
+        Store ({storeItems?.length || 0})
         {user?._id == id && (
           <button
             className="btn btn-1 add-btn"
@@ -128,7 +129,7 @@ export default function Store() {
             />
           ))
         ) : (
-          <p>The talent has not uploaded any artworks for sell yet.</p>
+          <p>The artist has not uploaded any artworks for sell yet.</p>
         )}
       </div>
 

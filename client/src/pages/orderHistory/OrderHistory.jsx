@@ -16,7 +16,7 @@ export default function OrderHistory() {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/orders/user/order-history${id}`,
+          `http://localhost:3000/orders/user/order-history/${id}`,
           {
             withCredentials: true,
           }

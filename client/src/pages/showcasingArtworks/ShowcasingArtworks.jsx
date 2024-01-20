@@ -6,7 +6,7 @@ import axios from "axios";
 import "../../assets/scss/artwork.scss";
 import "./ShowcasingArtworks.scss";
 
-export default function ShowcasingArtworks({showcasingArtworks}) {
+export default function ShowcasingArtworks({ showcasingArtworks }) {
   // const [artworks, setArtworks] = useState([]);
 
   // useEffect(() => {
@@ -53,7 +53,9 @@ export default function ShowcasingArtworks({showcasingArtworks}) {
     <>
       {selectedArtworkIdx && (
         <ShowcasingArtworkDetails
-          showcasingArtwork={showcasingArtworks.find((artwork) => artwork._id === selectedArtworkIdx)}
+          showcasingArtwork={showcasingArtworks.find(
+            (artwork) => artwork._id === selectedArtworkIdx
+          )}
           closeArtwork={closeArtwork}
           nextArtwork={nextArtwork}
           prevArtwork={prevArtwork}
@@ -61,24 +63,31 @@ export default function ShowcasingArtworks({showcasingArtworks}) {
       )}
 
       <div className="showcasing-artwork-container">
-        {showcasingArtworks?.length === 0 ? (
-          <p>There is no artwork found</p>
-        ) : (
+        {showcasingArtworks?.length > 0 ? (
           showcasingArtworks?.map((showcasingArtwork, index) => {
             return (
               showcasingArtwork.images &&
               showcasingArtwork.images.length > 0 && (
-                <div className="showcasing-artwork-item" key={index} onClick={() => {openModal(showcasingArtwork._id)}}>
-                  {showcasingArtwork.images && showcasingArtwork.images.length > 0 && (
-                    <img
-                      src={`../../public/uploads/artworks/${showcasingArtwork.images[0]}`}
-                      alt=""
-                    />
-                  )}
+                <div
+                  className="showcasing-artwork-item"
+                  key={index}
+                  onClick={() => {
+                    openModal(showcasingArtwork._id);
+                  }}
+                >
+                  {showcasingArtwork.images &&
+                    showcasingArtwork.images.length > 0 && (
+                      <img
+                        src={`../../public/uploads/artworks/${showcasingArtwork.images[0]}`}
+                        alt=""
+                      />
+                    )}
                 </div>
               )
-            )
+            );
           })
+        ) : (
+          <p>There is no artwork found</p>
         )}
       </div>
     </>

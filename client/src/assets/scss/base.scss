@@ -139,12 +139,11 @@ button {
   font-size: 1.4rem;
 
   i {
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 14px;
     object-fit: cover;
     margin: 0;
-    font-size: 1.5rem;
-    margin-right: 8px;
+    font-size: 1.4rem;
   }
 
   &:hover {
@@ -582,6 +581,16 @@ input[type="submit"]:hover {
   cursor: pointer;
 }
 
+.form-field__radio {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 16px;
+
+  input {
+    margin-right: 6px;
+  }
+}
+
 .form-field__error {
   color: #dc3d3d;
   margin-top: 4px;
@@ -592,8 +601,8 @@ input[type="submit"]:hover {
   width: 100%;
   position: relative;
   overflow: auto;
-  white-space: nowrap; /* Ensure the items stay in a single line */
-  // overflow: auto; /* or overflow: hidden; */
+  white-space: nowrap; 
+  margin-bottom: 28px;
 
   .field-container {
     position: relative;

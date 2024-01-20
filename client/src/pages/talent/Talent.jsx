@@ -137,7 +137,6 @@ export default function Talent() {
     },
   });
 
-
   // useQuery for fetch talent info
   const { data: talent } = useQuery({
     queryKey: ["fetchTalent"],
@@ -145,7 +144,7 @@ export default function Talent() {
   });
 
   const handleSubmitTalentInfo = async (file, inputs) => {
-    return {abc: "abc"};
+    return { abc: "abc" };
     // try {
     //   // Step 2: Post image to url2
     //   const uploadFile = async () => {
@@ -194,7 +193,7 @@ export default function Talent() {
     // } catch (error) {
     //   console.log(error);
     // }
-  }
+  };
 
   const talentInfoMutation = useMutation({
     mutationFn: handleSubmitTalentInfo,
@@ -209,7 +208,11 @@ export default function Talent() {
     <>
       <div className="talent-profile">
         <div className="talent-profile--left">
-          <Sidebar talent={talent} talentInfoMutation={talentInfoMutation} handleSubmitTalentInfo={handleSubmitTalentInfo}/>
+          <Sidebar
+            talent={talent}
+            talentInfoMutation={talentInfoMutation}
+            handleSubmitTalentInfo={handleSubmitTalentInfo}
+          />
         </div>
 
         <div className="talent-profile--right">
@@ -223,14 +226,16 @@ export default function Talent() {
               }
               className="talent-profile__bg-img"
             />
-            <button
-              className="talent-profile__bg-btn edit-cover-btn"
-              onClick={() => {
-                setShowEditCoverForm(true);
-              }}
-            >
-              <i className="fa-solid fa-image"></i> Edit cover photo
-            </button>
+            {user._id === id && (
+              <button
+                className="talent-profile__bg-btn edit-cover-btn"
+                onClick={() => {
+                  setShowEditCoverForm(true);
+                }}
+              >
+                <i className="fa-solid fa-image"></i> Edit cover photo
+              </button>
+            )}
           </div>
 
           <div className="talent-profile__button-container">
@@ -334,7 +339,7 @@ export default function Talent() {
             </div> */}
           </div>
           <hr />
-          <Outlet talentId={id}/>
+          <Outlet talentId={id} />
         </div>
 
         {/* {showAddCommissionForm && (

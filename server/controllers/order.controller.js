@@ -74,20 +74,37 @@ class OrderController {
     }
   };
 
-  // Additional methods
   getOrdersByClientId = async (req, res, next) => {
     try {
-      const orders = await Order.find({client: req.params.clientId}).populate({
+      const orders = await Order.find({ client: req.params.clientId }).populate({
         path: 'items.itemId',
-        model: 'Artwork', // Adjust this based on your actual model name
-        select: 'title price images', // Select the fields you want to retrieve
+        model: 'Artwork',
+        select: 'title price images forSelling', // Include 'forSelling' field to filter only selling artworks
       })
-      .exec();;
-      res.status(200).json(orders);
+      .sort({ createdAt: -1 })
+      .exec();
+  
+      // Modify the response to include titles of each item
+      const modifiedOrders = orders.map(order => {
+        const modifiedItems = order.items.map(item => {
+          return {
+            ...item._doc,
+            title: item.itemId.title, // Add the title field to each item
+          };
+        });
+  
+        return {
+          ...order._doc,
+          items: modifiedItems,
+        };
+      });
+  
+      res.status(200).json(modifiedOrders);
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
+  
 
   getOrdersByTalentId = async (req, res, next) => {
     try {
@@ -95,12 +112,13 @@ class OrderController {
   
       // Find orders where items.itemId belongs to the specified artwork owner
       const ownerOrders = await Order.find({
-        'items.itemId': { $in: await Artwork.find({ talent: ownerId }).distinct('_id') },
+        'items.itemId': { $in: await Artwork.find({ talent: talentId }).distinct('_id') },
       })
         .populate('client', 'username') // Populate the 'client' field with the client's username
-        .populate('items.itemId'); // Populate the 'items.itemId' field with the actual item details
-  
-      res.status(200).json({ ownerOrders });
+        .populate('items.itemId') // Populate the 'items.itemId' field with the actual item details
+        .sort({ createdAt: -1 });
+        
+      res.status(200).json(ownerOrders);
     } catch (error) {
       next(error)
     }
@@ -120,64 +138,27 @@ class OrderController {
     }
   }; 
 
-  // intent = async (req, res, next) => {
-  //   //Find the artwork/commission, client in the database
-  //   const typeOfOrder = req.body.type
-  //   const itemsOfOrder = req.body.items
-  //   const client = await User.findById(req.userId);
+  intent = async (req, res, next) => {
+    //Find the artwork/commission, client in the database
+    const typeOfOrder = req.body.type
+    const itemsOfOrder = req.body.items
+    const client = await User.findById(req.userId);
 
-  //   //Stripe Integration
-  //   const stripe = new Stripe(process.env.STRIPE);
-  //   const paymentIntent = await stripe.paymentIntents.create({
-  //     amount: 2000,
-  //     currency: "aud",
-  //     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-  //     automatic_payment_methods: {
-  //       enabled: true,
-  //     },
-  //   });
+    //Stripe Integration
+    const stripe = new Stripe(process.env.STRIPE);
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: 2000,
+      currency: "aud",
+      // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
 
-  //   //Define the orderData
-  //   let orderData = {
-  //     client: client._id,
-  //     type: typeOfOrder,
-  //     items: itemsOfOrder,
-  //     price: 0,
-  //     payment_intent: paymentIntent.id,
-  //   };
-  //   //Check whether the type is artwork or commission
-  //   if (typeOfOrder == 'artwork') {
-  //     await Promise.all(orderData.items.map(async (item) => {
-  //       try {
-  //         const artwork = await Artwork.findById(item);
-  //         const artworkPrice = artwork ? artwork.price : 0;
-  //         // Add the price of the artwork to the total
-  //         orderData.price += artworkPrice;
-  //       } catch (error) {
-  //         console.log(error.message);
-  //       }
-  //     }));
-  //     //Stripe Integration
-  //     paymentIntent.amount = orderData.price * 100;
-
-  //   } else if (typeOfOrder == 'commission') {
-  //     const commission = await Commission.findById(orderData.items[0])
-  //     const commissionPrice = commission ? commission.price : 0
-  //     orderData.price += commissionPrice;
-  //     //Stripe Integration
-  //     paymentIntent.amount = orderData.price * 100;
-  //   } else {
-  //     res.status(404).json({
-  //       error: "Invalid type",
-  //     });
-  //   }
-
-  //   const order = new Order(orderData);
-  //   await order.save();
-  //   res.status(200).send({
-  //     clientSecret: paymentIntent.client_secret,
-  //   });
-  // };
+    res.status(200).send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  };
 
   // index = async (req, res, next) => {
   //   try {

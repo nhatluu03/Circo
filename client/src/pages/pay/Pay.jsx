@@ -18,6 +18,7 @@ const Pay = () => {
     clientSecret,
     appearance,
   };
+
   useEffect(() => {
     const orderData = {
       type:'artwork',
@@ -27,10 +28,11 @@ const Pay = () => {
     const makeRequest = async () => {
       try {
         const res = await axios.post(
-          `http://localhost:3000/orders/create-payment-intent/`, orderData,{
+          `http://localhost:3000/orders/create-payment-intent`, orderData,{
             withCredentials: true
           }
         );
+        console.log()
         setClientSecret(res.data.clientSecret);
       } catch (error) {
         console.log(error);

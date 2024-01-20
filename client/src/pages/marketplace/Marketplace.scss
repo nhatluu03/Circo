@@ -1,0 +1,12 @@
+.marketplace {
+  .selling-artwork-container {
+    .selling-artwork-item {
+      width: 18% !important;
+      margin-right: 2.5%;
+
+      &:nth-of-child(5n) {
+        margin-right: 0;
+      }
+    }
+  }
+}

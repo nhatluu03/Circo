@@ -7,7 +7,8 @@ import CartItems from "../../components/cartItems/CartItems.jsx";
 import axios from "axios";
 
 function Checkout() {
-  const [totalPriceItems, setTotalPriceItems] = useState(null);
+  const [subTotalPrice, setSubTotalPrice] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(null);
   const [checkoutInputs, setCheckoutInputs] = useState({});
   const [selectedPackagingOption, setSelectedPackagingOption] = useState(null);
   const navigate = useNavigate();
@@ -29,12 +30,18 @@ function Checkout() {
 
   useEffect(() => {
     // Calculate total price based on the current cartItems
-    let totalPrice = 0;
+    let subTotalPrice = 0;
     for (const item of cartItems) {
-      totalPrice += item.price * item.quantity; // Multiply by quantity
+      subTotalPrice += item.price * item.quantity; // Multiply by quantity
     }
-    setTotalPriceItems(totalPrice);
-  }, [cartItems]);
+    let totalPrice = subTotalPrice;
+    if (selectedPackagingOption) {
+      totalPrice += selectedPackagingOption.price;
+    }
+
+    setSubTotalPrice(subTotalPrice);
+    setTotalPrice(totalPrice);
+  }, [cartItems, selectedPackagingOption]);
 
   const [isOpen, setIsOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -69,7 +76,7 @@ function Checkout() {
 
   const handleSelectPackagingOption = (option) => {
     setSelectedPackagingOption(option);
-    console.log(selectedPackagingOption)
+    console.log(selectedPackagingOption);
     setIsOpen(false);
   };
 
@@ -79,41 +86,29 @@ function Checkout() {
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
-    // Simulate a successful payment (you may need to replace this with your actual payment logic)
-    // For demonstration purposes, simply display an alert and navigate to the newsfeed page.
+    checkoutInputs.total = totalPrice;
     if (selectedPackagingOption) {
       checkoutInputs.packagingOption = selectedPackagingOption;
     }
-    const items = cartItems.map(({ _id, quantity }) => ({ itemId:_id, quantity }));
+
+    const items = cartItems.map(({ _id, quantity }) => ({
+      itemId: _id,
+      quantity,
+    }));
     checkoutInputs.items = items;
     checkoutInputs.status = "pending";
     checkoutInputs.client = user._id;
-    console.log(checkoutInputs)
-
-    const response = await axios.post("http://localhost:3000/orders", checkoutInputs, {withCredentials: true});
-    if (response.data) {
-      alert("Order successful. Thank you for shopping with us!");
-      navigate("/orderHistory");
-    } 
-  //   "client": "6598ec8f62ed079d028d9d4f",
-  // "type": "artwork",
-  // "items": [
-  //   {
-  //     "itemId": "659d67d8afa552c18a8139a0",
-  //     "quantity": 4
-  //   }
-  // ],
-  // "status": "pending",
-  // "recipientName": "Luu Quoc Vinh",
-  // "mobileNumber": "0123456789",
-  // "streetNo": "406 Le Loi",
-  // "city": "TP Quang Ngai",
-  // "province": "Quang Ngai",
-  // "country": "Vietnam",
-  // "packaging": "1",
-  // "packingNote": "Please package my order carefully."
-
     console.log(checkoutInputs);
+
+    const response = await axios.post(
+      "http://localhost:3000/orders",
+      checkoutInputs,
+      { withCredentials: true }
+    );
+    if (response.data) {
+      alert("Successfully order the products. Thank you for shopping with us!");
+      navigate("/orderHistory");
+    }
     // navigate("/artworks");
   };
 
@@ -189,7 +184,9 @@ function Checkout() {
               <div className="packageMethods">
                 <span>Packaging methods</span>
                 <div className="packageHeader" onClick={handleToggleDropdown}>
-                  {selectedPackagingOption?.title || "--Choose packaging method--"}
+                  {selectedPackagingOption
+                    ? `${selectedPackagingOption?.title} $(${selectedPackagingOption?.price})`
+                    : "--Choose packaging method--"}
                 </div>
 
                 {isOpen && (
@@ -200,7 +197,7 @@ function Checkout() {
                         className="option"
                         onClick={() => handleSelectPackagingOption(option)}
                       >
-                        {option.title}
+                        {option.title} $({option.price})
                       </div>
                     ))}
                   </div>
@@ -243,7 +240,7 @@ function Checkout() {
             <span className="header">Order Summary</span>
             <div className="container">
               <div className="order-cart-container">
-              <CartItems cartItems={cartItems} setCartItems={setCartItems}/>
+                <CartItems cartItems={cartItems} setCartItems={setCartItems} />
               </div>
               <div className="coupons">
                 <div className="couponsLabel">
@@ -269,7 +266,7 @@ function Checkout() {
               <div className="subtotal">
                 <div className="subtotalInfo">
                   <p className="subtotalLabel">Subtotal</p>
-                  <p className="subtotalPrice">${totalPriceItems}</p>
+                  <p className="subtotalPrice">${subTotalPrice}</p>
                 </div>
                 <div className="packagingInfo">
                   <p className="packagingLabel">Packaging</p>
@@ -281,7 +278,7 @@ function Checkout() {
               <div className="confirm">
                 <div className="total">
                   <p className="totalLabel">Total(USD)</p>
-                  <p className="totalPrice">$138.50</p>
+                  <p className="totalPrice">{totalPrice}</p>
                 </div>
                 <button className="confirmButton" onClick={handleSubmitOrder}>
                   Confirm Order

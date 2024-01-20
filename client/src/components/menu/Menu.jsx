@@ -62,7 +62,7 @@ export default function Menu() {
                 <span className="title">Profile</span>
               </Link>
             ) : (
-              <Link to={`/talents/${user?._id}`} className="menu-item">
+              <Link to={`/${user.role == "admin" || user.role == "client" ? "clients" : "talents"}/${user?._id}`} className="menu-item">
                 {" "}
                 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAZxJREFUSEu11L1vjWEYx/HPSecmmgpCajHUaOofIF5K01EbU/8CidCkpoYNIQzduyojUukLo9UmBgtB21RIGQnPldxtTh7nPveTU+da7/v6fa/3lj5bq8/6mgImq0Bu4kQK6D3m8bwUYBPAHG5nhGZxvxukBDiPF9hAgFaS2DncwRGcwXoOUgKsJoFpPK6JTGEJy7jYK+AbDlRlGMTPmsgwtvEZx3oFbOIQDuJrBhB/olQdrVSiqPlZRDmeZEoUPbrQK6C9yTEx0ZOBBL2Lw/ttcgR2DSEWwu32u+pLQB/uZ0x3fUdxHTGev/Ayzf+7/7FoJY2u792aHOMZUY/hVJqmdrEtvMHrlM2PTqQcIKZiMTWxSQaxCzNYq3/uBJjAs/TxKW4hjtv3mnNkGMcv3sMnLAKLsd2zOmAIb1PkcWtuNAkf91I5v+BkNXk7u351wFU8wCucbige30InljIO35Vq8xdygDhol0rLkwGPp8P3CJdzgA8YQZSqXvNSQkfxCR9xPAf4kx5KNyoH+8e/V6FSNtkpauzY9GPfM/gL5dBHGcZ57nQAAAAASUVORK5CYII=" />
                 <span className="title">Profile</span>
@@ -101,7 +101,7 @@ export default function Menu() {
               <span className="title">Terms & Policies</span>
             </div>
             <div className="menu-item" onClick={logout}>
-              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAM1JREFUSEvdlT0KwkAQRl/OIQhiobcJeA1bG2+gZ9BzeIbUNnaiIHgHG+UDN4ToOsvEVci2M/O9+UlmCjK/IrM+PweUwAqYOis7AAtgF+LbFVyAgVM8hB2BcQxwfxq8rXuJbwv1H7AB5sAtMiezRdZ8JVABM+D6xvkrAOlKXBDBms8EBAerEtnVJrVr23D+P8DKPGToblEKoNOQrR+t82dqAVIqlE+9Ifq3Ks7A0OqDYT8Bo9i61sFZAxMnZA8sPx0cp248zHtYkhPJDngAqgQ2GSwkQI0AAAAASUVORK5CYII=" />
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
               <span className="title">Logout</span>
             </div>
           </div>

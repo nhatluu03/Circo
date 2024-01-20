@@ -5,6 +5,14 @@
     align-items: center;
     padding: 4px 0;
 
+    &:last-child:hover {
+      background-color: var(--price-color-light);
+      color: white;
+
+      img {
+        color: white;
+      }
+    }
     .box-icon {
       color: red;
     }

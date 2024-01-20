@@ -3,11 +3,7 @@ import "./AddFeedback.scss";
 import { UserContext } from "../../../contexts/user.context.jsx";
 import axios from "axios";
 
-export default function AddFeedback({
-  setShowAddCommissionForm,
-  handleAddCommission,
-  mutation,
-}) {
+export default function AddFeedback({orderId}) {
   const { user, login } = useContext(UserContext);
   const [files, setFiles] = useState([]);
   const [selectedMaterials, setSelectedMaterials] = useState([]);
@@ -88,12 +84,10 @@ export default function AddFeedback({
   const handleSubmit = async (e) => {
     e.preventDefault();
     alert("Handle submit in child component");
-    console.log(files);
-    console.log(inputs);
-    inputs.fields = selectedFields;
-    inputs.materials = selectedMaterials;
-    const output = await handleAddCommission(files, inputs);
-    mutation.mutate(output);
+    console.log()
+    inputs._id = orderId;
+    const response = await axios.post("http://localhost:3000/order")
+   
   };
 
   return (
@@ -204,7 +198,7 @@ export default function AddFeedback({
         <div className="form-field">
           <input
             type="submit"
-            value="Upload artworks"
+            value="Give feedback"
             className="form-field__input"
           />
         </div>

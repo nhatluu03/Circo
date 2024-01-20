@@ -112,7 +112,7 @@ export default function Commissions() {
   return (
     <div className="commissions">
       <h3 className="profile-page__header">
-        Commissions
+        Commissions ({commissions.length})
         {user?._id == id && (
           <button
             className="btn btn-1 add-btn"
@@ -125,63 +125,69 @@ export default function Commissions() {
         )}
       </h3>
       <div className="commission-container">
-        {commissions.map((commission) => {
-          return (
-            <div className="commission-item">
-              <div className="commission-item__sample-container">
-                {/* {commission.images.map((image) => {
+        {commissions.length > 0 ? (
+          commissions.map((commission) => {
+            return (
+              <div className="commission-item">
+                <div className="commission-item__sample-container">
+                  {/* {commission.images.map((image) => {
                   return  (<img
                   src={`../../public/uploads/commissions/${image[0]}`}
                   alt=""
                   className="commission-item__sample-item large"
                 />)
                 })} */}
-                <img
-                  src={`../../public/uploads/commissions/${commission.images[0]}`}
-                  alt=""
-                  className="commission-item__sample-item large"
-                />
-                <div>
                   <img
-                    src={`../../public/uploads/commissions/${commission.images[1]}`}
+                    src={`../../public/uploads/commissions/${commission.images[0]}`}
                     alt=""
-                    className="commission-item__sample-item"
+                    className="commission-item__sample-item large"
                   />
-                  <img
-                    src={`../../public/uploads/commissions/${commission.images[2]}`}
-                    alt=""
-                    className="commission-item__sample-item"
-                  />
+                  <div>
+                    <img
+                      src={`../../public/uploads/commissions/${commission.images[1]}`}
+                      alt=""
+                      className="commission-item__sample-item"
+                    />
+                    <img
+                      src={`../../public/uploads/commissions/${commission.images[2]}`}
+                      alt=""
+                      className="commission-item__sample-item"
+                    />
+                  </div>
+                </div>
+                <div className="commission-item__details">
+                  <h2 className="commission-item__details__header">
+                    {commission.title}
+                  </h2>
+                  {commission.materials?.length > 0 && (
+                    <p>
+                      <strong>Materials: </strong>
+                      {commission.materials.join(",")}
+                    </p>
+                  )}
+
+                  {commission.fields?.length > 0 && (
+                    <p>
+                      <strong>Fields: </strong>
+                      {commission.fields.map((field) => {
+                        return <>{field.name + ", "}</>;
+                      })}
+                    </p>
+                  )}
+                  <span className="extra-msg gray italic">
+                    *Notes: {commission.note}
+                  </span>
+                  <br></br>
+                  <button className="btn btn-3 commission-item__book-btn">
+                    Book commission
+                  </button>
                 </div>
               </div>
-              <div className="commission-item__details">
-                <h2 className="commission-item__details__header">
-                  {commission.title}
-                </h2>
-                {commission.materials?.length > 0 && (
-                  <p>
-                    <strong>Materials: </strong>
-                    {commission.materials.join(",")}
-                  </p>
-                )}
-
-                {commission.fields?.length > 0 && (
-                  <p>
-                    <strong>Fields: </strong>
-                    {commission.fields.map((field) => {
-                      return (<>{field.name + ", "}</>);
-                    })}
-                  </p>
-                )}
-                <span className="extra-msg gray italic">*Notes: {commission.note}</span>
-                <br></br>
-                <button className="btn btn-3 commission-item__book-btn">
-                  Book commission
-                </button>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <p>The artist has not uploaded any commissions yet.</p>
+        )}
       </div>
 
       {/* Modal forms */}

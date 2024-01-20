@@ -64,8 +64,6 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
       showSuccess(passwordErrRef);
     }
 
-    console.log(isValidUsername, isValidPassword);
-
     return isValidUsername && isValidPassword;
   }
 
@@ -80,7 +78,6 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
 
     inputs.role = "client";
     const { confirm_password, ...others } = inputs;
-    console.log(others);
 
     // FE validation
     let isValidLoginInfo = true;  //validateInputs()
@@ -91,10 +88,11 @@ export default function Login({ setShowLoginForm, setShowRegisterForm }) {
           others,
           {withCredentials: true}
         );
-        console.log(response.data);
-        console.log(response);
+
         if (response.status == 200) {
-          alert("Login successfully");
+          alert("Successfully logged in.");
+          setShowLoginForm(false);
+          navigate("/artworks")
 
           const user = response.data;
           login(user);

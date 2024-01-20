@@ -14,6 +14,7 @@ import {
   showSuccess,
 } from "../../assets/js/validator.js";
 import { reactLocalStorage } from "reactjs-localstorage";
+import SuccessModal from "../successModal/SuccessModal.jsx";
 
 import { UserContext } from "../../contexts/user.context.jsx";
 
@@ -118,7 +119,7 @@ export default function Register({ setShowLoginForm, setShowRegisterForm }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    inputs.role = "talent";
+    // inputs.role = "talent";
     const { confirm_password, ...others } = inputs;
     console.log(others);
 
@@ -134,15 +135,13 @@ export default function Register({ setShowLoginForm, setShowRegisterForm }) {
         console.log(response);
         console.log("User data before Login: " + JSON.parse(user));
         if (response.status == 200) {
-          alert("Register successfully");
+          alert("Successfully register new account");
           const user = response.data;
           login(user);
-          console.log("User data after Login: " + JSON.parse(user));
-          // setUser(response.data);
-          // Call login route
+          setShowRegisterForm(false);
+          navigate("/artworks");
         } else if (response.status == 400) {
           alert("Username already exists!");
-          // Show error for the field "username"
         }
       } catch (error) {
         if (error.response.status == 400) {
@@ -228,6 +227,15 @@ export default function Register({ setShowLoginForm, setShowRegisterForm }) {
               ></span>
             </div>
             <div className="form-field">
+              <label htmlFor="role" className="form-field__label">
+                Register as
+              </label>
+              <select name="role" id="" className="form-field__input" onChange={handleChange}>
+                <option value="client" selected>Client</option>
+                <option value="talent">Artist</option>
+              </select>
+            </div>
+            <div className="form-field">
               <label htmlFor="full-name" className="form-field__label">
                 Full name
               </label>
@@ -256,7 +264,14 @@ export default function Register({ setShowLoginForm, setShowRegisterForm }) {
           </form>
           <p className="form-extra-text">
             Already had an account?{" "}
-            <span className="form-extra-text__link" onClick={() => {setShowLoginForm(true), setShowRegisterForm(false)}}>Sign in</span>
+            <span
+              className="form-extra-text__link"
+              onClick={() => {
+                setShowLoginForm(true), setShowRegisterForm(false);
+              }}
+            >
+              Sign in
+            </span>
           </p>
         </div>
       </div>

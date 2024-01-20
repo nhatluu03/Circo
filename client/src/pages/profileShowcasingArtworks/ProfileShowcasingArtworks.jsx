@@ -86,7 +86,7 @@ export default function ProfileShowcasingArtworks() {
   return (
     <div className="artworks">
       <h3 className="profile-page__header">
-        Commissions
+        Masterpieces ({showcasingArtworks?.length || 0})
         {user?._id == id && (
           <button
             className="btn btn-1 add-btn"

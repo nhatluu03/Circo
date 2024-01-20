@@ -10,12 +10,26 @@ class ArtworkController {
   };
 
   index = async (req, res) => {
+    const { forSelling } = req.query;
+
     try {
-      // Use populate to get artworks along with the corresponding talent
-      const artworks = await Artwork.find().populate({
-        path: "talent",
-        select: "avatar username", // get the fields avatar and username only
-      });
+      let artworks;
+      if (forSelling) {
+        artworks = await Artwork.find({
+          forSelling: true,
+        }).populate("fields", "name");
+        // .populate({
+        //   path: "Field",
+        //   select: "_id title"
+        // });
+      } else {
+        // Use populate to get artworks along with the corresponding talent
+        artworks = await Artwork.find().populate({
+          path: "talent",
+          select: "avatar username", // get the fields avatar and username only
+        });
+      }
+
       console.log(artworks);
       res.status(200).json(artworks);
     } catch (error) {
@@ -193,7 +207,7 @@ class ArtworkController {
   };
 
   commentOnArtwork = async (req, res) => {
-    console.log("COMMENT")
+    console.log("COMMENT");
     const artworkId = req.params.id;
     const { userId, content } = req.body;
 

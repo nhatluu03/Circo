@@ -175,33 +175,33 @@ class UserController {
     try {
       const talents = await User.find({ role: "talent" });
       const result = [];
-
+  
       // Iterate through each talent
       for (var i = 0; i < talents.length; i++) {
         const talent = talents[i];
-        // Find the top 3 artworks loved by other people for each talent
-        const top3Artworks = await Artwork.find({ talent: talent._id })
-          .sort({ likes: -1 })
+  
+        // Find the top 3 recent artworks loved by other people for each talent
+        const top3RecentArtworks = await Artwork.find({ talent: talent._id })
+          .sort({ createdAt: -1 }) // Sort by createdAt in descending order for getting recent artworks
           .limit(3)
           .exec();
-
+  
         // Count the number of commissions for each talent
         const commissions = await Commission.countDocuments({
           talent: talent._id,
         });
-
-        // Push talent's information, top 3 loved artworks, and commission count to the result array
+  
+        // Push talent's information, top 3 recent artworks, and commission count to the result array
         result.push({
           talent,
-          top3Artworks: top3Artworks.map((artwork) => ({
+          top3RecentArtworks: top3RecentArtworks.map((artwork) => ({
             _id: artwork._id,
             image: artwork.images[0],
-            // image: () => { return artwork.images.length > 0 ? artwork.images[0] : "https://th.bing.com/th/id/OIP.Z_PIeIRDajXPmZHROt-T_QHaEK?w=324&h=182&c=7&r=0&o=5&pid=1.7"},
           })),
           commissions: commissions,
         });
       }
-
+  
       // Send the result as JSON response
       res.status(200).json(result);
     } catch (error) {

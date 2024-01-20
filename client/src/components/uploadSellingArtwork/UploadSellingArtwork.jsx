@@ -40,6 +40,24 @@ export default function UploadSellingArtwork({
 
   const [inputs, setInputs] = useState({});
   const [selectedFields, setSelectedFields] = useState([]);
+  // const handleChange = (e) => {
+  //   const { name, value, checked } = e.target;
+
+  //   if (name === "selectedFields") {
+  //     if (checked) {
+  //       // If checkbox is checked, add the value to the selectedMaterials array
+  //       setSelectedFields((prevFields) => [...prevFields, value]);
+  //     } else {
+  //       // If checkbox is unchecked, remove the value from the selectedMaterials array
+  //       setSelectedFields((prevFields) =>
+  //         prevFields.filter((field) => field !== value)
+  //       );
+  //     }
+  //   } else {
+  //     setInputs((values) => ({ ...values, [name]: value }));
+  //   }
+  // };
+
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
 
@@ -58,14 +76,15 @@ export default function UploadSellingArtwork({
     }
   };
 
+       
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     inputs.fields = selectedFields
-    console.log(files)
     console.log(inputs)
-    // alert("Handle submit in child component");
-    // const output = await handleUploadSellingArtwork(files, inputs);
-    // mutation.mutate(output);
+    alert("Handle submit in child component");
+    const output = await handleUploadSellingArtwork(files, inputs);
+    mutation.mutate(output);
   };
 
   return (
@@ -113,19 +132,20 @@ export default function UploadSellingArtwork({
           />
           {/* <span ref={usernameErrRef} className="form-field__error"></span> */}
         </div>
-        <div className="form-field">
+        <div className="">
           <label htmlFor="creative-field" className="form-field__label">
-            Creative Field
+            Creative Fields
           </label>
           {fields.map((field) => {
             return (
               <>
-                <div class="form-field__checkbox">
+                <div className="form-field__checkbox">
                   <input
                     type="checkbox"
                     name="fields"
                     id={field._id}
                     value={field._id}
+                    onChange={handleChange}
                   />
                   <label for={field._id}>{field.name}</label>
                 </div>

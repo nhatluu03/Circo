@@ -26,7 +26,7 @@ const ArtworkSchema = new Schema(
           // If forSelling is false, ensure that price is not provided
           return !(this.forSelling === false && this.title !== undefined);
         },
-        message: 'Cannot set the title when forSelling is false.',
+        message: 'Cannot set the title for the artwork.',
       },
     },
     forSelling: { type: Boolean, default: false, required: true },

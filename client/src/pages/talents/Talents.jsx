@@ -176,24 +176,24 @@ export default function Talents() {
                 <div className="talent-item__bg-container" key={index}>
                   <img
                     src={
-                      talent.top3Artworks.length >= 1
-                        ? talent.top3Artworks[0].image
+                      talent.top3RecentArtworks.length >= 1
+                        ? "../../public/uploads/artworks/" + talent.top3RecentArtworks[0].image
                         : "https://www.hobbycraft.co.uk/dw/image/v2/BHCG_PRD/on/demandware.static/-/Sites-hobbycraft-uk-master/default/dwb4e5319b/images/Ideas/art/main/ideas_main_how-to-create-a-large-scale-abstract-artwork.jpg?sw=680&q=85"
                     }
                     className="talent-item__bg-item"
                   />
                   <img
                     src={
-                      talent.top3Artworks.length >= 1
-                        ? talent.top3Artworks[1]?.image
+                      talent.top3RecentArtworks.length >= 1
+                        ? "../../public/uploads/artworks/" + talent.top3RecentArtworks[1]?.image
                         : "https://www.hobbycraft.co.uk/dw/image/v2/BHCG_PRD/on/demandware.static/-/Sites-hobbycraft-uk-master/default/dwb4e5319b/images/Ideas/art/main/ideas_main_how-to-create-a-large-scale-abstract-artwork.jpg?sw=680&q=85"
                     }
                     className="talent-item__bg-item"
                   />
                   <img
                     src={
-                      talent.top3Artworks.length >= 1
-                        ? talent.top3Artworks[2]?.image
+                      talent.top3RecentArtworks.length >= 1
+                        ? "../../public/uploads/artworks/" + talent.top3RecentArtworks[2]?.image
                         : "https://www.hobbycraft.co.uk/dw/image/v2/BHCG_PRD/on/demandware.static/-/Sites-hobbycraft-uk-master/default/dwb4e5319b/images/Ideas/art/main/ideas_main_how-to-create-a-large-scale-abstract-artwork.jpg?sw=680&q=85"
                     }
                     className="talent-item__bg-item"
