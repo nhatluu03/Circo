@@ -6,13 +6,14 @@ import { io } from "socket.io-client";
 import ChatboxBg from "../../assets/img/chatbox_bg.png";
 import "./Conversations.scss";
 
-export default function Conversations({showCreatedConversation}) {
+export default function Conversations({ showCreatedConversation }) {
   const [messages, setMessages] = useState([]);
   const [conversation, setConversation] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [currentChat, setCurrentChat] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [isOpenConversations, SetIsOpenConversations] = useState(false);
+  const [image, setImage] = useState("");
   let [arrivalMessage, setArrivalMessage] = useState(null);
   const { user } = useContext(UserContext);
   const scrollRef = useRef();
@@ -29,15 +30,21 @@ export default function Conversations({showCreatedConversation}) {
         content: data.content,
         createdAt: Date.now(),
       });
-      console.log("3");
+    });
+    socket.current.on("getImage", (data) => {
+      setArrivalMessage({
+        senderId: data.senderId,
+        content: data.content,
+        createdAt: Date.now(),
+      });
     });
   }, []);
-  useEffect(()=>{
-    if(showCreatedConversation){
-      SetIsOpenConversations(true)
-      setCurrentChat(showCreatedConversation)
+  useEffect(() => {
+    if (showCreatedConversation) {
+      SetIsOpenConversations(true);
+      setCurrentChat(showCreatedConversation);
     }
-  },[showCreatedConversation])
+  }, [showCreatedConversation]);
   useEffect(() => {
     if (arrivalMessage) {
       // If arrival message is in the current Conversation
@@ -121,7 +128,7 @@ export default function Conversations({showCreatedConversation}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newMessage) {
+    if (newMessage.trim() == "") {
       return;
     } else {
       const message = {
@@ -129,9 +136,6 @@ export default function Conversations({showCreatedConversation}) {
         content: newMessage,
       };
       const receiverId = conversation?.otherMember.userId;
-      console.log("1");
-      console.log(receiverId);
-
       socket.current.emit("sendMessage", {
         senderId: user?._id,
         receiverId,
@@ -146,14 +150,13 @@ export default function Conversations({showCreatedConversation}) {
           }
         );
         setConversation(res.data);
-        console.log("2");
         setNewMessage("");
       } catch (error) {
         console.log(error);
       }
     }
   };
-  console.log(newMessage);
+  const handleImage = () => {};
   return (
     <div className="conversations">
       <button
@@ -181,7 +184,6 @@ export default function Conversations({showCreatedConversation}) {
             {conversations.length == 0 && "No conversation found"}
             {conversations.map((conversation, index) => (
               <div
-                
                 className="conversation-item"
                 key={index}
                 onClick={() => setCurrentChat(conversation._id)}
@@ -252,7 +254,15 @@ export default function Conversations({showCreatedConversation}) {
                 <form className="new-message-form" onSubmit={handleSubmit}>
                   <div className="new-message-form--left">
                     <div className="form-field">
-                      <i class="fa-solid fa-plus open-media-ic"></i>
+                      <input
+                        id="imageUpload"
+                        type="file"
+                        style={{ display: "none" }}
+                        onChange={handleImage}
+                      />
+                      <label htmlFor="imageUpload">
+                        <i class="fa-solid fa-plus open-media-ic"></i>
+                      </label>
                     </div>
 
                     <div className="form-field">

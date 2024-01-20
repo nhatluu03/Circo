@@ -40,13 +40,10 @@ io.on("connection", (socket) => {
   // Send and get messages
   socket.on("sendMessage", ({ senderId, receiverId, content }) => {
     const user = getUser(receiverId);
-    console.log(users)
-    console.log(user)
     io.to(user?.socketId).emit("getMessage",{
         senderId,
         content,
       })
-    console.log('getting')
   });
   socket.on("disconnect", () => {
     console.log("A user disconnected");
@@ -54,7 +51,6 @@ io.on("connection", (socket) => {
     io.emit("getUsers", users);
   });
 });
-
 // Start the HTTP server
 const PORT = 8900;
 httpServer.listen(PORT, () => {
