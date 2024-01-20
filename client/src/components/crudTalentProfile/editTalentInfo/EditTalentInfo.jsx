@@ -9,12 +9,9 @@ export default function EditTalentInfo({
   profileInfoMutation,
 }) {
   const [image, setImage] = useState(null);
-  const { user, fetchUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [files, setFiles] = useState([]);
-  const [update, setUpdate] = useState(false)
-  const [fullname, setFullname] = useState('')
-  const [jobTitle, setJobTitle] = useState('')
-  const [bio, setBio] = useState('')
+
   // Dropdown list of art fields
   const [fields, setFields] = useState([]);
   useEffect(() => {
@@ -42,27 +39,22 @@ export default function EditTalentInfo({
     setFiles(updatedFiles);
   };
 
+  const [inputs, setInputs] = useState({});
+  const handleChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setInputs((values) => ({ ...values, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("file", image);
-    formData.append("fullname", fullname);
-    formData.append("jobTitle", jobTitle);
-    formData.append("bio", bio);
-    const response = await axios.put(`http://localhost:3000/users/${user?._id}`, formData,{
-      withCredentials: true
-    })
-    fetchUser()
-    setBio(response.data.bio)
-    setFullname(response.data.fullname)
-    setJobTitle(response.data.jobTitle)
-    window.location.reload()
-    // const output = await handleUploadSellingArtwork(files, formData);
-    // mutation.mutate(output);
+    alert("Handle submit in child component");
+    const output = await handleUploadSellingArtwork(files, inputs);
+    mutation.mutate(output);
   };
-  console.log(fullname)
-  console.log(jobTitle)
-  console.log(bio)
+  console.log(inputs)
   return (
     <>
       <div
@@ -104,8 +96,9 @@ export default function EditTalentInfo({
             type="text"
             className="form-field__input"
             name="fullname"
+            value={user.fullname ? user.fullname : "Freelance artist"}
             placeholder="Enter your full name"
-            onChange={(e) => setFullname(e.target.value)}
+            onChange={handleChange}
           />
           {/* <span ref={usernameErrRef} className="form-field__error"></span> */}
         </div>
@@ -117,9 +110,9 @@ export default function EditTalentInfo({
             type="text"
             className="form-field__input"
             name="title"
-            value={user.jobTitle || "Freelancer"}
+            value={user.title ? user.title : "Freelance artist"}
             placeholder="Enter your job title"
-            onChange={(e) => setJobTitle(e.target.value)}
+            onChange={handleChange}
           />
           {/* <span ref={usernameErrRef} className="form-field__error"></span> */}
         </div>
@@ -131,8 +124,9 @@ export default function EditTalentInfo({
             type="text"
             className="form-field__input"
             name="bio"
+            value={user.bio ? user.bio : ""}
             placeholder="Tell ArtHub-er something about you"
-            onChange={(e)=> setBio(e.target.value)}
+            onChange={handleChange}
           />
           {/* <span ref={usernameErrRef} className="form-field__error"></span> */}
         </div>
