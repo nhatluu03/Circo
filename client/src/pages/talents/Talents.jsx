@@ -13,9 +13,9 @@ export default function Talents() {
   const [filters, setFilters] = useState({
     creativeFields: {},
     badges: {
-      trusted: false,
-      topContributor: false,
-      emerging: false,
+      'Trusted': false,
+      'Top Contributor': false,
+      'Emerging': false,
     },
   });
 

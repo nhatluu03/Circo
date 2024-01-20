@@ -96,8 +96,8 @@ export default function Martketplace() {
                     </label>
                   </div>
                 ))} */}
-                <input type="number" placeholder="from" ref={fromRef}/>
-                <input type="number" placeholder="to" ref={toRef}/>
+                <input type="number" placeholder="From" ref={fromRef}/>
+                <input type="number" placeholder="To" ref={toRef}/>
               </div>
             </div>
 
