@@ -24,6 +24,7 @@ import Store from "./pages/store/Store";
 import Layout from "./Layout";
 import Pay from "./pages/pay/Pay";
 import Checkout from "./pages/checkout/Checkout";
+import Vouchers from "./pages/vouchers/Vouchers";
 
 // import Success from "./pages/success/Success";
 
@@ -72,6 +73,10 @@ function App() {
         {
           path: "/clients/:id/order-history",
           element: <OrderHistory />,
+        },
+        {
+          path: "/clients/:id/vouchers",
+          element: <Vouchers />,
         },
       ],
     },
