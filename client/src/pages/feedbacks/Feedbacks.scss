@@ -1,4 +1,4 @@
-.reviews {
+.feedbacks {
   .rating__star {
     color: var(--rating-star-light);
   }
@@ -18,7 +18,7 @@
     margin: 28px 0;
 
     .review-category-item {
-        margin-right: 12px;
+      margin-right: 12px;
     }
   }
 
@@ -30,7 +30,6 @@
       padding: 28px 0;
       .review-item--left {
         width: 35%;
-        
       }
 
       .review-item--right {
@@ -38,15 +37,15 @@
         justify-content: end;
 
         .review-item__artwork-container {
-            display: flex;
+          display: flex;
 
-            .review-item__artwork-item {
-                width: 140px;
-                height: 100%;
-                object-fit: cover;
-                margin-left: 4px;
-                border-radius: 4px;
-            }
+          .review-item__artwork-item {
+            width: 140px;
+            height: 100%;
+            object-fit: cover;
+            margin-left: 4px;
+            border-radius: 4px;
+          }
         }
       }
     }

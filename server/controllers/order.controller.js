@@ -11,137 +11,154 @@ class OrderController {
       const orders = await Order.find();
       res.status(200).json({ success: true, data: orders });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
-  
+
   // Show - Get a specific order by ID
   show = async (req, res, next) => {
     try {
       const { id } = req.params;
-      const order = await Order.findById(id);
-  
+      const order = await Order.findById(id)
+        .populate({
+          path: "items.itemId",
+          select: "images title price", // Specify the fields you want to retrieve from the Artwork model
+          model: "Artwork",
+        })
+        .exec();
+
       if (!order) {
-        return res.status(404).json({ success: false, error: 'Order not found' });
+        return res
+          .status(404)
+          .json({ success: false, error: "Order not found" });
       }
-  
-      res.status(200).json({ success: true, data: order });
+
+      res.status(200).json(order);
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
-  
+
   // Store - Create a new order
   store = async (req, res, next) => {
     // console.log(req.body);
     try {
       const newOrder = await Order.create(req.body);
-      res.status(201).json({ success: true, data: newOrder });
+      res.status(201).json(newOrder);
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
-  
+
   // Update - Update an existing order
   update = async (req, res, next) => {
     try {
       const { id } = req.params;
-      const updatedOrder = await Order.findByIdAndUpdate(id, req.body, { new: true });
-      
+      const updatedOrder = await Order.findByIdAndUpdate(id, req.body, {
+        new: true,
+      });
+
       if (!updatedOrder) {
-        return res.status(404).json({ success: false, error: 'Order not found' });
+        return res
+          .status(404)
+          .json({ success: false, error: "Order not found" });
       }
-  
-      res.status(200).json({ success: true, data: updatedOrder });
+
+      res.status(200).json(updatedOrder);
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
-  
+
   // Destroy - Delete an order
   destroy = async (req, res, next) => {
     try {
       const { id } = req.params;
       const deletedOrder = await Order.findByIdAndDelete(id);
-  
+
       if (!deletedOrder) {
-        return res.status(404).json({ success: false, error: 'Order not found' });
+        return res
+          .status(404)
+          .json({ success: false, error: "Order not found" });
       }
-  
-      res.status(200).json({ success: true, data: deletedOrder });
+
+      res.status(200).json(deletedOrder);
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
   getOrdersByClientId = async (req, res, next) => {
     try {
-      const orders = await Order.find({ client: req.params.clientId }).populate({
-        path: 'items.itemId',
-        model: 'Artwork',
-        select: 'title price images forSelling', // Include 'forSelling' field to filter only selling artworks
-      })
-      .sort({ createdAt: -1 })
-      .exec();
-  
+      const orders = await Order.find({ client: req.params.clientId })
+        .populate({
+          path: "items.itemId",
+          model: "Artwork",
+          select: "title price images forSelling", // Include 'forSelling' field to filter only selling artworks
+        })
+        .sort({ createdAt: -1 })
+        .exec();
+
       // Modify the response to include titles of each item
-      const modifiedOrders = orders.map(order => {
-        const modifiedItems = order.items.map(item => {
+      const modifiedOrders = orders.map((order) => {
+        const modifiedItems = order.items.map((item) => {
           return {
             ...item._doc,
             title: item.itemId.title, // Add the title field to each item
           };
         });
-  
+
         return {
           ...order._doc,
           items: modifiedItems,
         };
       });
-  
+
       res.status(200).json(modifiedOrders);
     } catch (error) {
       next(error);
     }
   };
-  
 
   getOrdersByTalentId = async (req, res, next) => {
     try {
       const talentId = req.params.talentId; // Get ownerId from request parameters
-  
+
       // Find orders where items.itemId belongs to the specified artwork owner
       const ownerOrders = await Order.find({
-        'items.itemId': { $in: await Artwork.find({ talent: talentId }).distinct('_id') },
+        "items.itemId": {
+          $in: await Artwork.find({ talent: talentId }).distinct("_id"),
+        },
       })
-        .populate('client', 'username') // Populate the 'client' field with the client's username
-        .populate('items.itemId') // Populate the 'items.itemId' field with the actual item details
+        .populate("client", "username") // Populate the 'client' field with the client's username
+        .populate("items.itemId") // Populate the 'items.itemId' field with the actual item details
         .sort({ createdAt: -1 });
-        
+
       res.status(200).json(ownerOrders);
     } catch (error) {
-      next(error)
+      next(error);
     }
-  }
+  };
 
   getReviews = async (req, res, next) => {
     try {
-      const orders = await Order.find({client: req.params.clientId}).populate({
-        path: 'items.itemId',
-        model: 'Artwork', // Adjust this based on your actual model name
-        select: 'title price images', // Select the fields you want to retrieve
-      })
-      .exec();;
+      const orders = await Order.find({ client: req.params.clientId })
+        .populate({
+          path: "items.itemId",
+          model: "Artwork", // Adjust this based on your actual model name
+          select: "title price images", // Select the fields you want to retrieve
+        })
+        .exec();
       res.status(200).json(orders);
     } catch (error) {
-      next(error)
+      next(error);
     }
-  }; 
+  };
 
   intent = async (req, res, next) => {
     //Find the artwork/commission, client in the database
-    const typeOfOrder = req.body.type
-    const itemsOfOrder = req.body.items
+    const typeOfOrder = req.body.type;
+    const itemsOfOrder = req.body.items;
     const client = await User.findById(req.userId);
 
     //Stripe Integration

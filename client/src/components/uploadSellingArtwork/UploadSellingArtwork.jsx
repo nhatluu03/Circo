@@ -82,9 +82,10 @@ export default function UploadSellingArtwork({
     e.preventDefault();
     inputs.fields = selectedFields
     console.log(inputs)
-    alert("Handle submit in child component");
     const output = await handleUploadSellingArtwork(files, inputs);
     mutation.mutate(output);
+    alert("Successfully uploaded the artworks for sell!");
+    setShowUploadSellingArtworkForm(false);
   };
 
   return (

@@ -48,8 +48,9 @@ export default function EditTalentInfo({
   const handleSubmit = async (e) => {
     e.preventDefault();
     alert("Handle submit in child component");
-    const output = await handleUploadSellingArtwork(files, inputs);
-    mutation.mutate(output);
+    console.log(inputs);
+    // const output = await handleUploadSellingArtwork(files, inputs);
+    // mutation.mutate(output);
   };
 
   return (
@@ -152,7 +153,7 @@ export default function EditTalentInfo({
         <div className="form-field">
           <input
             type="submit"
-            value="Upload artworks"
+            value="Confirm changes"
             className="form-field__input"
           />
         </div>

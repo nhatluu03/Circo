@@ -173,24 +173,26 @@ class UserController {
 
   index = async (req, res, next) => {
     try {
-      const talents = await User.find({ role: "talent" });
+      const talents = await User.find({ role: "talent" }).sort({
+        createdAt: -1,
+      });
       const result = [];
-  
+
       // Iterate through each talent
       for (var i = 0; i < talents.length; i++) {
         const talent = talents[i];
-  
+
         // Find the top 3 recent artworks loved by other people for each talent
         const top3RecentArtworks = await Artwork.find({ talent: talent._id })
           .sort({ createdAt: -1 }) // Sort by createdAt in descending order for getting recent artworks
           .limit(3)
           .exec();
-  
+
         // Count the number of commissions for each talent
         const commissions = await Commission.countDocuments({
           talent: talent._id,
         });
-  
+
         // Push talent's information, top 3 recent artworks, and commission count to the result array
         result.push({
           talent,
@@ -201,7 +203,7 @@ class UserController {
           commissions: commissions,
         });
       }
-  
+
       // Send the result as JSON response
       res.status(200).json(result);
     } catch (error) {
@@ -210,12 +212,12 @@ class UserController {
     }
   };
 
-  getTalentsByFilters = async (req, res, next) =>{
+  getTalentsByFilters = async (req, res, next) => {
     const q = req.query;
     const filters = {
       ...(q.creative && { creativeFields: q.creative }),
       ...(q.badges && { badges: q.badges }),
-      ...((q.rating) && { rating: q.rating }),
+      ...(q.rating && { rating: q.rating }),
       ...(q.search && { username: { $regex: q.search, $options: "i" } }),
     };
     try {
@@ -224,7 +226,7 @@ class UserController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   show = async (req, res, next) => {
     const targetUserId = req.params.id;
@@ -319,21 +321,23 @@ class UserController {
   getFeedbacks = async (req, res, next) => {
     try {
       // Find all orders where the talent's ID is in the items.itemId field
-      const orders = await Order.model("Order").find({
-        "items.itemId": this._id,
-        rating: { $exists: true }, // Filter orders with ratings
-        review: { $exists: true }, // Filter orders with reviews
-      }).populate({
-        path: 'client',
-        select: 'fullname username avatar', // Specify the fields you want to select
-      });;
-  
+      const orders = await Order.model("Order")
+        .find({
+          "items.itemId": this._id,
+          rating: { $exists: true }, // Filter orders with ratings
+          review: { $exists: true }, // Filter orders with reviews
+        })
+        .populate({
+          path: "client",
+          select: "fullname username avatar", // Specify the fields you want to select
+        });
+
       // Extract ratings and reviews from orders
       const feedbacks = orders.map((order) => ({
         rating: order.rating,
         review: order.review,
       }));
-      console.log(feedbacks)
+      console.log(feedbacks);
       res.status(200).json(feedbacks);
     } catch (error) {
       next(error);

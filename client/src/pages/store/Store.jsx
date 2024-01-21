@@ -96,7 +96,6 @@ export default function Store() {
     mutationFn: handleUploadSellingArtwork,
     onSuccess: async () => {
       // Invalidate and refetch
-      alert("Handle submit in parent component");
       await queryClient.invalidateQueries({ queryKey: ["storeItems"] });
     },
   });

@@ -5,10 +5,9 @@
   border-radius: 6px;
 
   .selling-artwork-item__sample-container {
-    height: 100px;
     display: flex;
     justify-content: space-between;
-    height: 140px;
+    height: 160px;
     padding: 4px;
 
     .selling-artwork-item__sample-item {
@@ -60,7 +59,7 @@
     }
 
     .selling-artwork-item__title {
-      margin: 8px 0;
+      margin: 6px 0;
     }
 
     .selling-artwork-item__extra {
@@ -69,11 +68,19 @@
 
       .selling-artwork-item__price {
         color: var(--price-color-light);
+        margin: 4px 0;
       }
     }
 
     .add-to-cart-btn {
       width: 100%;
+
+      &:hover {
+        background-color: var(--black-bg-light);
+        opacity: 1;
+        transition: 0.3s;
+        color: white;
+      }
     }
 
     .selling-artwork-item__action {

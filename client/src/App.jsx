@@ -52,7 +52,7 @@ function App() {
           element: <OrderDashboard />,
         },
         {
-          path: "/talents/:id/order-dashboard/:orderId",
+          path: "/talents/:id/orders/:orderId",
           element: <OrderDetails />,
         },
         {
@@ -72,6 +72,10 @@ function App() {
         {
           path: "/clients/:id/order-history",
           element: <OrderHistory />,
+        },
+        {
+          path: "/clients/:id/orders/:orderId",
+          element: <OrderDetails />,
         },
       ],
     },

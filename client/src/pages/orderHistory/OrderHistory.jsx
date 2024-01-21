@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./OrderHistory.scss";
 import AddFeedback from "../../components/crudFeedback/addFeedback/AddFeedback.jsx";
 import { UserContext } from "../../contexts/user.context.jsx";
@@ -30,11 +30,9 @@ export default function OrderHistory() {
     fetchOrders();
   }, []);
 
-  
   // Toggle display add feedback form
   const [showAddFeedbackForm, setShowAddFeedbackForm] = useState(false);
   const [selectedOrderToFeedback, setSelectedOrderToFeedback] = useState(false);
-  
 
   return (
     <div className="order-history">
@@ -63,10 +61,20 @@ export default function OrderHistory() {
                   <button className="order-history-item__btn btn btn-3">
                     Order again
                   </button>
-                  <button className="order-history-item__btn btn btn-1">
-                    View order details
-                  </button>
-                  <button className="order-history-item__btn btn btn-1" onClick={() => {setShowAddFeedbackForm(true); setSelectedOrderToFeedback(order._id)}}>
+                  
+                  <Link to={`/${user.role == "admin" || user.role == "client" ? "clients" : "talents"}/${id}/orders/${order._id}`}>
+                    <button className="order-history-item__btn btn btn-1">
+                      View order details
+                    </button>
+                  </Link>
+
+                  <button
+                    className="order-history-item__btn btn btn-1"
+                    onClick={() => {
+                      setShowAddFeedbackForm(true);
+                      setSelectedOrderToFeedback(order._id);
+                    }}
+                  >
                     Give feedbacks
                   </button>
                   <button className="order-history-item__btn btn btn-1">
@@ -81,9 +89,12 @@ export default function OrderHistory() {
         )}
       </div>
 
-       {/* Modal forms */}
-       {showAddFeedbackForm && (
-        <AddFeedback setShowAddFeedbackForm={setShowAddFeedbackForm} selectedOrderToFeedback={selectedOrderToFeedback}/>
+      {/* Modal forms */}
+      {showAddFeedbackForm && (
+        <AddFeedback
+          setShowAddFeedbackForm={setShowAddFeedbackForm}
+          selectedOrderToFeedback={selectedOrderToFeedback}
+        />
       )}
     </div>
   );

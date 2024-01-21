@@ -6,6 +6,9 @@ import sampleArtwork01 from "../../assets/img/artwork_01.png";
 import sampleArtwork02 from "../../assets/img/artwork_02.png";
 
 export default function AddCollection({ setShowAddCollectionForm, showcasingArtworks}) {
+  if (!showcasingArtworks) {
+    return null;
+  }
   const { user, login } = useContext(UserContext);
   const [masterpieces, setMasterpieces] = useState([]);
 

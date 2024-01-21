@@ -12,11 +12,11 @@ import { UserContext } from "../../contexts/user.context.jsx";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import "./Talent.scss";
 
-export default function Talent({showNewConversation}) {
+export default function Talent({ showNewConversation }) {
   const { id } = useParams();
   const { user } = useContext(UserContext);
   const queryClient = useQueryClient();
-  const [showCreatedConversation, setShowCreatedConversation] = useState(null)
+  const [showCreatedConversation, setShowCreatedConversation] = useState(null);
 
   // // Toggle display add-commssion-form
   // const [showAddCommissionForm, setShowAddCommissionForm] = useState(false);
@@ -200,21 +200,25 @@ export default function Talent({showNewConversation}) {
     mutationFn: handleSubmitTalentInfo,
     onSuccess: async () => {
       // Invalidate and refetch
-      alert("Handle submit in parent component");
       await queryClient.invalidateQueries({ queryKey: ["editTalentInfo"] });
     },
   });
 
-  const handleChildEvent = (data) =>{
-    setShowCreatedConversation(data)
-    showNewConversation(data)
-  }
+  const handleChildEvent = (data) => {
+    setShowCreatedConversation(data);
+    showNewConversation(data);
+  };
 
   return (
     <>
       <div className="talent-profile">
         <div className="talent-profile--left">
-          <Sidebar showCreatedConversation={handleChildEvent} talent={talent} talentInfoMutation={talentInfoMutation} handleSubmitTalentInfo={handleSubmitTalentInfo}/>
+          <Sidebar
+            showCreatedConversation={handleChildEvent}
+            talent={talent}
+            talentInfoMutation={talentInfoMutation}
+            handleSubmitTalentInfo={handleSubmitTalentInfo}
+          />
         </div>
 
         <div className="talent-profile--right">
@@ -290,17 +294,19 @@ export default function Talent({showNewConversation}) {
                 </button>
               </Link>
 
-              <Link to={`talents/${talent?._id}/order-dashboard`}>
-                <button
-                  className={`talent-profile__button-item ${
-                    activeButton === "order-dashboard" ? "active" : ""
-                  }`}
-                  onClick={() => handleButtonClick("order-dashboard")}
-                >
-                  <i className="bx bx-info-circle"></i>
-                  Orders
-                </button>
-              </Link>
+              {user?._id == id && (
+                <Link to={`talents/${talent?._id}/order-dashboard`}>
+                  <button
+                    className={`talent-profile__button-item ${
+                      activeButton === "order-dashboard" ? "active" : ""
+                    }`}
+                    onClick={() => handleButtonClick("order-dashboard")}
+                  >
+                    <i className="bx bx-info-circle"></i>
+                    Order Dashboard
+                  </button>
+                </Link>
+              )}
 
               <Link to={`talents/${talent?._id}/feedbacks`}>
                 <button

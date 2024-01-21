@@ -3,10 +3,14 @@
     .selling-artwork-item {
       width: 18% !important;
       margin-right: 2.5%;
+    }
 
-      &:nth-of-child(5n) {
-        margin-right: 0;
-      }
+    .selling-artwork-item:nth-of-type(4n) {
+      margin-right: 2.5%;
+    }
+
+    .selling-artwork-item:nth-of-type(5n) {
+      margin-right: 0 !important;
     }
   }
 }

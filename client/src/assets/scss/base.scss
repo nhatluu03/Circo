@@ -373,7 +373,8 @@ hr {
   border-radius: 8px;
   background-color: white;
   z-index: 10000;
-  padding: 16px 30px;
+  // padding: 16px 30px;
+  padding: 12px 30px;
 
   .user-info {
     margin-bottom: 12px;
@@ -401,7 +402,7 @@ hr {
     }
 
     .form-field__child {
-        width: 48%;
+      width: 48%;
     }
   }
 
@@ -414,15 +415,15 @@ hr {
     }
   }
 
-//   .2-col {
-//     display: flex;
-//     justify-content: space-between;
-//     width: 100%;
+  //   .2-col {
+  //     display: flex;
+  //     justify-content: space-between;
+  //     width: 100%;
 
-//     .form-field__child {
-//       width: 45%;
-//     }
-//   }
+  //     .form-field__child {
+  //       width: 45%;
+  //     }
+  //   }
 
   .form-field--upload {
     .upload-artwork-btn {
@@ -508,7 +509,8 @@ hr {
 
 .form-field--upload {
   text-align: center;
-  padding: 28px;
+  // padding: 28px;
+  padding: 12px;
   margin: 18px 0;
   border: 2.5px dashed var(--green-light);
   border-radius: 8px;
@@ -601,7 +603,7 @@ input[type="submit"]:hover {
   width: 100%;
   position: relative;
   overflow: auto;
-  white-space: nowrap; 
+  white-space: nowrap;
   margin-bottom: 28px;
 
   .field-container {
@@ -677,4 +679,10 @@ input[type="submit"]:hover {
     margin-right: 20px;
     left: 0;
   }
+}
+
+// Code lord
+.selling-artwork-item__field-container {
+  display: inline-flex;
+  flex-wrap: wrap;
 }

@@ -100,7 +100,7 @@ export default function Commissions() {
     mutationFn: handleAddCommission,
     onSuccess: async () => {
       // Invalidate and refetch
-      alert("Handle submit in parent component");
+      // alert("Handle submit in parent component");
       await queryClient.invalidateQueries({ queryKey: ["commissions"] });
     },
   });

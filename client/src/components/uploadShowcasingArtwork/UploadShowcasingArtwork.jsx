@@ -76,11 +76,8 @@ export default function UploadShowcasingArtwork({ setShowUploadShowcasingArtwork
         withCredentials: true
       });
       console.log('Artwork Data:', res2.data);
-
-   
-
-
-
+      alert("Successfully uploaded the artwork!")
+      setShowUploadShowcasingArtworkForm(false);
       // const response2 = await axios.post('http://localhost:3000/artworks/uploads', files, {
       //   withCredentials: true,
       //   headers: {
@@ -145,6 +142,7 @@ export default function UploadShowcasingArtwork({ setShowUploadShowcasingArtwork
             type="text"
             className="form-field__input"
             name="description"
+            onChange={handleChange}
             placeholder={`What's on your mind now, ${user.username}?`}
           />
           <i className="fa-regular fa-face-smile"></i>
@@ -186,6 +184,7 @@ export default function UploadShowcasingArtwork({ setShowUploadShowcasingArtwork
             id="fileInput"
             className="form-field__input"
             multiple
+            accept="image/*"
             onChange={handleFileChange}
           />
           <p>Or drag and drop file</p>

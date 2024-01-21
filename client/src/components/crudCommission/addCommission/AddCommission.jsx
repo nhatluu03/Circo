@@ -87,13 +87,14 @@ export default function AddCommission({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Handle submit in child component");
-    console.log(files);
-    console.log(inputs);
+    alert("Successfully added new commission!");
+    // console.log(files);
+    // console.log(inputs);
     inputs.fields = selectedFields
     inputs.materials = selectedMaterials
     const output = await handleAddCommission(files, inputs);
     mutation.mutate(output);
+    setShowAddCommissionForm(false);
   };
 
   return (

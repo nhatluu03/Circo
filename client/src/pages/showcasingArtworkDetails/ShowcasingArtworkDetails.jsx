@@ -41,6 +41,9 @@ const showcasingArtworkDetails = ({
     }
   };
 
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isReacted, setIsReacted] = useState(false);
+
   return (
     <div className="overlay">
       <div className="artwork-content">
@@ -55,7 +58,7 @@ const showcasingArtworkDetails = ({
             <div className="user-info">
               <img
                 className="avt-m"
-                src="https://www.imagelighteditor.com/img/bg-after.jpg"
+                src={`${showcasingArtwork.talent.avatar}`}
                 alt={`Avatar of ${showcasingArtwork.talent.username}`}
               />
               <div className="user-info__name">
@@ -84,8 +87,12 @@ const showcasingArtworkDetails = ({
           <div className="artwork-content__interaction-container">
             <div className="artwork-content__interaction-container--left">
               <div className="artwork-content__interaction-item">
-                <i class="fa-regular fa-heart"></i>{" "}
-                {showcasingArtwork.reacts.length}
+                {!isReacted ? (
+                  <><i class="fa-regular fa-heart" onClick={() => {setIsReacted(true)}}></i> {showcasingArtwork.reacts.length}</>
+                ) : (
+                  <><i class="fa-solid fa-heart" onClick={() => {setIsReacted(false)}}></i> {showcasingArtwork.reacts.length + 1}</>
+                )}
+                
               </div>
               <div className="artwork-content__interaction-item">
                 <i class="fa-regular fa-message"></i>{" "}
@@ -94,7 +101,11 @@ const showcasingArtworkDetails = ({
             </div>
             <div className="artwork-content__interaction-container--right">
               <div className="artwork-content__interaction-item">
-                <i class="fa-regular fa-bookmark"></i>
+                {!isBookmarked ? (
+                  <i className="fa-regular fa-bookmark" onClick={() => {setIsBookmarked(true)}}></i>
+                ) : (
+                  <i className="fa-solid fa-bookmark" onClick={() => {setIsBookmarked(false)}}></i>
+                )}
               </div>
             </div>
           </div>

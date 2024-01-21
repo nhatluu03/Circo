@@ -14,9 +14,11 @@ export default function EditCover({setShowEditCoverForm, handleUploadCoverPhoto,
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Handle submit in child component");
+    // alert("Handle submit in child component");
     const response = await handleUploadCoverPhoto(selectedCoverPhoto);
     coverPhotoMutation.mutate(response);
+    alert("Successfulyl uploaded new cover photo!")
+    setShowEditCoverForm(false);
   };
 
 
