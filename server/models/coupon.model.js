@@ -23,7 +23,6 @@ const CouponSchema = new mongoose.Schema(
     },
     expiry_date: {
       type: Date,
-      required: true
     },
     count: {
       type: Number,
