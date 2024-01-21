@@ -27,7 +27,7 @@ export default function ClientProfile() {
     } else if (buttonName == "commissions") {
       // setShowAddCommissionBtn(true);
       setShowUploadArtworkBtn(false);
-    }else if(buttonName == 'vouchers'){
+    }else if(buttonName == 'coupons'){
       setShowUploadArtworkBtn(false)
     }
   };
@@ -86,15 +86,15 @@ export default function ClientProfile() {
                   Order History
                 </button>
               </Link>
-              <Link to={`clients/${talent?._id}/vouchers`}>
+              <Link to={`clients/${talent?._id}/coupons`}>
                 <button
                   className={`talent-profile__button-item ${
-                    activeButton === "vouchers" ? "active" : ""
+                    activeButton === "coupons" ? "active" : ""
                   }`}
-                  onClick={() => handleButtonClick("vouchers")}
+                  onClick={() => handleButtonClick("coupons")}
                 >
                   <i className="bx bx-cart"></i>
-                  Vouchers
+                  Coupons
                 </button>
               </Link>
             </div>

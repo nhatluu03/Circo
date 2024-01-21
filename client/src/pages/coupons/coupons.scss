@@ -1,0 +1,97 @@
+.coupons{
+    margin-top: 20px;
+    .coupons__creating{
+        .couponCreate__container{
+            background-color: #f5f5f5;
+            padding: 35px;
+            .couponCreate__form__header{
+                font-size: 18px;
+                font-weight: 500;
+                color: #2c2c2c;
+            }
+            .couponCreate__form{
+                margin-top: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                background-color: white;
+                border-radius: 8px;
+                padding: 35px;
+                filter: drop-shadow(0px 2px 4px rgba(194, 194, 194, 0.25));
+                .couponCreate__form__mainInfo{
+                    display: flex;
+                    gap: 20px;
+                    .couponCreate__form__left, .couponCreate__form__right{
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px;
+                        .couponCreate__form__group{
+                            display: flex;
+                            flex-direction: column;
+                            .couponCreate__form__group__title{
+                                font-size: 14px;
+                                color: #2c2c2c;
+                                margin-bottom: 5px;
+                            }
+                            input{
+                                border-radius: 8px;
+                                padding: 10px 12px;
+                                border: 1px solid #d6d6d6;
+                                background: #fff;
+                                color: #202024;
+                                font-size: 12px;
+                                font-weight: 500;
+                                &:focus {
+                                border: 1px solid #3c3c3c;
+                                }
+                            }
+        
+                        }
+                    }
+                }
+                .couponCreate__form__Type{
+                    display: flex;
+                    flex-direction: column;
+                    .couponCreate__form__group__title{
+                        font-size: 14px;
+                        color: #2c2c2c;
+                        margin-bottom: 5px;
+                    }
+                    input{
+                        border-radius: 8px;
+                        padding: 10px 12px;
+                        border: 1px solid #d6d6d6;
+                        background: #fff;
+                        color: #202024;
+                        font-size: 12px;
+                        font-weight: 500;
+                        &:focus {
+                        border: 1px solid #3c3c3c;
+                        }
+                    }
+                }
+                .couponCreate__form__button{
+                    padding: 10px;
+                    border-radius: 8px;
+                    border: 1px solid #1d1d1d;
+                    background: #2c2c2c;
+                    color: white;
+                    font-weight: 500;
+                    transition: 0.2s;
+                    width: 20%;
+                }
+            }
+        }
+        .coupons__creating__button{
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #1d1d1d;
+            background: #2c2c2c;
+            color: white;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+    }
+    
+}
