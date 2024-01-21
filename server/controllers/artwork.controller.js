@@ -10,12 +10,12 @@ class ArtworkController {
   };
 
   index = async (req, res) => {
-    const { forSelling } = req.query;
+    const { forSelling, from, to, search } = req.query;
     const q = req.query;
     const filters = {
       forSelling: true,
       ...((q.from || q.to) && {
-        price: { ...(q.from && { $gt: q.from - 1 }), ...(q.to && { $lt: q.to + 1  }) },
+        price: { ...(from && { $gt: Number(from) - 1 }), ...(to && { $lt: Number(to) + 1 }) },
       }),
       ...(q.search && { title: { $regex: q.search, $options: "i" } }),
     };

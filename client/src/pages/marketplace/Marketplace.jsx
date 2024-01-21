@@ -47,21 +47,22 @@ export default function Martketplace() {
     };
     fetchSellingArtworks();
   }, []);
-  const apply = async()=>{
-    console.log(fromRef)
-    console.log(toRef)
+  const apply = async () => {
     try {
-      if(fromRef.current || toRef.current){
+      if (fromRef.current || toRef.current) {
         const response = await axios.get(
           `http://localhost:3000/artworks?forSelling=true&from=${fromRef.current.value}&to=${toRef.current.value}`
-          );
-          setSellingArtworks(response.data);
-          console.log(response.data);
+        );
+        setSellingArtworks(response.data);
+        console.log(response.data);
+        console.log(fromRef.current.value)
+        console.log(toRef.current.value)
       }
     } catch (error) {
       console.log(error);
-    };
-  }
+    }
+  };
+  
 
   return (
     <div className="marketplace">
