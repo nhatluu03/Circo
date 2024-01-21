@@ -58,9 +58,9 @@
                         color: #2c2c2c;
                         margin-bottom: 5px;
                     }
-                    input{
+                    .couponCreate__form__group__select{
                         border-radius: 8px;
-                        padding: 10px 12px;
+                        padding: 6px 8px;
                         border: 1px solid #d6d6d6;
                         background: #fff;
                         color: #202024;
@@ -68,6 +68,9 @@
                         font-weight: 500;
                         &:focus {
                         border: 1px solid #3c3c3c;
+                        }
+                        option{
+                            padding: 10px 12px;
                         }
                     }
                 }

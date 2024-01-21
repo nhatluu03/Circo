@@ -59,11 +59,12 @@ const Coupons = () => {
               </div>
               <div className="couponCreate__form__Type">
                 <label className="couponCreate__form__group__title">Type</label>
-                <input />
+                <select className="couponCreate__form__group__select">
+                  <option>Amount</option>
+                  <option>Percentage</option>
+                </select>
               </div>
-              <button
-                className="couponCreate__form__button"
-              >
+              <button className="couponCreate__form__button">
                 Create
               </button>
             </div>
@@ -80,7 +81,7 @@ const Coupons = () => {
       <div className="coupons__container">
         {coupons.map((coupon, index) => (
           <div>
-            <span>{coupon.title}</span>
+            <span>{coupon.type}</span>
           </div>
         ))}
       </div>
