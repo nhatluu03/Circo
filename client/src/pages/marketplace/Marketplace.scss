@@ -14,6 +14,9 @@
         opacity: 0.2;
         overflow: hidden;
         transition: 0.1s linear;
+        .filter-bar-item__option-item{
+          accent-color: #202024;
+        }
       }
 
       &.stretch {

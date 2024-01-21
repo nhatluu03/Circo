@@ -13,7 +13,9 @@ export default function Martketplace() {
 
   const fromRef = useRef();
   const toRef = useRef();
-  
+  const descendingRef = useRef();
+  const ascendingRef = useRef();
+
   useEffect(() => {
     const fetchFields = async () => {
       try {
@@ -24,7 +26,6 @@ export default function Martketplace() {
         });
 
         setFields(response.data);
-        
       } catch (error) {
         console.log(error);
       }
@@ -49,20 +50,31 @@ export default function Martketplace() {
   }, []);
   const apply = async () => {
     try {
+      let sortOrder = "asc";
+      if (descendingRef.current.checked) {
+        sortOrder = "desc";
+      }
       if (fromRef.current || toRef.current) {
         const response = await axios.get(
           `http://localhost:3000/artworks?forSelling=true&from=${fromRef.current.value}&to=${toRef.current.value}`
         );
-        setSellingArtworks(response.data);
-        console.log(response.data);
-        console.log(fromRef.current.value)
-        console.log(toRef.current.value)
+        let sortedArtworks = [...response.data];
+        sortedArtworks.sort((a, b) => {
+          const valueA = a.price;
+          const valueB = b.price;
+
+          if (sortOrder === "asc") {
+            return valueA - valueB;
+          } else {
+            return valueB - valueA;
+          }
+        });
+        setSellingArtworks(sortedArtworks);
       }
     } catch (error) {
       console.log(error);
     }
   };
-  
 
   return (
     <div className="marketplace">
@@ -99,15 +111,38 @@ export default function Martketplace() {
                     </label>
                   </div>
                 ))} */}
-                <input type="number" placeholder="From" ref={fromRef}/>
-                <input type="number" placeholder="To" ref={toRef}/>
+                <input type="number" placeholder="From" ref={fromRef} />
+                <input type="number" placeholder="To" ref={toRef} />
+              </div>
+            </div>
+            <div className="filter-bar-item">
+              <h4 className="filter-bar-item__header">
+                <i class="fa-solid fa-award"></i> Sort by
+              </h4>
+              <hr />
+              <div className="filter-bar-item__option-container">
+                <div className="filter-bar-item__option-item">
+                  <input
+                    id="ascending"
+                    ref={ascendingRef}
+                    value="ascending"
+                    type="checkbox"
+                  />
+                  <label id="descending">Ascending</label>
+                </div>
+                <div className="filter-bar-item__option-item">
+                  <input
+                    id="ascending"
+                    ref={descendingRef}
+                    value="descending"
+                    type="checkbox"
+                  />
+                  <label htmlFor="descending">Descending</label>
+                </div>
               </div>
             </div>
 
-            <button
-              onClick={apply}
-              className="filtering-submit-btn btn btn-3"
-            >
+            <button onClick={apply} className="filtering-submit-btn btn btn-3">
               Apply Filters
             </button>
           </div>
