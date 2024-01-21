@@ -53,7 +53,6 @@ export default function EditTalentInfo({
     e.preventDefault();
     const formData = new FormData();
     formData.append("file", image);
-
     // Add other data to formData if needed
     formData.append("fullname", inputs.fullname);
     formData.append("bio", inputs.bio);

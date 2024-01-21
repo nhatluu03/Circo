@@ -51,11 +51,13 @@ export default function Martketplace() {
     console.log(fromRef)
     console.log(toRef)
     try {
-      const response = await axios.get(
-        `http://localhost:3000/artworks?forSelling=true&from=${fromRef.current.value}&to=${toRef.current.value}`
-      );
-      console.log(response.data);
-      setSellingArtworks(response.data);
+      if(fromRef.current || toRef.current){
+        const response = await axios.get(
+          `http://localhost:3000/artworks?forSelling=true&from=${fromRef.current.value}&to=${toRef.current.value}`
+          );
+          setSellingArtworks(response.data);
+          console.log(response.data);
+      }
     } catch (error) {
       console.log(error);
     };

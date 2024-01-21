@@ -15,11 +15,10 @@ class ArtworkController {
     const filters = {
       forSelling: true,
       ...((q.from || q.to) && {
-        price: { ...(q.from && { $gt: q.from - 1 }), ...(q.to && { $lt: q.to -1  }) },
+        price: { ...(q.from && { $gt: q.from - 1 }), ...(q.to && { $lt: q.to + 1  }) },
       }),
       ...(q.search && { title: { $regex: q.search, $options: "i" } }),
     };
-    console.log(q)
     try {
       let artworks;
       if (forSelling) {
@@ -35,6 +34,7 @@ class ArtworkController {
           select: "avatar username", // get the fields avatar and username only
         });
       }
+      console.log(artworks)
       res.status(200).json(artworks);
     } catch (error) {
       console.error(error);
